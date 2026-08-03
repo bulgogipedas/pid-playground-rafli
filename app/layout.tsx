@@ -52,7 +52,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="id" className={`${inter.variable} ${plusJakarta.variable} bg-background`}>
+    <html lang="id" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable} bg-background`}>
       <body className="font-sans antialiased bg-background">
         <AuthProvider>
           {children}

@@ -20,9 +20,9 @@ export function LanguageSwitcher() {
 
   return (
     <div className="flex items-center gap-2">
-      <Globe className="w-4 h-4 text-muted-foreground" />
+      <Globe aria-hidden="true" className="hidden h-4 w-4 text-muted-foreground sm:block" />
       <Select value={language} onValueChange={(value) => setLanguage(value as "id" | "en")}>
-        <SelectTrigger className="w-[160px] h-9 bg-white border-gray-200">
+        <SelectTrigger aria-label="Pilih bahasa" className="h-9 w-[104px] bg-card sm:w-[160px]">
           <SelectValue placeholder="Select language" />
         </SelectTrigger>
         <SelectContent>

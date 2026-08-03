@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { Bell, Search } from "lucide-react"
+import { ArrowRight, Bell, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -57,7 +57,7 @@ export function Header() {
   }
 
   return (
-    <header className="h-16 border-b border-border bg-card flex items-center justify-between px-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b border-border bg-card/95 px-3 pl-16 backdrop-blur supports-[backdrop-filter]:bg-card/80 sm:px-6 sm:pl-16 lg:pl-6">
       {/* Search */}
       <div className="flex-1 max-w-md">
         <form role="search" onSubmit={handleSearch} className="relative">
@@ -73,13 +73,22 @@ export function Header() {
             name="query"
             type="search"
             placeholder="Cari pelatihan, sertifikat..."
-            className="pl-10 bg-muted border-0 focus-visible:ring-1 focus-visible:ring-secondary"
+            className="bg-muted border-0 pl-10 pr-10 focus-visible:ring-1 focus-visible:ring-secondary"
           />
+          <Button
+            type="submit"
+            variant="ghost"
+            size="icon-sm"
+            className="absolute right-1 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            aria-label="Jalankan pencarian"
+          >
+            <ArrowRight aria-hidden="true" className="h-4 w-4" />
+          </Button>
         </form>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-4">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-3">
         {/* Language Switcher */}
         <LanguageSwitcher />
 

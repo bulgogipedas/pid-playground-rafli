@@ -475,7 +475,7 @@ export default function KatalogPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4 sm:gap-4">
         <Card className="border-gray-100 shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -577,11 +577,13 @@ export default function KatalogPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <div className="flex border rounded-md">
+              <div className="flex rounded-md border">
                 <Button 
                   variant={viewMode === "grid" ? "secondary" : "ghost"} 
                   size="icon"
                   onClick={() => setViewMode("grid")}
+                  aria-label="Tampilan grid"
+                  aria-pressed={viewMode === "grid"}
                 >
                   <Grid3X3 className="w-4 h-4" />
                 </Button>
@@ -589,6 +591,8 @@ export default function KatalogPage() {
                   variant={viewMode === "list" ? "secondary" : "ghost"} 
                   size="icon"
                   onClick={() => setViewMode("list")}
+                  aria-label="Tampilan daftar"
+                  aria-pressed={viewMode === "list"}
                 >
                   <List className="w-4 h-4" />
                 </Button>

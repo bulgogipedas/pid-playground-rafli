@@ -475,9 +475,9 @@ export default function ELearningPlayerPage() {
   }
   
   return (
-    <div className="flex flex-col h-screen bg-background">
+    <div className="flex min-h-[100dvh] flex-col bg-background">
       {/* Header */}
-      <header className="h-14 border-b border-border bg-card flex items-center px-4 gap-4">
+      <header className="flex min-h-14 items-center gap-2 border-b border-border bg-card px-3 sm:gap-4 sm:px-4">
         <Link href="/dashboard/pelatihan" aria-label="Kembali ke Pelatihan Saya">
           <Button variant="ghost" size="icon" aria-hidden="true" tabIndex={-1}>
             <ArrowLeft className="w-5 h-5" />
@@ -486,20 +486,20 @@ export default function ELearningPlayerPage() {
         <div className="flex-1 min-w-0">
           <h1 className="font-serif font-semibold text-foreground truncate">{course.title}</h1>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">Progress:</span>
-            <Progress value={overallProgress} className="w-24 h-2" />
+            <span className="hidden text-sm text-muted-foreground sm:inline">Progress:</span>
+            <Progress value={overallProgress} className="h-2 w-16 sm:w-24" aria-label={`Progress pelatihan ${overallProgress}%`} />
             <span className="text-sm font-medium text-secondary">{overallProgress}%</span>
           </div>
         </div>
       </header>
       
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
         {/* Main Content Area */}
         <div className="flex-1 flex flex-col">
           {/* Video/Content Player */}
-          <div className="flex-1 bg-gray-900 relative flex items-center justify-center">
+          <div className="relative flex min-h-[24rem] flex-1 items-center justify-center bg-slate-950 md:min-h-0">
             {currentContent?.type === "video" ? (
               <>
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -570,7 +570,7 @@ export default function ELearningPlayerPage() {
           </div>
           
           {/* Content Controls */}
-          <div className="h-16 border-t border-border bg-card flex items-center justify-between px-6">
+          <div className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-t border-border bg-card px-4 py-3 sm:px-6">
             <div>
               <p className="text-sm text-muted-foreground">
                 Bagian {currentSection + 1} dari {course.sections.length}
@@ -583,9 +583,9 @@ export default function ELearningPlayerPage() {
                   Selesai
                 </Badge>
               ) : (
-                <Button 
+                <Button
                   onClick={markAsComplete}
-                  className="bg-secondary hover:bg-secondary/90"
+                  className="w-full bg-secondary hover:bg-secondary/90 sm:w-auto"
                 >
                   Tandai Selesai & Lanjut
                 </Button>
@@ -595,7 +595,7 @@ export default function ELearningPlayerPage() {
         </div>
         
         {/* Sidebar - Course Content List */}
-        <div className="w-80 border-l border-border bg-card overflow-y-auto">
+        <div className="max-h-[45dvh] w-full shrink-0 overflow-y-auto border-t border-border bg-card md:max-h-none md:w-80 md:border-l md:border-t-0">
           {/* Learning Path Section */}
           <div className="p-4 border-b border-border">
             <h3 className="font-serif font-semibold text-foreground mb-3 flex items-center gap-2">

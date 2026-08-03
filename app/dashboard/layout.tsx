@@ -1,3 +1,6 @@
+"use client"
+
+import { usePathname } from "next/navigation"
 import { Sidebar } from "@/components/dashboard/sidebar"
 import { Header } from "@/components/dashboard/header"
 
@@ -6,6 +9,13 @@ export default function DashboardLayout({
 }: {
   children: React.ReactNode
 }) {
+  const pathname = usePathname()
+  const isLearningPlayer = pathname.startsWith("/dashboard/belajar/")
+
+  if (isLearningPlayer) {
+    return <div className="min-h-[100dvh] bg-background">{children}</div>
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Skip to content (keyboard/screen-reader users) */}
@@ -20,9 +30,13 @@ export default function DashboardLayout({
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="lg:pl-64 transition-all duration-300">
+      <div className="min-w-0 transition-all duration-300 lg:pl-64">
         <Header />
-        <main id="main-content" tabIndex={-1} className="p-6 focus:outline-none">
+        <main
+          id="main-content"
+          tabIndex={-1}
+          className="min-w-0 px-4 pb-8 pt-20 focus:outline-none sm:px-6 sm:pb-10 sm:pt-6"
+        >
           {children}
         </main>
       </div>
