@@ -112,10 +112,10 @@ function getNavigationForRole(role: UserRole): NavSection[] {
     ]
   }
 
-  // Admin Divisi (under Admin SDM) - manages requests, division reports
+  // Admin Divisi (under Admin SDM) - operational access only
   if (role === "admin_divisi") {
     return [
-      { label: "Menu Pembelajaran", items: learningItems },
+      { label: "Menu Utama", items: [learningItems[0]] },
       {
         label: "Menu Kontrol",
         items: [
@@ -127,10 +127,10 @@ function getNavigationForRole(role: UserRole): NavSection[] {
     ]
   }
 
-  // Admin Content (CMS) - content management
+  // Admin Content (CMS) - content management only
   if (role === "admin_content") {
     return [
-      { label: "Menu Pembelajaran", items: learningItems },
+      { label: "Menu Utama", items: [learningItems[0]] },
       {
         label: "Menu Kontrol",
         items: [
@@ -142,10 +142,10 @@ function getNavigationForRole(role: UserRole): NavSection[] {
     ]
   }
 
-  // Admin SDM (LMS) - full system admin
+  // Admin SDM (LMS) - system administration only
   if (role === "admin_sdm") {
     return [
-      { label: "Menu Pembelajaran", items: learningItems },
+      { label: "Menu Utama", items: [learningItems[0]] },
       {
         label: "Menu Kontrol",
         items: [

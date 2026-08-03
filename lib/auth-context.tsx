@@ -145,14 +145,14 @@ export function getNavigationForRole(role: UserRole) {
 
   // Admin Divisi (under Admin SDM)
   const adminDivisiNav = [
-    ...baseNav,
+    baseNav[0],
     { label: "Pengajuan Divisi", href: "/dashboard/pengajuan", icon: "FileText" },
     { label: "Laporan Divisi", href: "/dashboard/laporan-divisi", icon: "BarChart" },
   ]
 
   // Admin Content (CMS)
   const adminContentNav = [
-    ...baseNav,
+    baseNav[0],
     { label: "Kelola Konten", href: "/dashboard/konten", icon: "FolderOpen" },
     { label: "Kelola Trainer", href: "/dashboard/trainer", icon: "Users" },
     { label: "Laporan Konten", href: "/dashboard/laporan-konten", icon: "BarChart" },
@@ -160,7 +160,7 @@ export function getNavigationForRole(role: UserRole) {
 
   // Admin SDM (LMS - full access)
   const adminSdmNav = [
-    ...baseNav,
+    baseNav[0],
     { label: "Pengajuan Pelatihan", href: "/dashboard/pengajuan", icon: "FileText" },
     { label: "TNA", href: "/dashboard/tna", icon: "ClipboardList" },
     { label: "Persetujuan", href: "/dashboard/persetujuan", icon: "CheckCircle" },
