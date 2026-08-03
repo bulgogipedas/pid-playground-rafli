@@ -37,7 +37,7 @@ export default function DashboardLayout({
           tabIndex={-1}
           className="min-w-0 px-4 pb-8 pt-20 focus:outline-none sm:px-6 sm:pb-10 sm:pt-6"
         >
-          {children}
+          <div className="mx-auto w-full max-w-[1600px]">{children}</div>
         </main>
       </div>
     </div>

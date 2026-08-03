@@ -12,7 +12,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { LanguageSwitcher } from "./language-switcher"
 import { toast } from "sonner"
 
 const notifications = [
@@ -59,7 +58,7 @@ export function Header() {
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b border-border bg-card/95 px-3 pl-16 backdrop-blur supports-[backdrop-filter]:bg-card/80 sm:px-6 sm:pl-16 lg:pl-6">
       {/* Search */}
-      <div className="flex-1 max-w-md">
+      <div className="min-w-0 max-w-md flex-1">
         <form role="search" onSubmit={handleSearch} className="relative">
           <label htmlFor="global-search" className="sr-only">
             Cari pelatihan, sertifikat, atau pengguna
@@ -89,9 +88,6 @@ export function Header() {
 
       {/* Actions */}
       <div className="flex shrink-0 items-center gap-1 sm:gap-3">
-        {/* Language Switcher */}
-        <LanguageSwitcher />
-
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

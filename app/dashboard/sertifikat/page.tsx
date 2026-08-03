@@ -53,6 +53,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
 import { dummyCertificates, type Certificate } from "@/lib/data/courses"
+import { PageHeader } from "@/components/dashboard/page-header"
 
 // Extended certificates with more data
 const allCertificates: Certificate[] = [
@@ -290,19 +291,17 @@ export default function SertifikatPage() {
   
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-foreground">Sertifikat Saya</h1>
-          <p className="text-muted-foreground mt-1">
-            Kelola portofolio sertifikat dan pencapaian pembelajaran Anda
-          </p>
-        </div>
-        <Button onClick={() => setShowUploadDialog(true)} className="bg-secondary hover:bg-secondary/90">
-          <Upload className="w-4 h-4 mr-2" />
-          Unggah Sertifikat Eksternal
-        </Button>
-      </div>
+      <PageHeader
+        className="mb-0"
+        title="Sertifikat Saya"
+        description="Kelola portofolio sertifikat dan pencapaian pembelajaran Anda"
+        actions={
+          <Button onClick={() => setShowUploadDialog(true)} className="bg-secondary hover:bg-secondary/90">
+            <Upload className="mr-2 h-4 w-4" />
+            Unggah Sertifikat Eksternal
+          </Button>
+        }
+      />
       
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

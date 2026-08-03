@@ -13,6 +13,23 @@ function getGreeting(): string {
   return "Selamat Malam"
 }
 
+function getRoleMessage(role?: string) {
+  switch (role) {
+    case "admin_sdm":
+      return "Kelola ekosistem pembelajaran, pantau kebutuhan SDM, dan pastikan setiap proses berjalan tepat waktu."
+    case "admin_content":
+      return "Pantau kualitas katalog, kelola materi, dan pastikan konten siap dipelajari oleh karyawan."
+    case "admin_divisi":
+      return "Pantau kebutuhan pelatihan divisi dan bantu tim mendapatkan pembelajaran yang relevan."
+    case "manager":
+      return "Tinjau pengajuan dari tim Anda dan bantu arahkan pengembangan kompetensi yang berdampak."
+    case "trainer":
+      return "Kelola materi yang Anda bawakan dan pantau sejauh mana peserta menyelesaikan pelatihan."
+    default:
+      return "Tingkatkan kompetensi Anda hari ini dengan melanjutkan pelatihan dan target belajar yang sedang berjalan."
+  }
+}
+
 export function WelcomeSection() {
   const { user } = useAuth()
   const [greeting, setGreeting] = useState("Selamat Datang")
@@ -33,14 +50,8 @@ export function WelcomeSection() {
           <h2 className="font-serif text-2xl md:text-3xl font-bold mb-2">
             {user?.name || 'Pengguna'}!
           </h2>
-          <p className="text-white/80 text-sm md:text-base max-w-lg">
-            {user?.role === 'admin_sdm' 
-              ? 'Kelola sistem pembelajaran dan pantau perkembangan karyawan.'
-              : user?.role === 'admin_divisi'
-              ? 'Pantau dan setujui pengajuan pelatihan dari tim Anda.'
-              : user?.role === 'trainer'
-              ? 'Kelola konten pelatihan dan lihat progres peserta.'
-              : 'Tingkatkan kompetensi Anda hari ini. Anda memiliki beberapa pelatihan yang perlu diselesaikan.'}
+          <p className="max-w-lg text-sm text-white/80 md:text-base">
+            {getRoleMessage(user?.role)}
           </p>
           <div className="mt-3 flex items-center gap-3">
             <span className="text-xs bg-white/20 px-2 py-1 rounded-full">

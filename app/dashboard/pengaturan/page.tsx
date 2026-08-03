@@ -21,7 +21,6 @@ import {
   Bell,
   Shield,
   Palette,
-  Globe,
   Save,
   Camera,
   Mail,
@@ -34,6 +33,7 @@ import {
 import { useAuth } from "@/lib/auth-context"
 import { roleLabels } from "@/lib/data/users"
 import { toast } from "sonner"
+import { PageHeader } from "@/components/dashboard/page-header"
 
 export default function PengaturanPage() {
   const { user } = useAuth()
@@ -47,7 +47,6 @@ export default function PengaturanPage() {
   const [certificateNotifications, setCertificateNotifications] = useState(true)
 
   // Display settings
-  const [language, setLanguage] = useState("id")
   const [timezone, setTimezone] = useState("Asia/Jakarta")
   const [dateFormat, setDateFormat] = useState("dd/MM/yyyy")
 
@@ -57,13 +56,11 @@ export default function PengaturanPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="font-serif text-2xl font-bold text-primary">Pengaturan</h1>
-        <p className="text-muted-foreground">
-          Kelola pengaturan akun dan preferensi Anda
-        </p>
-      </div>
+      <PageHeader
+        className="mb-0"
+        title="Pengaturan"
+        description="Kelola pengaturan akun dan preferensi Anda"
+      />
 
       <Tabs defaultValue="profile" className="space-y-4">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 lg:w-auto lg:inline-grid">
@@ -335,21 +332,8 @@ export default function PengaturanPage() {
             <CardContent className="space-y-6">
               {/* Language & Region */}
               <div className="space-y-4">
-                <h4 className="font-medium">Bahasa & Wilayah</h4>
+                <h4 className="font-medium">Wilayah & Format</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label>Bahasa</Label>
-                    <Select value={language} onValueChange={setLanguage}>
-                      <SelectTrigger>
-                        <Globe className="w-4 h-4 mr-2" />
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="id">Bahasa Indonesia</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
                   <div className="space-y-2">
                     <Label>Zona Waktu</Label>
                     <Select value={timezone} onValueChange={setTimezone}>
@@ -401,7 +385,7 @@ export default function PengaturanPage() {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={() => handleSave("Tampilan & Bahasa")} className="gap-2 bg-secondary hover:bg-secondary/90">
+                <Button onClick={() => handleSave("Tampilan & Wilayah")} className="gap-2 bg-secondary hover:bg-secondary/90">
                   <Save aria-hidden="true" className="w-4 h-4" />
                   Simpan Perubahan
                 </Button>

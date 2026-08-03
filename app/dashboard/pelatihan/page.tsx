@@ -39,6 +39,7 @@ import {
   CourseStatus,
 } from "@/lib/data/courses"
 import { useAuth } from "@/lib/auth-context"
+import { PageHeader } from "@/components/dashboard/page-header"
 
 function formatDuration(minutes: number): string {
   const hours = Math.floor(minutes / 60)
@@ -238,21 +239,19 @@ export default function PelatihanSayaPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div>
-          <h1 className="font-serif text-2xl font-bold text-[#102F49]">Pelatihan Saya</h1>
-          <p className="text-muted-foreground">
-            Kelola dan pantau progres pelatihan Anda
-          </p>
-        </div>
-        <Link href="/dashboard/katalog">
-          <Button className="bg-[#102F49] hover:bg-[#084E75]">
-            <BookOpen className="w-4 h-4 mr-2" />
-            Jelajahi Katalog
-          </Button>
-        </Link>
-      </div>
+      <PageHeader
+        className="mb-0"
+        title="Pelatihan Saya"
+        description="Kelola dan pantau progres pelatihan Anda"
+        actions={
+          <Link href="/dashboard/katalog">
+            <Button className="bg-sidebar hover:bg-sidebar/90">
+              <BookOpen className="mr-2 h-4 w-4" />
+              Jelajahi Katalog
+            </Button>
+          </Link>
+        }
+      />
 
       {/* Stats Cards */}
       <div className="grid gap-4 md:grid-cols-4">

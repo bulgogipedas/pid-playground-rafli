@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { CalendarClock, AlertTriangle, Clock, ChevronRight } from "lucide-react"
 import Link from "next/link"
+import { useAuth } from "@/lib/auth-context"
+import { dummyTrainingRequests } from "@/lib/data/training-requests"
 
 interface Deadline {
   id: string
@@ -97,16 +99,35 @@ function getTypeLabel(type: Deadline["type"]) {
 }
 
 export function UpcomingDeadlines() {
+  const { user } = useAuth()
+  const isLearner = user?.role === "peserta"
+  const roleDeadlines: Deadline[] = (user?.role === "admin_sdm" || user?.role === "admin_content" || user?.role === "trainer" || user?.role === "manager"
+    ? dummyTrainingRequests
+    : dummyTrainingRequests.filter((request) => request.division === user?.division).length > 0
+      ? dummyTrainingRequests.filter((request) => request.division === user?.division)
+      : dummyTrainingRequests)
+    .filter((request) => request.status.startsWith("pending") || request.status === "revision")
+    .slice(0, 5)
+    .map((request) => ({
+      id: request.id,
+      title: request.trainingName,
+      type: "training" as const,
+      dueDate: new Date(request.startDate).toLocaleDateString("id-ID", { day: "numeric", month: "short", year: "numeric" }),
+      daysLeft: Math.max(1, Math.ceil((new Date(request.startDate).getTime() - Date.now()) / 86400000)),
+      status: request.status === "revision" ? "warning" as const : "urgent" as const,
+    }))
+  const visibleDeadlines = isLearner ? deadlines : roleDeadlines
+
   return (
-    <Card className="rounded-lg border border-gray-100 shadow-sm bg-white">
+    <Card className="rounded-lg border border-border bg-card shadow-sm">
       <CardHeader className="flex flex-row items-center justify-between pb-2">
         <div className="flex items-center gap-2">
-          <CalendarClock className="w-5 h-5 text-[#0879B5]" />
+          <CalendarClock className="w-5 h-5 text-primary" />
           <CardTitle className="font-serif text-lg font-semibold">
-            Deadline Mendatang
+            {isLearner ? "Deadline Mendatang" : "Aktivitas Perlu Perhatian"}
           </CardTitle>
         </div>
-        <Link href="/dashboard/pelatihan">
+        <Link href={isLearner ? "/dashboard/pelatihan" : user?.role === "manager" ? "/dashboard/persetujuan" : "/dashboard/pengajuan"}>
           <Button variant="ghost" size="sm" className="text-secondary hover:text-secondary/90">
             Lihat Semua
           </Button>
@@ -114,7 +135,12 @@ export function UpcomingDeadlines() {
       </CardHeader>
       <CardContent>
         <div className="space-y-1">
-          {deadlines.map((deadline, index) => (
+            {visibleDeadlines.length === 0 ? (
+              <div className="rounded-lg border border-dashed border-border px-4 py-8 text-center">
+                <p className="font-medium text-foreground">Tidak ada aktivitas mendesak</p>
+                <p className="mt-1 text-sm text-muted-foreground">Semua item dalam scope Anda sudah tertangani.</p>
+              </div>
+            ) : visibleDeadlines.map((deadline, index) => (
             <div
               key={deadline.id}
               className={`flex items-center justify-between py-3 ${

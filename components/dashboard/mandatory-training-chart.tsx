@@ -2,23 +2,59 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { useAuth } from "@/lib/auth-context"
+import { dummyCourses, dummyEnrollments } from "@/lib/data/courses"
+import { dummyTrainingRequests } from "@/lib/data/training-requests"
 
-const data = [
-  { name: "Selesai", value: 7, color: "#059669" },
-  { name: "Sedang Berlangsung", value: 2, color: "#D97706" },
-  { name: "Belum Dimulai", value: 3, color: "#E2E8F0" },
-]
-
-const total = data.reduce((sum, item) => sum + item.value, 0)
-const completed = data.find((d) => d.name === "Selesai")?.value || 0
-const percentage = Math.round((completed / total) * 100)
+const chartColors = {
+  primary: "#0879B5",
+  success: "#059669",
+  warning: "#D97706",
+  muted: "#E2E8F0",
+  violet: "#7C3AED",
+}
 
 export function MandatoryTrainingChart() {
+  const { user } = useAuth()
+  const isLearner = user?.role === "peserta"
+  const learnerEnrollments = dummyEnrollments.filter((enrollment) => enrollment.userId === user?.id)
+  const requestScope = user?.role === "admin_sdm" || user?.role === "admin_content" || user?.role === "trainer" || user?.role === "manager"
+    ? dummyTrainingRequests
+    : dummyTrainingRequests.filter((request) => request.division === user?.division).length > 0
+      ? dummyTrainingRequests.filter((request) => request.division === user?.division)
+      : dummyTrainingRequests
+
+  const data = isLearner
+    ? [
+        { name: "Selesai", value: learnerEnrollments.filter((item) => item.status === "selesai").length, color: chartColors.success },
+        { name: "Sedang Berlangsung", value: learnerEnrollments.filter((item) => item.status === "sedang_berjalan").length, color: chartColors.warning },
+        { name: "Belum Dimulai", value: learnerEnrollments.filter((item) => item.status === "belum_mulai").length, color: chartColors.muted },
+      ]
+    : user?.role === "admin_content" || user?.role === "trainer"
+      ? [
+          { name: "Terbit", value: dummyCourses.filter((course) => course.status === "published").length, color: chartColors.success },
+          { name: "Draft", value: dummyCourses.filter((course) => course.status === "draft").length, color: chartColors.warning },
+          { name: "Arsip", value: dummyCourses.filter((course) => course.status === "archived").length, color: chartColors.muted },
+        ]
+      : [
+          { name: "Menunggu Review", value: requestScope.filter((request) => request.status.startsWith("pending")).length, color: chartColors.warning },
+          { name: "Disetujui", value: requestScope.filter((request) => request.status === "approved").length, color: chartColors.success },
+          { name: "Perlu Revisi", value: requestScope.filter((request) => request.status === "revision").length, color: chartColors.violet },
+        ]
+
+  const total = data.reduce((sum, item) => sum + item.value, 0)
+  const completed = isLearner
+    ? data.find((item) => item.name === "Selesai")?.value || 0
+    : data.find((item) => item.name === "Disetujui" || item.name === "Terbit")?.value || 0
+  const percentage = total ? Math.round((completed / total) * 100) : 0
+  const title = isLearner ? "Progress Pelatihan" : user?.role === "admin_content" || user?.role === "trainer" ? "Status Konten" : "Status Pengajuan"
+  const completionLabel = isLearner ? "Selesai" : user?.role === "admin_content" || user?.role === "trainer" ? "Terbit" : "Disetujui"
+
   return (
-    <Card className="rounded-lg border border-gray-100 shadow-sm bg-white">
+    <Card className="rounded-lg border border-border bg-card shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="font-serif text-lg font-semibold">
-          Pelatihan Wajib
+          {title}
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -46,7 +82,7 @@ export function MandatoryTrainingChart() {
             {/* Center Text */}
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <span className="text-2xl font-bold font-serif text-foreground">{percentage}%</span>
-              <span className="text-xs text-muted-foreground">Selesai</span>
+              <span className="text-xs text-muted-foreground">{completionLabel}</span>
             </div>
           </div>
 
@@ -64,7 +100,7 @@ export function MandatoryTrainingChart() {
                 <span className="text-sm font-medium">{item.value}</span>
               </div>
             ))}
-            <div className="pt-2 border-t border-gray-100">
+            <div className="border-t border-border pt-2">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-foreground">Total</span>
                 <span className="text-sm font-bold text-foreground">{total} Pelatihan</span>

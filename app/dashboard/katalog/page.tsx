@@ -59,6 +59,7 @@ import {
   Unlock,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { PageHeader } from "@/components/dashboard/page-header"
 
 // Course detail sheet
 function CourseDetailSheet({ 
@@ -466,13 +467,11 @@ export default function KatalogPage() {
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h1 className="font-serif text-2xl font-bold text-primary">Katalog Pelatihan</h1>
-        <p className="text-muted-foreground">
-          Jelajahi dan daftar pelatihan untuk mengembangkan kompetensi Anda
-        </p>
-      </div>
+      <PageHeader
+        className="mb-0"
+        title="Katalog Pelatihan"
+        description="Jelajahi dan daftar pelatihan untuk mengembangkan kompetensi Anda"
+      />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4 sm:gap-4">
