@@ -76,7 +76,7 @@ export default function LoginPage() {
               <div className="text-sm text-white/70">Tingkat Penyelesaian</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold text-primary">150+</div>
+              <div className="text-3xl font-bold text-blue-300">150+</div>
               <div className="text-sm text-white/70">Kursus Tersedia</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4">
@@ -157,9 +157,9 @@ export default function LoginPage() {
                   </div>
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className="w-full bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
+                <Button
+                  type="submit"
+                  className="w-full"
                   disabled={isLoading}
                 >
                   {isLoading ? (

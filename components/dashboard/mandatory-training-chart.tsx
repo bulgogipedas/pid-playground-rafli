@@ -7,7 +7,7 @@ import { dummyCourses, dummyEnrollments } from "@/lib/data/courses"
 import { dummyTrainingRequests } from "@/lib/data/training-requests"
 
 const chartColors = {
-  primary: "#0879B5",
+  primary: "#2A438A",
   success: "#047857",
   warning: "#B45309",
   muted: "#E2E8F0",

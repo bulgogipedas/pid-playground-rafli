@@ -266,7 +266,7 @@ function RequestForm({
         <Button type="button" variant="outline" onClick={onClose}>
           Batal
         </Button>
-        <Button type="submit" className="bg-secondary hover:bg-secondary/90">
+        <Button type="submit">
           Ajukan Pelatihan
         </Button>
       </div>
@@ -437,7 +437,7 @@ export default function PengajuanPage() {
           {user?.role === "peserta" && (
             <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-secondary hover:bg-secondary/90">
+                <Button>
                   <Plus className="w-4 h-4 mr-2" />
                   Ajukan Pelatihan
                 </Button>

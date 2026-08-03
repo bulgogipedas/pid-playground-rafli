@@ -150,10 +150,10 @@ const monthlyTrend = [
 ]
 
 const trainingByCategory = [
-  { name: "Technical Skills", value: 45, color: "#0879B5" },
+  { name: "Technical Skills", value: 45, color: "#2A438A" },
   { name: "Soft Skills", value: 25, color: "#059669" },
   { name: "Compliance", value: 20, color: "#D97706" },
-  { name: "Leadership", value: 10, color: "#102F49" },
+  { name: "Leadership", value: 10, color: "#233873" },
 ]
 
 const pendingRequests = [
@@ -270,7 +270,7 @@ export default function LaporanDivisiPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#102F49]">
+          <h1 className="font-serif text-2xl font-bold text-[#233873]">
             Laporan Divisi
           </h1>
           <p className="text-muted-foreground">
@@ -301,10 +301,10 @@ export default function LaporanDivisiPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-100">
-                <Users className="w-5 h-5 text-[#0879B5]" />
+                <Users className="w-5 h-5 text-[#2A438A]" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#102F49]">
+                <p className="text-2xl font-bold text-[#233873]">
                   {divisionStats.totalKaryawan}
                 </p>
                 <p className="text-xs text-muted-foreground">Total Karyawan</p>
@@ -320,7 +320,7 @@ export default function LaporanDivisiPage() {
                 <BookOpen className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#102F49]">
+                <p className="text-2xl font-bold text-[#233873]">
                   {divisionStats.kursusAktif}
                 </p>
                 <p className="text-xs text-muted-foreground">Kursus Aktif</p>
@@ -336,7 +336,7 @@ export default function LaporanDivisiPage() {
                 <Target className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#102F49]">
+                <p className="text-2xl font-bold text-[#233873]">
                   {divisionStats.rataRataProgress}%
                 </p>
                 <p className="text-xs text-muted-foreground">Rata-rata Progress</p>
@@ -352,7 +352,7 @@ export default function LaporanDivisiPage() {
                 <Clock className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#102F49]">
+                <p className="text-2xl font-bold text-[#233873]">
                   {divisionStats.totalJamBelajar}
                 </p>
                 <p className="text-xs text-muted-foreground">Total Jam Belajar</p>
@@ -368,7 +368,7 @@ export default function LaporanDivisiPage() {
                 <Award className="w-5 h-5 text-indigo-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#102F49]">
+                <p className="text-2xl font-bold text-[#233873]">
                   {divisionStats.sertifikatDiterbitkan}
                 </p>
                 <p className="text-xs text-muted-foreground">Sertifikat</p>
@@ -384,7 +384,7 @@ export default function LaporanDivisiPage() {
                 <CheckCircle className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#102F49]">
+                <p className="text-2xl font-bold text-[#233873]">
                   {divisionStats.kepatuhanWajib}%
                 </p>
                 <p className="text-xs text-muted-foreground">Kepatuhan Wajib</p>
@@ -426,7 +426,7 @@ export default function LaporanDivisiPage() {
                         yAxisId="left"
                         type="monotone"
                         dataKey="jamBelajar"
-                        stroke="#0879B5"
+                        stroke="#2A438A"
                         strokeWidth={2}
                         name="Jam Belajar"
                       />

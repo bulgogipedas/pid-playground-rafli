@@ -82,7 +82,7 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
       <CardContent className="p-0">
         <div className="flex flex-col md:flex-row">
           {/* Thumbnail */}
-          <div className="w-full md:w-48 h-32 md:h-auto bg-gradient-to-br from-[#102F49] to-[#0879B5] rounded-t-lg md:rounded-l-lg md:rounded-tr-none flex items-center justify-center shrink-0">
+          <div className="w-full md:w-48 h-32 md:h-auto bg-gradient-to-br from-[#233873] to-[#2A438A] rounded-t-lg md:rounded-l-lg md:rounded-tr-none flex items-center justify-center shrink-0">
             <BookOpen className="w-12 h-12 text-white/80" />
           </div>
           
@@ -95,7 +95,7 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
                     className={
                       course.type === 'wajib' 
                         ? 'bg-[#D97706]/10 text-[#D97706]' 
-                        : 'bg-[#0879B5]/10 text-[#0879B5]'
+                        : 'bg-[#2A438A]/10 text-[#2A438A]'
                     }
                   >
                     {typeLabels[course.type]}
@@ -104,7 +104,7 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
                     {methodLabels[course.method]}
                   </Badge>
                 </div>
-                <h3 className="font-semibold text-[#102F49] mb-1 line-clamp-2">
+                <h3 className="font-semibold text-[#233873] mb-1 line-clamp-2">
                   {course.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
@@ -131,7 +131,7 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
                     Selesai
                   </Badge>
                 ) : enrollment.status === 'sedang_berjalan' ? (
-                  <Badge className="bg-[#0879B5] text-white mb-2">
+                  <Badge className="bg-[#2A438A] text-white mb-2">
                     <Play className="w-3 h-3 mr-1" />
                     Sedang Berjalan
                   </Badge>
@@ -163,7 +163,7 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
               <div className="mt-4">
                 <div className="flex items-center justify-between text-sm mb-2">
                   <span className="text-muted-foreground">Progres</span>
-                  <span className="font-medium text-[#102F49]">{enrollment.progress}%</span>
+                  <span className="font-medium text-[#233873]">{enrollment.progress}%</span>
                 </div>
                 <Progress value={enrollment.progress} className="h-2" />
               </div>
@@ -181,8 +181,8 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
                     enrollment.status === 'selesai'
                       ? 'bg-[#059669] hover:bg-[#047857]'
                       : enrollment.status === 'sedang_berjalan'
-                      ? 'bg-[#0879B5] hover:bg-[#056598]'
-                      : 'bg-[#102F49] hover:bg-[#084E75]'
+                      ? 'bg-[#2A438A] hover:bg-[#233873]'
+                      : 'bg-[#233873] hover:bg-[#1D305F]'
                   }
                 >
                   {enrollment.status === 'selesai' ? 'Lihat Sertifikat' : 
@@ -245,7 +245,7 @@ export default function PelatihanSayaPage() {
         description="Kelola dan pantau progres pelatihan Anda"
         actions={
           <Link href="/dashboard/katalog">
-            <Button className="bg-sidebar hover:bg-sidebar/90">
+            <Button>
               <BookOpen className="mr-2 h-4 w-4" />
               Jelajahi Katalog
             </Button>
@@ -260,10 +260,10 @@ export default function PelatihanSayaPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Pelatihan
             </CardTitle>
-            <BookOpen className="w-4 h-4 text-[#0879B5]" />
+            <BookOpen className="w-4 h-4 text-[#2A438A]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#102F49]">{totalEnrolled}</div>
+            <div className="text-2xl font-bold text-[#233873]">{totalEnrolled}</div>
             <p className="text-xs text-muted-foreground">Terdaftar</p>
           </CardContent>
         </Card>
@@ -296,10 +296,10 @@ export default function PelatihanSayaPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Jam Belajar
             </CardTitle>
-            <TrendingUp className="w-4 h-4 text-[#0879B5]" />
+            <TrendingUp className="w-4 h-4 text-[#2A438A]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#102F49]">{totalLearningHours.toFixed(1)}</div>
+            <div className="text-2xl font-bold text-[#233873]">{totalLearningHours.toFixed(1)}</div>
             <p className="text-xs text-muted-foreground">Total jam</p>
           </CardContent>
         </Card>
@@ -354,7 +354,7 @@ export default function PelatihanSayaPage() {
             <Card className="rounded-lg border border-gray-100 shadow-sm">
               <CardContent className="py-12 text-center">
                 <BookOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="font-semibold text-lg text-[#102F49] mb-2">
+                <h3 className="font-semibold text-lg text-[#233873] mb-2">
                   Tidak ada pelatihan ditemukan
                 </h3>
                 <p className="text-muted-foreground mb-4">
@@ -363,7 +363,7 @@ export default function PelatihanSayaPage() {
                     : `Tidak ada pelatihan dengan status "${activeTab}".`}
                 </p>
                 <Link href="/dashboard/katalog">
-                  <Button className="bg-[#102F49] hover:bg-[#084E75]">
+                  <Button>
                     Jelajahi Katalog Pelatihan
                   </Button>
                 </Link>

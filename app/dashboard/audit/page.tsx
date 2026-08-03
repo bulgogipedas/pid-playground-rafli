@@ -37,15 +37,15 @@ import {
 import { dummyAuditLogs, AuditLog } from "@/lib/data/users"
 
 const actionIcons: Record<string, React.ReactNode> = {
-  LOGIN: <LogIn className="w-4 h-4 text-[#0879B5]" />,
+  LOGIN: <LogIn className="w-4 h-4 text-[#2A438A]" />,
   APPROVE_TRAINING: <CheckCircle className="w-4 h-4 text-[#059669]" />,
   REJECT_TRAINING: <XCircle className="w-4 h-4 text-[#DC2626]" />,
   UPLOAD_CONTENT: <Upload className="w-4 h-4 text-[#D97706]" />,
   COMPLETE_COURSE: <Award className="w-4 h-4 text-[#059669]" />,
-  ISSUE_CERTIFICATE: <Award className="w-4 h-4 text-[#0879B5]" />,
-  CREATE_USER: <Users className="w-4 h-4 text-[#102F49]" />,
+  ISSUE_CERTIFICATE: <Award className="w-4 h-4 text-[#2A438A]" />,
+  CREATE_USER: <Users className="w-4 h-4 text-[#233873]" />,
   SUBMIT_REQUEST: <FileText className="w-4 h-4 text-[#D97706]" />,
-  SYNC_HCIS: <RefreshCw className="w-4 h-4 text-[#0879B5]" />,
+  SYNC_HCIS: <RefreshCw className="w-4 h-4 text-[#2A438A]" />,
 }
 
 const actionLabels: Record<string, string> = {
@@ -102,7 +102,7 @@ export default function AuditLogPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#102F49]">Audit Log</h1>
+          <h1 className="font-serif text-2xl font-bold text-[#233873]">Audit Log</h1>
           <p className="text-muted-foreground">
             Rekam jejak semua aktivitas pengguna dalam sistem
           </p>
@@ -120,7 +120,7 @@ export default function AuditLogPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Total Aktivitas</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#102F49]">{logs.length}</div>
+            <div className="text-2xl font-bold text-[#233873]">{logs.length}</div>
             <p className="text-xs text-muted-foreground">Hari ini</p>
           </CardContent>
         </Card>
@@ -129,7 +129,7 @@ export default function AuditLogPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Login</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#0879B5]">
+            <div className="text-2xl font-bold text-[#2A438A]">
               {logs.filter(l => l.action === 'LOGIN').length}
             </div>
             <p className="text-xs text-muted-foreground">Sesi aktif</p>
@@ -223,13 +223,13 @@ export default function AuditLogPage() {
                 <TableRow key={log.id}>
                   <TableCell>
                     <div className="text-sm">
-                      <div className="font-medium text-[#102F49]">{formatDate(log.timestamp)}</div>
+                      <div className="font-medium text-[#233873]">{formatDate(log.timestamp)}</div>
                       <div className="text-muted-foreground">{formatTime(log.timestamp)}</div>
                     </div>
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-2">
-                      <div className="w-8 h-8 rounded-full bg-[#0879B5]/10 flex items-center justify-center text-[#0879B5] text-xs font-medium">
+                      <div className="w-8 h-8 rounded-full bg-[#2A438A]/10 flex items-center justify-center text-[#2A438A] text-xs font-medium">
                         {log.userName.split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </div>
                       <div>

@@ -67,7 +67,7 @@ function FeaturedLearningPath() {
     <Card className="overflow-hidden border-primary/20 bg-white shadow-sm">
       <CardContent className="p-0">
         <div className="grid gap-0 lg:grid-cols-[1.3fr_1fr]">
-          <div className="bg-[#102f49] p-6 text-white sm:p-8">
+          <div className="bg-[#233873] p-6 text-white sm:p-8">
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <Badge className="border-0 bg-cyan-400/15 text-cyan-100">Learning path baru</Badge>
               <Badge variant="outline" className="border-white/20 text-white/80">Pemula</Badge>
@@ -80,7 +80,7 @@ function FeaturedLearningPath() {
               <span className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-300 text-amber-300" />{pythonCourse.rating} ({pythonCourse.ratingCount})</span>
             </div>
             <Link href={`/dashboard/belajar/${pythonCourse.id}`} className="mt-6 inline-flex">
-              <Button className="bg-white text-[#102f49] hover:bg-cyan-50"><Play className="mr-2 h-4 w-4" />Mulai learning path</Button>
+              <Button className="bg-white text-primary hover:bg-blue-50"><Play className="mr-2 h-4 w-4" />Mulai learning path</Button>
             </Link>
           </div>
           <div className="flex flex-col justify-between gap-5 p-6 sm:p-8">
@@ -330,13 +330,13 @@ function CourseDetailSheet({
         <SheetFooter className="mt-6">
           {isEnrolled ? (
             <Link href={`/dashboard/belajar/${course.id}`} className="w-full">
-              <Button className="w-full bg-secondary hover:bg-secondary/90">
+              <Button className="w-full">
                 <Play className="w-4 h-4 mr-2" />
                 Lanjutkan Belajar
               </Button>
             </Link>
           ) : (
-            <Button className="w-full bg-secondary hover:bg-secondary/90" onClick={onEnroll}>
+            <Button className="w-full" onClick={onEnroll}>
               <GraduationCap className="w-4 h-4 mr-2" />
               Daftar Pelatihan
             </Button>
@@ -420,7 +420,7 @@ function CourseCard({
             </div>
             <Progress value={enrollment?.progress || 0} className="h-1.5" />
             <Link href={`/dashboard/belajar/${course.id}`}>
-              <Button size="sm" className="w-full mt-2 bg-secondary hover:bg-secondary/90">
+              <Button size="sm" className="w-full mt-2">
                 <Play className="w-4 h-4 mr-2" />
                 Lanjutkan
               </Button>
@@ -728,7 +728,7 @@ export default function KatalogPage() {
 
                             <div className="flex items-center shrink-0">
                               {enrolled ? (
-                                <Button size="sm" className="bg-secondary hover:bg-secondary/90">
+                                <Button size="sm">
                                   <Play className="w-4 h-4 mr-2" />
                                   Lanjutkan
                                 </Button>

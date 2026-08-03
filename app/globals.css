@@ -4,54 +4,51 @@
 @custom-variant dark (&:is(.dark *));
 
 /* PT PELNI LMS Design System
-   Primary PELNI Blue: #0879B5
-   Maritime Navy: #102F49
-   Ocean Cyan Accent: #17A8BA
-   PELNI Gold: #F8B923 (achievement/certificate only)
-   PELNI Red: #E93645 (critical accent only)
+   Official logo palette: #2A438A, #447FC1, #75BEE9
+   Semantic colors are reserved for state and feedback.
 */
 
 :root {
-  --background: #F8FAFC;
-  --foreground: #0F172A;
+  --background: #F7F9FC;
+  --foreground: #172033;
   --card: #FFFFFF;
-  --card-foreground: #0F172A;
+  --card-foreground: #172033;
   --popover: #FFFFFF;
-  --popover-foreground: #0F172A;
-  --primary: #0879B5;
+  --popover-foreground: #172033;
+  --primary: #2A438A;
   --primary-foreground: #FFFFFF;
-  --secondary: #F1F5F9;
-  --secondary-foreground: #056598;
-  --muted: #F1F5F9;
-  --muted-foreground: #64748B;
-  --accent: #EFF8FF;
-  --accent-foreground: #056598;
+  --secondary: #E9EFF9;
+  --secondary-foreground: #2A438A;
+  --muted: #EEF2F7;
+  --muted-foreground: #5F6B7C;
+  --accent: #EDF4FB;
+  --accent-foreground: #2A438A;
   --success: #047857;
   --success-foreground: #FFFFFF;
   --warning: #B45309;
   --warning-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
-  --border: #E2E8F0;
-  --input: #E2E8F0;
-  --ring: #168CC6;
-  --chart-1: #0879B5;
-  --chart-2: #17A8BA;
-  --chart-3: #7C3AED;
-  --chart-4: #F8B923;
-  --chart-5: #E93645;
+  --border: #DCE3ED;
+  --input: #CBD5E1;
+  --ring: #447FC1;
+  --chart-1: #2A438A;
+  --chart-2: #447FC1;
+  --chart-3: #75BEE9;
+  --chart-4: #047857;
+  --chart-5: #B45309;
   --chart-6: #059669;
   --chart-7: #EA580C;
   --chart-8: #64748B;
   --radius: 0.5rem;
-  --sidebar: #102F49;
+  --sidebar: #233873;
   --sidebar-foreground: #FFFFFF;
-  --sidebar-primary: #0879B5;
+  --sidebar-primary: #447FC1;
   --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #0879B5;
+  --sidebar-accent: #447FC1;
   --sidebar-accent-foreground: #FFFFFF;
   --sidebar-border: rgba(255, 255, 255, 0.1);
-  --sidebar-ring: #0879B5;
+  --sidebar-ring: #75BEE9;
   --sidebar-muted: rgba(255, 255, 255, 0.1);
   --sidebar-muted-foreground: rgba(255, 255, 255, 0.7);
 }
@@ -93,17 +90,17 @@
   --color-chart-8: var(--chart-8);
 
   /* Remap Tailwind blue-* scale to PELNI blues so hardcoded blue utilities stay on-brand */
-  --color-blue-50: #EFF8FF;
-  --color-blue-100: #DBEEFF;
-  --color-blue-200: #B9DFFF;
-  --color-blue-300: #82C7F5;
-  --color-blue-400: #4FB0EC;
-  --color-blue-500: #168CC6;
-  --color-blue-600: #0879B5;
-  --color-blue-700: #056598;
-  --color-blue-800: #084E75;
-  --color-blue-900: #102F49;
-  --color-blue-950: #0B2439;
+  --color-blue-50: #EDF4FB;
+  --color-blue-100: #DCEAF7;
+  --color-blue-200: #B9D7EF;
+  --color-blue-300: #75BEE9;
+  --color-blue-400: #5A9FD5;
+  --color-blue-500: #447FC1;
+  --color-blue-600: #2A438A;
+  --color-blue-700: #233873;
+  --color-blue-800: #1D305F;
+  --color-blue-900: #17274E;
+  --color-blue-950: #101C39;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -156,8 +153,7 @@
   }
 }
 
-/* Compatibility aliases for legacy screens. Keep older utility names inside
-   the same semantic palette while those screens are gradually consolidated. */
+/* Compatibility aliases keep legacy screens inside the same semantic palette. */
 @layer utilities {
   [data-slot="button"][data-variant="default"].bg-secondary {
     background-color: var(--primary);

@@ -324,7 +324,7 @@ export default function SertifikatPage() {
         title="Sertifikat Saya"
         description="Kelola portofolio sertifikat dan pencapaian pembelajaran Anda"
         actions={
-          <Button onClick={() => setShowUploadDialog(true)} className="bg-secondary hover:bg-secondary/90">
+          <Button onClick={() => setShowUploadDialog(true)}>
             <Upload className="mr-2 h-4 w-4" />
             Unggah Sertifikat Eksternal
           </Button>
@@ -785,7 +785,7 @@ export default function SertifikatPage() {
                 
                 {/* Actions */}
                 <div className="flex gap-3">
-                  <Button className="flex-1 bg-secondary hover:bg-secondary/90">
+                  <Button className="flex-1">
                     <Download className="w-4 h-4 mr-2" />
                     Unduh PDF
                   </Button>
@@ -1028,8 +1028,7 @@ export default function SertifikatPage() {
             <Button variant="outline" onClick={() => setShowUploadDialog(false)}>
               Batal
             </Button>
-            <Button 
-              className="bg-secondary hover:bg-secondary/90"
+            <Button
               onClick={handleUploadSubmit}
               disabled={!uploadForm.courseName || !uploadForm.certificateNumber || !uploadForm.issuedAt || !uploadForm.learningHours}
             >

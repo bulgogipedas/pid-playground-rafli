@@ -127,7 +127,7 @@ const monthlyData = [
 
 // Training distribution
 const trainingDistribution = [
-  { name: "Hard Skill", value: 45, color: "#0879B5" },
+  { name: "Hard Skill", value: 45, color: "#2A438A" },
   { name: "Soft Skill", value: 35, color: "#059669" },
   { name: "Compliance", value: 20, color: "#D97706" },
 ]
@@ -326,10 +326,10 @@ export default function LaporanTimPage() {
                     <BarChart data={monthlyData}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
-                      <YAxis yAxisId="left" orientation="left" stroke="#0879B5" />
+                      <YAxis yAxisId="left" orientation="left" stroke="#2A438A" />
                       <YAxis yAxisId="right" orientation="right" stroke="#059669" />
                       <Tooltip />
-                      <Bar yAxisId="left" dataKey="hours" fill="#0879B5" name="Jam Belajar" radius={[4, 4, 0, 0]} />
+                      <Bar yAxisId="left" dataKey="hours" fill="#2A438A" name="Jam Belajar" radius={[4, 4, 0, 0]} />
                       <Bar yAxisId="right" dataKey="completed" fill="#059669" name="Selesai" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -508,10 +508,10 @@ export default function LaporanTimPage() {
                         <TableCell>{new Date(request.submittedDate).toLocaleDateString("id-ID")}</TableCell>
                         <TableCell className="text-center">
                           <div className="flex justify-center gap-2">
-                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+                            <Button size="sm" variant="success">
                               Setujui
                             </Button>
-                            <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
+                            <Button size="sm" variant="destructive">
                               Tolak
                             </Button>
                           </div>
@@ -675,7 +675,7 @@ export default function LaporanTimPage() {
                     <XAxis dataKey="month" />
                     <YAxis />
                     <Tooltip />
-                    <Bar dataKey="hours" fill="#0879B5" name="Jam Belajar" radius={[4, 4, 0, 0]} />
+                    <Bar dataKey="hours" fill="#2A438A" name="Jam Belajar" radius={[4, 4, 0, 0]} />
                     <Bar dataKey="completed" fill="#059669" name="Selesai" radius={[4, 4, 0, 0]} />
                   </BarChart>
                 </ResponsiveContainer>

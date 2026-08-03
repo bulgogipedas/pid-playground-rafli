@@ -301,7 +301,7 @@ function CourseForm({
         <Button type="button" variant="outline" onClick={onClose}>
           Batal
         </Button>
-        <Button type="submit" className="bg-secondary hover:bg-secondary/90">
+        <Button type="submit">
           {course ? "Simpan Perubahan" : "Buat Pelatihan"}
         </Button>
       </div>
@@ -431,9 +431,8 @@ function ContentUploadDialog({
           <Button variant="outline" onClick={() => setIsOpen(false)}>
             Batal
           </Button>
-          <Button 
+          <Button
             onClick={handleSubmit}
-            className="bg-secondary hover:bg-secondary/90"
             disabled={!contentData.title || contentData.duration === 0}
           >
             <Upload className="w-4 h-4 mr-2" />
@@ -613,7 +612,7 @@ function CourseEditorSheet({ course }: { course: Course }) {
 
           {/* Save Button */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button className="bg-secondary hover:bg-secondary/90">
+            <Button>
               Simpan Perubahan
             </Button>
           </div>
@@ -722,7 +721,7 @@ export default function KontenPage() {
         </div>
         <Dialog open={isCreating} onOpenChange={setIsCreating}>
           <DialogTrigger asChild>
-            <Button className="bg-secondary hover:bg-secondary/90">
+            <Button>
               <Plus className="w-4 h-4 mr-2" />
               Buat Pelatihan Baru
             </Button>

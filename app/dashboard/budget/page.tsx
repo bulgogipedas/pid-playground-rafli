@@ -49,7 +49,7 @@ const categoryLabels = {
 }
 
 const categoryColors = {
-  external_trainer: "#0879B5",
+  external_trainer: "#2A438A",
   internal_trainer: "#059669",
   material: "#D97706",
   venue: "#7C3AED",

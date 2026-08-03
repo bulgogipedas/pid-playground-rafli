@@ -88,7 +88,7 @@ export default function TNAPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#102F49]">
+          <h1 className="font-serif text-2xl font-bold text-[#233873]">
             Training Needs Analysis (TNA)
           </h1>
           <p className="text-muted-foreground">
@@ -132,10 +132,10 @@ export default function TNAPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Gap Kompetensi
             </CardTitle>
-            <Target className="w-4 h-4 text-[#0879B5]" />
+            <Target className="w-4 h-4 text-[#2A438A]" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#102F49]">{totalGaps}</div>
+            <div className="text-2xl font-bold text-[#233873]">{totalGaps}</div>
             <p className="text-xs text-muted-foreground">Teridentifikasi dari HCIS</p>
           </CardContent>
         </Card>
@@ -210,7 +210,7 @@ export default function TNAPage() {
             {/* Division Summary */}
             <Card className="rounded-lg border border-gray-100 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-lg font-serif text-[#102F49]">
+                <CardTitle className="text-lg font-serif text-[#233873]">
                   Gap per Divisi
                 </CardTitle>
                 <CardDescription>
@@ -254,7 +254,7 @@ export default function TNAPage() {
             {/* Top Competency Gaps */}
             <Card className="rounded-lg border border-gray-100 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-lg font-serif text-[#102F49]">
+                <CardTitle className="text-lg font-serif text-[#233873]">
                   Top Gap Kompetensi
                 </CardTitle>
                 <CardDescription>
@@ -271,7 +271,7 @@ export default function TNAPage() {
                     { competency: "Kepatuhan Regulasi", avgGap: 1.8, affected: 12, category: "technical" },
                   ].map((item, index) => (
                     <div key={item.competency} className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-full bg-[#102F49] text-white flex items-center justify-center text-sm font-medium shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-[#233873] text-white flex items-center justify-center text-sm font-medium shrink-0">
                         {index + 1}
                       </div>
                       <div className="flex-1">
@@ -296,7 +296,7 @@ export default function TNAPage() {
             {/* Mandatory Training Progress */}
             <Card className="rounded-lg border border-gray-100 shadow-sm lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-lg font-serif text-[#102F49]">
+                <CardTitle className="text-lg font-serif text-[#233873]">
                   Progres Pelatihan Wajib
                 </CardTitle>
                 <CardDescription>
@@ -311,7 +311,7 @@ export default function TNAPage() {
                       <div key={training.id} className="space-y-3">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className="font-medium text-[#102F49]">
+                            <h4 className="font-medium text-[#233873]">
                               {training.trainingName}
                             </h4>
                             <p className="text-sm text-muted-foreground">
@@ -377,7 +377,7 @@ export default function TNAPage() {
                 <TableBody>
                   {divisionGapSummaries.map((div) => (
                     <TableRow key={div.division}>
-                      <TableCell className="font-medium text-[#102F49]">
+                      <TableCell className="font-medium text-[#233873]">
                         {div.division}
                       </TableCell>
                       <TableCell className="text-center">{div.totalEmployees}</TableCell>
@@ -451,7 +451,7 @@ export default function TNAPage() {
                 <TableBody>
                   {jobFamilyGapSummaries.map((jf) => (
                     <TableRow key={jf.jobFamily}>
-                      <TableCell className="font-medium text-[#102F49]">
+                      <TableCell className="font-medium text-[#233873]">
                         {jf.jobFamily}
                       </TableCell>
                       <TableCell className="text-center">{jf.totalEmployees}</TableCell>
@@ -559,7 +559,7 @@ export default function TNAPage() {
                     <TableRow key={gap.id}>
                       <TableCell>
                         <div>
-                          <div className="font-medium text-[#102F49]">{gap.userName}</div>
+                          <div className="font-medium text-[#233873]">{gap.userName}</div>
                           <div className="text-xs text-muted-foreground">{gap.division}</div>
                         </div>
                       </TableCell>
@@ -642,7 +642,7 @@ export default function TNAPage() {
                     return (
                       <TableRow key={training.id}>
                         <TableCell>
-                          <div className="font-medium text-[#102F49] max-w-[250px]">
+                          <div className="font-medium text-[#233873] max-w-[250px]">
                             {training.trainingName}
                           </div>
                           <div className="text-xs text-muted-foreground">

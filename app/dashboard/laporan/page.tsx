@@ -417,7 +417,7 @@ export default function LaporanPage() {
                     <SelectItem value="public_offline">Public Offline</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button className="bg-secondary hover:bg-secondary/90">
+                <Button>
                   <Download className="w-4 h-4 mr-2" />
                   Export
                 </Button>
@@ -454,7 +454,7 @@ export default function LaporanPage() {
                           return null
                         }}
                       />
-                      <Bar dataKey="total" fill="#0879B5" radius={[4, 4, 0, 0]} name="Total Jam" />
+                      <Bar dataKey="total" fill="#2A438A" radius={[4, 4, 0, 0]} name="Total Jam" />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>
@@ -603,7 +603,7 @@ export default function LaporanPage() {
                     <XAxis dataKey="month" tick={{ fontSize: 12 }} />
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip />
-                    <Bar dataKey="submitted" fill="#102F49" radius={[4, 4, 0, 0]} name="Diajukan" />
+                    <Bar dataKey="submitted" fill="#233873" radius={[4, 4, 0, 0]} name="Diajukan" />
                     <Bar dataKey="approved" fill="#059669" radius={[4, 4, 0, 0]} name="Disetujui" />
                   </BarChart>
                 </ResponsiveContainer>

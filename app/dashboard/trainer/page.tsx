@@ -476,11 +476,11 @@ export default function TrainerPage() {
                         <TableCell>{new Date(request.requestDate).toLocaleDateString("id-ID")}</TableCell>
                         <TableCell className="text-center">
                           <div className="flex justify-center gap-2">
-                            <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+                            <Button size="sm" variant="success">
                               <UserCheck className="w-4 h-4 mr-1" />
                               Setujui
                             </Button>
-                            <Button size="sm" variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">
+                            <Button size="sm" variant="destructive">
                               <UserX className="w-4 h-4 mr-1" />
                               Tolak
                             </Button>

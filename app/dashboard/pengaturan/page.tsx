@@ -156,7 +156,7 @@ export default function PengaturanPage() {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={() => handleSave("Profil")} className="gap-2 bg-secondary hover:bg-secondary/90">
+                <Button onClick={() => handleSave("Profil")} className="gap-2">
                   <Save aria-hidden="true" className="w-4 h-4" />
                   Simpan Perubahan
                 </Button>
@@ -225,7 +225,7 @@ export default function PengaturanPage() {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={() => handleSave("Notifikasi")} className="gap-2 bg-secondary hover:bg-secondary/90">
+                <Button onClick={() => handleSave("Notifikasi")} className="gap-2">
                   <Save aria-hidden="true" className="w-4 h-4" />
                   Simpan Perubahan
                 </Button>
@@ -385,7 +385,7 @@ export default function PengaturanPage() {
               </div>
 
               <div className="flex justify-end">
-                <Button onClick={() => handleSave("Tampilan & Wilayah")} className="gap-2 bg-secondary hover:bg-secondary/90">
+                <Button onClick={() => handleSave("Tampilan & Wilayah")} className="gap-2">
                   <Save aria-hidden="true" className="w-4 h-4" />
                   Simpan Perubahan
                 </Button>

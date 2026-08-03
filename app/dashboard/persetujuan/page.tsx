@@ -106,21 +106,18 @@ function ApprovalDialog({
       title: "Setujui Pengajuan",
       description: `Anda akan menyetujui pengajuan pelatihan "${request.trainingName}".`,
       buttonText: "Setujui",
-      buttonClass: "bg-emerald-600 hover:bg-emerald-700",
       icon: CheckCircle2,
     },
     reject: {
       title: "Tolak Pengajuan",
       description: `Anda akan menolak pengajuan pelatihan "${request.trainingName}".`,
       buttonText: "Tolak",
-      buttonClass: "bg-red-600 hover:bg-red-700",
       icon: XCircle,
     },
     revision: {
       title: "Minta Revisi",
       description: `Pengajuan pelatihan "${request.trainingName}" akan dikembalikan untuk direvisi.`,
       buttonText: "Minta Revisi",
-      buttonClass: "bg-blue-600 hover:bg-blue-700",
       icon: RotateCcw,
     },
   }
@@ -131,10 +128,10 @@ function ApprovalDialog({
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
       <DialogTrigger asChild>
-        <Button 
-          variant={action === "approve" ? "default" : "outline"} 
+        <Button
+          variant={action === "approve" ? "success" : action === "reject" ? "destructive" : "outline"}
           size="sm"
-          className={action === "approve" ? "bg-emerald-600 hover:bg-emerald-700" : action === "reject" ? "text-red-600 border-red-200 hover:bg-red-50" : ""}
+          className="w-full"
         >
           <Icon className="w-4 h-4 mr-1" />
           {config.buttonText}
@@ -175,7 +172,7 @@ function ApprovalDialog({
           </Button>
           <Button 
             onClick={handleSubmit} 
-            className={config.buttonClass}
+            variant={action === "approve" ? "success" : action === "reject" ? "destructive" : "default"}
             disabled={action !== "approve" && !comment.trim()}
           >
             <Icon className="w-4 h-4 mr-2" />
@@ -191,7 +188,7 @@ function ApprovalDialog({
 // is not cramped inside a side sheet.
 function RequestDetail({ request }: { request: TrainingRequest }) {
   return (
-    <Button asChild variant="ghost" size="sm">
+    <Button asChild variant="ghost" size="sm" className="w-full">
       <Link href={`/dashboard/pengajuan/${request.id}?from=persetujuan`}>
         <Eye className="mr-1 h-4 w-4" />
         Detail
@@ -247,7 +244,7 @@ function MandatoryProgramSection() {
         </div>
         <Dialog open={isCreating} onOpenChange={setIsCreating}>
           <DialogTrigger asChild>
-            <Button className="bg-secondary hover:bg-secondary/90">
+            <Button>
               <UserPlus className="w-4 h-4 mr-2" />
               Buat Program Baru
             </Button>
@@ -348,9 +345,8 @@ function MandatoryProgramSection() {
               <Button variant="outline" onClick={() => setIsCreating(false)}>
                 Batal
               </Button>
-              <Button 
+              <Button
                 onClick={handleCreateProgram}
-                className="bg-secondary hover:bg-secondary/90"
                 disabled={!newProgram.name || newProgram.courseIds.length === 0 || newProgram.targetJobFamilies.length === 0}
               >
                 Buat Program
@@ -415,7 +411,7 @@ function MandatoryProgramSection() {
                           Pause
                         </Button>
                       ) : program.status === "scheduled" ? (
-                        <Button size="sm" className="bg-emerald-600 hover:bg-emerald-700">
+                        <Button size="sm" variant="success">
                           <Play className="w-4 h-4 mr-1" />
                           Aktifkan
                         </Button>
@@ -473,8 +469,8 @@ function BulkApproval({
             <div className="flex gap-2">
               <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                  <Button 
-                    className="bg-emerald-600 hover:bg-emerald-700"
+                  <Button
+                    variant="success"
                     onClick={() => setAction("approve")}
                   >
                     <CheckCircle2 className="w-4 h-4 mr-2" />
@@ -517,9 +513,9 @@ function BulkApproval({
                     <Button variant="outline" onClick={() => setIsOpen(false)}>
                       Batal
                     </Button>
-                    <Button 
+                    <Button
                       onClick={handleSubmit}
-                      className={action === "approve" ? "bg-emerald-600 hover:bg-emerald-700" : "bg-red-600 hover:bg-red-700"}
+                      variant={action === "approve" ? "success" : "destructive"}
                       disabled={action === "reject" && !comment.trim()}
                     >
                       {action === "approve" ? "Setujui Semua" : "Tolak Semua"}
@@ -527,9 +523,8 @@ function BulkApproval({
                   </DialogFooter>
                 </DialogContent>
               </Dialog>
-              <Button 
-                variant="outline"
-                className="text-red-600 border-red-200 hover:bg-red-50"
+              <Button
+                variant="destructive"
                 onClick={() => {
                   setAction("reject")
                   setIsOpen(true)
@@ -845,7 +840,7 @@ export default function PersetujuanPage() {
                       )}
                       
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-3 mb-2">
+                        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2">
                           <Badge className={cn("rounded-full px-2 py-1 text-xs font-medium", statusColors[request.status])}>
                             {statusLabels[request.status]}
                           </Badge>
@@ -893,7 +888,7 @@ export default function PersetujuanPage() {
                       </div>
 
                       {/* Actions */}
-                      <div className="flex flex-row md:flex-col gap-2 shrink-0">
+                      <div className="grid grid-cols-2 gap-2 md:flex md:flex-col md:min-w-36 shrink-0">
                         <RequestDetail request={request} />
                         <ApprovalDialog 
                           request={request} 

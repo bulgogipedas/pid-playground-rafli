@@ -302,7 +302,7 @@ export default function UploadSertifikatPage() {
                   </div>
                 )}
 
-                <Button type="submit" className="w-full bg-secondary hover:bg-secondary/90">
+                <Button type="submit" className="w-full">
                   <Upload className="w-4 h-4 mr-2" />
                   Upload Sertifikat
                 </Button>
@@ -367,7 +367,7 @@ export default function UploadSertifikatPage() {
                     <p className="text-sm text-orange-800 mt-1">
                       Sertifikat "Data Analysis with Python" perlu diperbaiki. {submittedCertificates.find(c => c.status === "revision")?.rejectionReason}
                     </p>
-                    <Button size="sm" variant="outline" className="mt-2 text-orange-600 border-orange-300 hover:bg-orange-50">
+                    <Button size="sm" className="mt-2">
                       Perbaiki Pengajuan
                     </Button>
                   </div>

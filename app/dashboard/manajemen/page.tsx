@@ -95,13 +95,13 @@ const monthlyTrends = [
 
 const courseCompletionData = [
   { name: "Selesai", value: 1847, color: "#059669" },
-  { name: "Sedang Berjalan", value: 523, color: "#0879B5" },
+  { name: "Sedang Berjalan", value: 523, color: "#2A438A" },
   { name: "Belum Mulai", value: 289, color: "#E2E8F0" },
 ]
 
 const trainingTypeData = [
-  { name: "E-Learning", value: 1245, color: "#0879B5" },
-  { name: "In-House", value: 456, color: "#102F49" },
+  { name: "E-Learning", value: 1245, color: "#2A438A" },
+  { name: "In-House", value: 456, color: "#233873" },
   { name: "Public Online", value: 312, color: "#D97706" },
   { name: "Public Offline", value: 178, color: "#059669" },
 ]
@@ -296,7 +296,7 @@ export default function ManajemenDashboardPage() {
                       <Line 
                         type="monotone" 
                         dataKey="learners" 
-                        stroke="#0879B5" 
+                        stroke="#2A438A"
                         strokeWidth={2}
                         name="Peserta Aktif"
                       />
@@ -459,7 +459,7 @@ export default function ManajemenDashboardPage() {
                     <XAxis dataKey="name" tick={{ fontSize: 10 }} angle={-45} textAnchor="end" height={80} />
                     <YAxis tick={{ fontSize: 12 }} />
                     <Tooltip />
-                    <Bar dataKey="hours" fill="#0879B5" radius={[4, 4, 0, 0]} name="Jam Belajar" />
+                    <Bar dataKey="hours" fill="#2A438A" radius={[4, 4, 0, 0]} name="Jam Belajar" />
                   </BarChart>
                 </ResponsiveContainer>
               </div>

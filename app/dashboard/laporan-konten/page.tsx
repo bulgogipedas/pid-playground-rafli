@@ -71,7 +71,7 @@ const monthlyViews = [
 
 // Content by format
 const contentByFormat = [
-  { name: "Video", value: 45, color: "#0879B5" },
+  { name: "Video", value: 45, color: "#2A438A" },
   { name: "PDF", value: 35, color: "#059669" },
   { name: "SCORM", value: 15, color: "#D97706" },
   { name: "Quiz", value: 5, color: "#DC2626" },
@@ -312,10 +312,10 @@ export default function LaporanKontenPage() {
                     <LineChart data={monthlyViews}>
                       <CartesianGrid strokeDasharray="3 3" />
                       <XAxis dataKey="month" />
-                      <YAxis yAxisId="left" orientation="left" stroke="#0879B5" />
+                      <YAxis yAxisId="left" orientation="left" stroke="#2A438A" />
                       <YAxis yAxisId="right" orientation="right" stroke="#059669" />
                       <Tooltip />
-                      <Line yAxisId="left" type="monotone" dataKey="views" stroke="#0879B5" strokeWidth={2} name="Views" />
+                      <Line yAxisId="left" type="monotone" dataKey="views" stroke="#2A438A" strokeWidth={2} name="Views" />
                       <Line yAxisId="right" type="monotone" dataKey="completions" stroke="#059669" strokeWidth={2} name="Completions" />
                     </LineChart>
                   </ResponsiveContainer>

@@ -130,14 +130,14 @@ export default function UserManagementPage() {
           </Button>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <Button>
                 <Plus aria-hidden="true" className="w-4 h-4 mr-2" />
                 Tambah Pengguna
               </Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
-                <DialogTitle className="font-serif text-[#102F49]">Tambah Pengguna Manual</DialogTitle>
+                <DialogTitle className="font-serif text-[#233873]">Tambah Pengguna Manual</DialogTitle>
                 <DialogDescription>
                   Untuk pengguna yang tidak terdaftar di HCIS (contoh: kontraktor)
                 </DialogDescription>
@@ -214,7 +214,7 @@ export default function UserManagementPage() {
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                   Batal
                 </Button>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground" onClick={() => setIsAddDialogOpen(false)}>
+                <Button onClick={() => setIsAddDialogOpen(false)}>
                   Simpan
                 </Button>
               </DialogFooter>
@@ -255,7 +255,7 @@ export default function UserManagementPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Sinkronisasi Terakhir</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-sm font-medium text-[#102F49]">15 Jan 2024, 08:30</div>
+            <div className="text-sm font-medium text-[#233873]">15 Jan 2024, 08:30</div>
           </CardContent>
         </Card>
       </div>

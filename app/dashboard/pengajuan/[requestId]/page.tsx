@@ -269,7 +269,7 @@ export default function TrainingRequestDetailPage() {
               <CardHeader className="border-b py-5"><CardTitle className="text-base">Ambil keputusan</CardTitle><p className="text-sm text-muted-foreground">Kamu bertindak sebagai {approvalLevel ? levelLabels[approvalLevel] : "approver"}.</p></CardHeader>
               <CardContent className="space-y-4 p-5">
                 <div className="space-y-2"><Label htmlFor="decision-comment">Catatan keputusan</Label><Textarea id="decision-comment" value={comment} onChange={(event) => setComment(event.target.value)} placeholder="Tuliskan pertimbangan atau arahan revisi..." rows={4} /></div>
-                <Button className="w-full bg-emerald-600 hover:bg-emerald-700" onClick={() => setPendingDecision("approve")}><CheckCircle2 className="mr-2 h-4 w-4" />Setujui pengajuan</Button>
+                <Button variant="success" className="w-full" onClick={() => setPendingDecision("approve")}><CheckCircle2 className="mr-2 h-4 w-4" />Setujui pengajuan</Button>
                 <div className="grid grid-cols-2 gap-2"><Button variant="outline" onClick={() => setPendingDecision("revision")}><AlertCircle className="mr-2 h-4 w-4" />Revisi</Button><Button variant="destructive" onClick={() => setPendingDecision("reject")}><XCircle className="mr-2 h-4 w-4" />Tolak</Button></div>
               </CardContent>
             </Card>
