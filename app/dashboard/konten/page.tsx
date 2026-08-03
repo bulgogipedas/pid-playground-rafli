@@ -85,6 +85,37 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { formatDate } from "@/lib/data/training-requests"
+import { pythonCourse } from "@/lib/learning/seed"
+
+const pythonContentCourse: Course = {
+  id: pythonCourse.id,
+  title: pythonCourse.title,
+  description: pythonCourse.shortDescription,
+  thumbnail: "/placeholder.svg?height=200&width=300",
+  duration: pythonCourse.estimatedHours * 60,
+  type: "pilihan",
+  method: "e_learning",
+  category: pythonCourse.category,
+  jobFamilies: pythonCourse.targetAudience,
+  instructor: pythonCourse.instructor,
+  sections: pythonCourse.modules.map((module) => ({
+    id: module.id,
+    title: module.title,
+    items: module.materials.map((material) => ({
+      id: material.id,
+      title: material.title,
+      type: material.type === "video" ? "video" : ["quiz", "pretest", "posttest"].includes(material.type) ? "quiz" : "pdf",
+      duration: material.duration,
+      url: material.youtubeId ? `https://www.youtube.com/watch?v=${material.youtubeId}` : undefined,
+    })),
+  })),
+  createdAt: pythonCourse.createdAt,
+  status: pythonCourse.status,
+  enrollmentCount: 0,
+  completionRate: 0,
+  rating: pythonCourse.rating ?? 0,
+  licenseType: "beli_putus",
+}
 
 // Content type labels and icons
 const contentTypeLabels: Record<ContentType, string> = {
@@ -596,7 +627,7 @@ export default function KontenPage() {
   const { user } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<"all" | "draft" | "published" | "archived">("all")
-  const [courses, setCourses] = useState(dummyCourses)
+  const [courses, setCourses] = useState<Course[]>([pythonContentCourse, ...dummyCourses])
   const [isCreating, setIsCreating] = useState(false)
 
   // Filter courses

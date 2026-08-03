@@ -7,7 +7,7 @@ import type {
   TrainingRequest,
 } from "./types"
 
-export const PYTHON_PLAYLIST_ID = "PLZS-MHyEIRo59lUBwU-XHH7Ymmb04ffOY"
+export const PYTHON_PLAYLIST_ID = "PLZS-MHyEIRo7cgStrKAMhgnOT66z2qKz1"
 
 // ---------------------------------------------------------------------------
 // Assessment questions

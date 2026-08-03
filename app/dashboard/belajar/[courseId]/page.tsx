@@ -1,966 +1,309 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
-import { useParams, useRouter } from "next/navigation"
+import { useEffect, useMemo, useState } from "react"
 import Link from "next/link"
-import { 
-  ArrowLeft, 
-  Play, 
-  Pause, 
-  Volume2, 
-  VolumeX, 
-  Maximize,
-  ChevronDown,
-  ChevronUp,
-  CheckCircle2,
-  Circle,
-  FileText,
-  Video,
-  HelpCircle,
-  Clock,
-  RotateCcw,
+import { useParams, useRouter } from "next/navigation"
+import {
+  ArrowLeft,
   Award,
-  AlertTriangle,
-  Download,
-  BookOpen
+  BookOpen,
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  ChevronRight,
+  ClipboardCheck,
+  Clock3,
+  ExternalLink,
+  FileText,
+  Flag,
+  FolderUp,
+  HelpCircle,
+  Lock,
+  PlayCircle,
+  Send,
+  Star,
+  Video,
 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Progress } from "@/components/ui/progress"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { allCourses, pythonAssessments, pythonAssignment } from "@/lib/learning/seed"
+import type { Assessment, CourseMaterial } from "@/lib/learning/types"
+import { useAuth } from "@/lib/auth-context"
 import { Badge } from "@/components/ui/badge"
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import { Label } from "@/components/ui/label"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from "@/components/ui/dialog"
-import { 
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+import { Label } from "@/components/ui/label"
+import { Progress } from "@/components/ui/progress"
+import { Textarea } from "@/components/ui/textarea"
 import { cn } from "@/lib/utils"
-import { dummyCourses, type ContentItem, type CourseSection } from "@/lib/data/courses"
+import { toast } from "sonner"
 
-// Quiz data
-interface QuizQuestion {
-  id: string
-  type: "multiple_choice" | "fill_blank"
-  question: string
-  options?: string[]
-  correctAnswer: string
-  points: number
+type PlayerState = {
+  completed: string[]
+  scores: Record<string, number>
+  assignmentSubmitted: boolean
+  assignmentApproved: boolean
+  feedbackSubmitted: boolean
+  certificateIssued: boolean
+  certificateNumber?: string
 }
 
-interface Quiz {
-  id: string
-  title: string
-  type: "pre_test" | "post_test" | "section_quiz"
-  duration: number // in minutes
-  passingScore: number
-  maxAttempts: number
-  questions: QuizQuestion[]
+const initialState: PlayerState = {
+  completed: [],
+  scores: {},
+  assignmentSubmitted: false,
+  assignmentApproved: false,
+  feedbackSubmitted: false,
+  certificateIssued: false,
 }
 
-const dummyQuizzes: Record<string, Quiz> = {
-  "ITM004": {
-    id: "QUIZ001",
-    title: "Quiz: Identifikasi Bahaya",
-    type: "section_quiz",
-    duration: 15,
-    passingScore: 70,
-    maxAttempts: 3,
-    questions: [
-      {
-        id: "Q1",
-        type: "multiple_choice",
-        question: "Apa yang dimaksud dengan bahaya fisik di tempat kerja?",
-        options: [
-          "Bahaya yang berhubungan dengan bahan kimia",
-          "Bahaya yang dapat menyebabkan cedera fisik langsung",
-          "Bahaya yang berhubungan dengan tekanan mental",
-          "Bahaya yang disebabkan oleh virus dan bakteri"
-        ],
-        correctAnswer: "Bahaya yang dapat menyebabkan cedera fisik langsung",
-        points: 20
-      },
-      {
-        id: "Q2",
-        type: "multiple_choice",
-        question: "Contoh APD (Alat Pelindung Diri) yang tepat untuk melindungi kepala adalah?",
-        options: [
-          "Sarung tangan",
-          "Kacamata safety",
-          "Helm safety",
-          "Sepatu safety"
-        ],
-        correctAnswer: "Helm safety",
-        points: 20
-      },
-      {
-        id: "Q3",
-        type: "fill_blank",
-        question: "Singkatan K3 dalam keselamatan kerja adalah Keselamatan dan Kesehatan ____",
-        correctAnswer: "Kerja",
-        points: 20
-      },
-      {
-        id: "Q4",
-        type: "multiple_choice",
-        question: "Apa langkah pertama yang harus dilakukan saat menemukan potensi bahaya?",
-        options: [
-          "Mengabaikan karena bukan tanggung jawab kita",
-          "Melaporkan kepada atasan atau petugas K3",
-          "Mencoba memperbaiki sendiri",
-          "Menunggu sampai terjadi kecelakaan"
-        ],
-        correctAnswer: "Melaporkan kepada atasan atau petugas K3",
-        points: 20
-      },
-      {
-        id: "Q5",
-        type: "multiple_choice",
-        question: "Warna apa yang digunakan untuk rambu larangan dalam K3?",
-        options: [
-          "Biru",
-          "Hijau",
-          "Merah",
-          "Kuning"
-        ],
-        correctAnswer: "Merah",
-        points: 20
-      }
-    ]
-  },
-  "ITM010": {
-    id: "QUIZ002",
-    title: "Quiz: Excel Functions",
-    type: "section_quiz",
-    duration: 20,
-    passingScore: 75,
-    maxAttempts: 2,
-    questions: [
-      {
-        id: "Q1",
-        type: "multiple_choice",
-        question: "Fungsi Excel apa yang digunakan untuk mencari nilai secara vertikal?",
-        options: ["HLOOKUP", "VLOOKUP", "INDEX", "MATCH"],
-        correctAnswer: "VLOOKUP",
-        points: 25
-      },
-      {
-        id: "Q2",
-        type: "fill_blank",
-        question: "Fungsi ____ digunakan untuk menghitung jumlah sel yang berisi angka",
-        correctAnswer: "COUNT",
-        points: 25
-      },
-      {
-        id: "Q3",
-        type: "multiple_choice",
-        question: "Untuk membuat referensi absolut dalam Excel, kita menggunakan simbol?",
-        options: ["#", "$", "@", "&"],
-        correctAnswer: "$",
-        points: 25
-      },
-      {
-        id: "Q4",
-        type: "multiple_choice",
-        question: "Pivot Table berguna untuk?",
-        options: [
-          "Membuat grafik saja",
-          "Meringkas dan menganalisis data",
-          "Menulis macro",
-          "Menghapus data duplikat"
-        ],
-        correctAnswer: "Meringkas dan menganalisis data",
-        points: 25
-      }
-    ]
+const materialIcon: Record<CourseMaterial["type"], typeof Video> = {
+  video: Video,
+  artikel: FileText,
+  pdf: FileText,
+  quiz: HelpCircle,
+  pretest: ClipboardCheck,
+  posttest: Flag,
+  assignment: FolderUp,
+  feedback: Star,
+}
+
+function formatMinutes(minutes: number) {
+  if (minutes < 60) return `${minutes} menit`
+  const hours = Math.floor(minutes / 60)
+  const remainder = minutes % 60
+  return remainder ? `${hours} jam ${remainder} menit` : `${hours} jam`
+}
+
+function readPlayerState(courseId: string): PlayerState {
+  if (typeof window === "undefined") return initialState
+  try {
+    const saved = window.localStorage.getItem(`lms_pid_player_${courseId}`)
+    return saved ? { ...initialState, ...JSON.parse(saved) } : initialState
+  } catch {
+    return initialState
   }
 }
 
-// Pre-test for course
-const preTestQuiz: Quiz = {
-  id: "PRETEST001",
-  title: "Pre-Test: Pengenalan K3",
-  type: "pre_test",
-  duration: 10,
-  passingScore: 0, // Pre-test doesn't need passing
-  maxAttempts: 1,
-  questions: [
-    {
-      id: "PT1",
-      type: "multiple_choice",
-      question: "Apakah Anda sudah pernah mengikuti pelatihan K3 sebelumnya?",
-      options: ["Belum pernah", "1-2 kali", "3 kali atau lebih"],
-      correctAnswer: "Belum pernah",
-      points: 0
-    },
-    {
-      id: "PT2",
-      type: "multiple_choice",
-      question: "Seberapa familiar Anda dengan istilah APD?",
-      options: ["Tidak familiar", "Sedikit familiar", "Sangat familiar"],
-      correctAnswer: "Sangat familiar",
-      points: 0
-    }
-  ]
+function getAssessment(material: CourseMaterial): Assessment | undefined {
+  return material.assessmentId ? pythonAssessments.find((assessment) => assessment.id === material.assessmentId) : undefined
 }
 
-// Post-test for course
-const postTestQuiz: Quiz = {
-  id: "POSTTEST001",
-  title: "Post-Test: Pengenalan K3",
-  type: "post_test",
-  duration: 20,
-  passingScore: 80,
-  maxAttempts: 3,
-  questions: [
-    {
-      id: "PST1",
-      type: "multiple_choice",
-      question: "Tujuan utama dari K3 adalah?",
-      options: [
-        "Meningkatkan produktivitas saja",
-        "Melindungi tenaga kerja dari kecelakaan dan penyakit akibat kerja",
-        "Mengurangi biaya operasional",
-        "Memenuhi syarat administratif"
-      ],
-      correctAnswer: "Melindungi tenaga kerja dari kecelakaan dan penyakit akibat kerja",
-      points: 20
-    },
-    {
-      id: "PST2",
-      type: "multiple_choice",
-      question: "Siapa yang bertanggung jawab terhadap K3 di tempat kerja?",
-      options: [
-        "Hanya manajemen",
-        "Hanya petugas K3",
-        "Semua pihak termasuk pekerja",
-        "Hanya pemerintah"
-      ],
-      correctAnswer: "Semua pihak termasuk pekerja",
-      points: 20
-    },
-    {
-      id: "PST3",
-      type: "fill_blank",
-      question: "Tindakan pencegahan untuk mengurangi risiko bahaya disebut ____",
-      correctAnswer: "mitigasi",
-      points: 20
-    },
-    {
-      id: "PST4",
-      type: "multiple_choice",
-      question: "Apa yang harus dilakukan sebelum memulai pekerjaan berbahaya?",
-      options: [
-        "Langsung bekerja saja",
-        "Melakukan risk assessment",
-        "Menunggu instruksi atasan",
-        "Tidak perlu persiapan"
-      ],
-      correctAnswer: "Melakukan risk assessment",
-      points: 20
-    },
-    {
-      id: "PST5",
-      type: "multiple_choice",
-      question: "Hierarki pengendalian risiko yang paling efektif adalah?",
-      options: [
-        "Penggunaan APD",
-        "Pengendalian administratif",
-        "Eliminasi bahaya",
-        "Pengendalian engineering"
-      ],
-      correctAnswer: "Eliminasi bahaya",
-      points: 20
-    }
-  ]
-}
+function AssessmentPanel({
+  assessment,
+  onPassed,
+  onClose,
+}: {
+  assessment: Assessment
+  onPassed: (score: number) => void
+  onClose: () => void
+}) {
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [submitted, setSubmitted] = useState(false)
+  const [score, setScore] = useState(0)
 
-export default function ELearningPlayerPage() {
-  const params = useParams()
-  const router = useRouter()
-  const courseId = params.courseId as string
-  
-  const course = dummyCourses.find(c => c.id === courseId)
-  
-  const [currentSection, setCurrentSection] = useState(0)
-  const [currentItem, setCurrentItem] = useState(0)
-  const [expandedSections, setExpandedSections] = useState<string[]>([])
-  const [completedItems, setCompletedItems] = useState<string[]>(["ITM001"])
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [isMuted, setIsMuted] = useState(false)
-  const [videoProgress, setVideoProgress] = useState(0)
-  
-  // Quiz state
-  const [showQuiz, setShowQuiz] = useState(false)
-  const [currentQuiz, setCurrentQuiz] = useState<Quiz | null>(null)
-  const [quizAnswers, setQuizAnswers] = useState<Record<string, string>>({})
-  const [quizSubmitted, setQuizSubmitted] = useState(false)
-  const [quizScore, setQuizScore] = useState(0)
-  const [timeRemaining, setTimeRemaining] = useState(0)
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [showPreTest, setShowPreTest] = useState(false)
-  const [showPostTest, setShowPostTest] = useState(false)
-  const [preTestCompleted, setPreTestCompleted] = useState(true) // Assuming pre-test done
-  const [showCompletionDialog, setShowCompletionDialog] = useState(false)
-  const [showCertificateEarned, setShowCertificateEarned] = useState(false)
-  
-  const timerRef = useRef<NodeJS.Timeout | null>(null)
-  
-  if (!course) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <Card className="p-6">
-          <p className="text-muted-foreground">Pelatihan tidak ditemukan</p>
-          <Button className="mt-4" onClick={() => router.push('/dashboard/pelatihan')}>
-            Kembali ke Pelatihan Saya
-          </Button>
-        </Card>
-      </div>
-    )
+  const submit = () => {
+    const correct = assessment.questions.filter((question) => answers[question.id] === question.correctOptionId).length
+    const result = Math.round((correct / assessment.questions.length) * 100)
+    setScore(result)
+    setSubmitted(true)
+    if (result >= assessment.passingGrade) onPassed(result)
   }
-  
-  const allItems = course.sections.flatMap(s => s.items)
-  const currentContent = course.sections[currentSection]?.items[currentItem]
-  const overallProgress = Math.round((completedItems.length / allItems.length) * 100)
-  
-  useEffect(() => {
-    if (course.sections.length > 0) {
-      setExpandedSections([course.sections[0].id])
-    }
-  }, [course.sections])
-  
-  // Timer for quiz
-  useEffect(() => {
-    if (showQuiz && currentQuiz && timeRemaining > 0 && !quizSubmitted) {
-      timerRef.current = setInterval(() => {
-        setTimeRemaining(prev => {
-          if (prev <= 1) {
-            handleSubmitQuiz()
-            return 0
-          }
-          return prev - 1
-        })
-      }, 1000)
-    }
-    return () => {
-      if (timerRef.current) clearInterval(timerRef.current)
-    }
-  }, [showQuiz, currentQuiz, quizSubmitted])
-  
-  const formatTime = (seconds: number) => {
-    const mins = Math.floor(seconds / 60)
-    const secs = seconds % 60
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`
-  }
-  
-  const toggleSection = (sectionId: string) => {
-    setExpandedSections(prev => 
-      prev.includes(sectionId) 
-        ? prev.filter(id => id !== sectionId)
-        : [...prev, sectionId]
-    )
-  }
-  
-  const handleSelectItem = (sectionIndex: number, itemIndex: number) => {
-    const item = course.sections[sectionIndex].items[itemIndex]
-    
-    if (item.type === "quiz") {
-      const quiz = dummyQuizzes[item.id]
-      if (quiz) {
-        setCurrentQuiz(quiz)
-        setTimeRemaining(quiz.duration * 60)
-        setQuizAnswers({})
-        setQuizSubmitted(false)
-        setQuizScore(0)
-        setCurrentQuestionIndex(0)
-        setShowQuiz(true)
-      }
-    } else {
-      setCurrentSection(sectionIndex)
-      setCurrentItem(itemIndex)
-    }
-  }
-  
-  const markAsComplete = () => {
-    if (currentContent && !completedItems.includes(currentContent.id)) {
-      setCompletedItems(prev => [...prev, currentContent.id])
-    }
-    
-    // Move to next item
-    const currentSectionItems = course.sections[currentSection].items
-    if (currentItem < currentSectionItems.length - 1) {
-      setCurrentItem(currentItem + 1)
-    } else if (currentSection < course.sections.length - 1) {
-      setCurrentSection(currentSection + 1)
-      setCurrentItem(0)
-      setExpandedSections(prev => [...prev, course.sections[currentSection + 1].id])
-    } else {
-      // Course completed
-      if (completedItems.length + 1 >= allItems.length) {
-        setShowCompletionDialog(true)
-      }
-    }
-  }
-  
-  const handleSubmitQuiz = () => {
-    if (!currentQuiz) return
-    
-    let score = 0
-    let totalPoints = 0
-    
-    currentQuiz.questions.forEach(q => {
-      totalPoints += q.points
-      const userAnswer = quizAnswers[q.id]?.toLowerCase().trim()
-      const correctAnswer = q.correctAnswer.toLowerCase().trim()
-      
-      if (userAnswer === correctAnswer) {
-        score += q.points
-      }
-    })
-    
-    const percentage = totalPoints > 0 ? Math.round((score / totalPoints) * 100) : 0
-    setQuizScore(percentage)
-    setQuizSubmitted(true)
-    
-    if (timerRef.current) clearInterval(timerRef.current)
-    
-    // If passed, mark quiz as complete
-    if (percentage >= currentQuiz.passingScore) {
-      const quizItem = allItems.find(item => dummyQuizzes[item.id]?.id === currentQuiz.id)
-      if (quizItem && !completedItems.includes(quizItem.id)) {
-        setCompletedItems(prev => [...prev, quizItem.id])
-      }
-    }
-  }
-  
-  const handleStartPostTest = () => {
-    setCurrentQuiz(postTestQuiz)
-    setTimeRemaining(postTestQuiz.duration * 60)
-    setQuizAnswers({})
-    setQuizSubmitted(false)
-    setQuizScore(0)
-    setCurrentQuestionIndex(0)
-    setShowPostTest(true)
-    setShowCompletionDialog(false)
-  }
-  
-  const handlePostTestComplete = () => {
-    setShowPostTest(false)
-    if (quizScore >= postTestQuiz.passingScore) {
-      setShowCertificateEarned(true)
-    }
-  }
-  
-  const getContentIcon = (type: ContentItem["type"]) => {
-    switch (type) {
-      case "video": return <Video className="w-4 h-4" />
-      case "pdf": return <FileText className="w-4 h-4" />
-      case "quiz": return <HelpCircle className="w-4 h-4" />
-      default: return <BookOpen className="w-4 h-4" />
-    }
-  }
-  
+
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-background">
-      {/* Header */}
-      <header className="flex min-h-14 items-center gap-2 border-b border-border bg-card px-3 sm:gap-4 sm:px-4">
-        <Link href="/dashboard/pelatihan" aria-label="Kembali ke Pelatihan Saya">
-          <Button variant="ghost" size="icon" aria-hidden="true" tabIndex={-1}>
-            <ArrowLeft className="w-5 h-5" />
-          </Button>
-        </Link>
-        <div className="flex-1 min-w-0">
-          <h1 className="font-serif font-semibold text-foreground truncate">{course.title}</h1>
-        </div>
-        <div className="flex items-center gap-2 sm:gap-3">
-          <div className="flex items-center gap-2">
-            <span className="hidden text-sm text-muted-foreground sm:inline">Progress:</span>
-            <Progress value={overallProgress} className="h-2 w-16 sm:w-24" aria-label={`Progress pelatihan ${overallProgress}%`} />
-            <span className="text-sm font-medium text-secondary">{overallProgress}%</span>
-          </div>
-        </div>
-      </header>
-      
-      <div className="flex flex-1 flex-col overflow-y-auto md:flex-row md:overflow-hidden">
-        {/* Main Content Area */}
-        <div className="flex-1 flex flex-col">
-          {/* Video/Content Player */}
-          <div className="relative flex min-h-[24rem] flex-1 items-center justify-center bg-slate-950 md:min-h-0">
-            {currentContent?.type === "video" ? (
-              <>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <div className="w-32 h-32 rounded-full bg-white/10 flex items-center justify-center mb-4 mx-auto">
-                      <Play className="w-16 h-16 text-white" />
-                    </div>
-                    <h2 className="text-xl font-semibold mb-2">{currentContent.title}</h2>
-                    <p className="text-white/70">Durasi: {currentContent.duration} menit</p>
-                  </div>
-                </div>
-                {/* Video Controls */}
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4">
-                  <div className="mb-2">
-                    <Progress value={videoProgress} className="h-1 bg-white/30" />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="text-white hover:bg-white/20"
-                        onClick={() => setIsPlaying(!isPlaying)}
-                        aria-label={isPlaying ? "Jeda video" : "Putar video"}
-                      >
-                        {isPlaying ? <Pause aria-hidden="true" className="w-5 h-5" /> : <Play aria-hidden="true" className="w-5 h-5" />}
-                      </Button>
-                      <Button 
-                        variant="ghost" 
-                        size="icon" 
-                        className="text-white hover:bg-white/20"
-                        onClick={() => setIsMuted(!isMuted)}
-                        aria-label={isMuted ? "Nyalakan suara" : "Bisukan suara"}
-                        aria-pressed={isMuted}
-                      >
-                        {isMuted ? <VolumeX aria-hidden="true" className="w-5 h-5" /> : <Volume2 aria-hidden="true" className="w-5 h-5" />}
-                      </Button>
-                      <span className="text-white text-sm">00:00 / {currentContent.duration}:00</span>
-                    </div>
-                    <Button variant="ghost" size="icon" className="text-white hover:bg-white/20" aria-label="Layar penuh">
-                      <Maximize aria-hidden="true" className="w-5 h-5" />
-                    </Button>
-                  </div>
-                </div>
-              </>
-            ) : currentContent?.type === "pdf" ? (
-              <div className="flex flex-col items-center justify-center text-white">
-                <FileText className="w-24 h-24 mb-4 text-white/70" />
-                <h2 className="text-xl font-semibold mb-2">{currentContent.title}</h2>
-                <p className="text-white/70 mb-6">Durasi baca: {currentContent.duration} menit</p>
-                <div className="flex gap-3">
-                  <Button className="bg-secondary hover:bg-secondary/90">
-                    <BookOpen className="w-4 h-4 mr-2" />
-                    Buka Dokumen
-                  </Button>
-                  <Button variant="outline" className="border-white/30 text-white hover:bg-white/10">
-                    <Download className="w-4 h-4 mr-2" />
-                    Unduh PDF
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <div className="text-center text-white">
-                <BookOpen className="w-24 h-24 mb-4 mx-auto text-white/70" />
-                <p>Pilih materi dari daftar konten</p>
-              </div>
-            )}
-          </div>
-          
-          {/* Content Controls */}
-          <div className="flex min-h-16 flex-wrap items-center justify-between gap-3 border-t border-border bg-card px-4 py-3 sm:px-6">
-            <div>
-              <p className="text-sm text-muted-foreground">
-                Bagian {currentSection + 1} dari {course.sections.length}
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {completedItems.includes(currentContent?.id || "") ? (
-                <Badge className="bg-success/10 text-success border-0">
-                  <CheckCircle2 className="w-3 h-3 mr-1" />
-                  Selesai
-                </Badge>
-              ) : (
-                <Button
-                  onClick={markAsComplete}
-                  className="w-full bg-secondary hover:bg-secondary/90 sm:w-auto"
-                >
-                  Tandai Selesai & Lanjut
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        {/* Sidebar - Course Content List */}
-        <div className="max-h-[45dvh] w-full shrink-0 overflow-y-auto border-t border-border bg-card md:max-h-none md:w-80 md:border-l md:border-t-0">
-          {/* Learning Path Section */}
-          <div className="p-4 border-b border-border">
-            <h3 className="font-serif font-semibold text-foreground mb-3 flex items-center gap-2">
-              <BookOpen className="w-4 h-4" />
-              Learning Path
-            </h3>
-            <div className="space-y-2">
-              {course.sections.map((section, idx) => (
-                <div key={section.id} className="flex items-center gap-2 text-xs">
-                  <div className="flex flex-col items-center">
-                    <div className={cn(
-                      "w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold text-white",
-                      section.items.every(item => completedItems.includes(item.id))
-                        ? "bg-success"
-                        : "bg-secondary"
-                    )}>
-                      {section.items.every(item => completedItems.includes(item.id))
-                        ? <CheckCircle2 className="w-3 h-3" />
-                        : idx + 1
-                      }
-                    </div>
-                    {idx < course.sections.length - 1 && (
-                      <div className="w-0.5 h-3 bg-border mt-1" />
-                    )}
-                  </div>
-                  <div>
-                    <p className="font-medium text-foreground">{section.title}</p>
-                    <p className="text-muted-foreground">{section.items.length} materi</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Daftar Materi Section */}
-          <div className="p-4 border-b border-border">
-            <h3 className="font-serif font-semibold text-foreground">Daftar Materi</h3>
-            <p className="text-sm text-muted-foreground mt-1">
-              {completedItems.length} dari {allItems.length} materi selesai
+    <Card className="border-primary/20 shadow-sm">
+      <CardHeader className="border-b bg-primary/[0.03]">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <Badge variant="outline" className="mb-2">Assessment</Badge>
+            <CardTitle className="text-xl">{assessment.title}</CardTitle>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {assessment.questions.length} pertanyaan · {assessment.durationMinutes} menit · Lulus minimal {assessment.passingGrade}%
             </p>
           </div>
-          
-          <div className="divide-y divide-border">
-            {course.sections.map((section, sectionIndex) => (
-              <div key={section.id}>
-                <button
-                  onClick={() => toggleSection(section.id)}
-                  className="w-full flex items-center justify-between p-4 hover:bg-muted/50 transition-colors"
-                >
-                  <div className="flex items-center gap-3">
-                    <div className={cn(
-                      "w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium",
-                      section.items.every(item => completedItems.includes(item.id))
-                        ? "bg-success text-white"
-                        : "bg-muted text-muted-foreground"
-                    )}>
-                      {section.items.every(item => completedItems.includes(item.id)) 
-                        ? <CheckCircle2 className="w-4 h-4" />
-                        : sectionIndex + 1
-                      }
-                    </div>
-                    <span className="font-medium text-sm text-foreground">{section.title}</span>
-                  </div>
-                  {expandedSections.includes(section.id) 
-                    ? <ChevronUp className="w-4 h-4 text-muted-foreground" />
-                    : <ChevronDown className="w-4 h-4 text-muted-foreground" />
-                  }
-                </button>
-                
-                {expandedSections.includes(section.id) && (
-                  <div className="pb-2">
-                    {section.items.map((item, itemIndex) => (
-                      <button
-                        key={item.id}
-                        onClick={() => handleSelectItem(sectionIndex, itemIndex)}
-                        className={cn(
-                          "w-full flex items-center gap-3 px-4 py-2 pl-14 text-left transition-colors",
-                          currentSection === sectionIndex && currentItem === itemIndex
-                            ? "bg-secondary/10 border-l-2 border-secondary"
-                            : "hover:bg-muted/50"
-                        )}
-                      >
-                        <div className={cn(
-                          "flex-shrink-0",
-                          completedItems.includes(item.id) ? "text-success" : "text-muted-foreground"
-                        )}>
-                          {completedItems.includes(item.id) 
-                            ? <CheckCircle2 className="w-4 h-4" />
-                            : getContentIcon(item.type)
-                          }
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className={cn(
-                            "text-sm truncate",
-                            completedItems.includes(item.id) ? "text-muted-foreground" : "text-foreground"
-                          )}>
-                            {item.title}
-                          </p>
-                          <p className="text-xs text-muted-foreground">{item.duration} menit</p>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-            ))}
+          <Button variant="ghost" size="sm" onClick={onClose}>Tutup</Button>
+        </div>
+      </CardHeader>
+      <CardContent className="space-y-6 p-5 sm:p-7">
+        {submitted && (
+          <div className={cn("rounded-lg border p-4", score >= assessment.passingGrade ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50")}>
+            <p className="font-semibold">Nilai kamu {score}%</p>
+            <p className="mt-1 text-sm text-muted-foreground">
+              {score >= assessment.passingGrade ? "Lulus. Materi ini sudah ditandai selesai." : "Belum lulus. Tinjau pembahasan, lalu coba lagi."}
+            </p>
           </div>
+        )}
 
-          {/* Assessment Pelatihan Section */}
-          <div className="p-4 border-t border-border">
-            <h4 className="font-serif font-semibold text-foreground mb-3 flex items-center gap-2">
-              <HelpCircle className="w-4 h-4 text-orange-600" />
-              Assessment Pelatihan
-            </h4>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center gap-2 p-2 bg-orange-50 rounded">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                <span>Pre-Assessment (0-10%)</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-orange-50 rounded">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                <span>Mid-Assessment (40-50%)</span>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-orange-50 rounded">
-                <CheckCircle2 className="w-3 h-3 text-emerald-600 flex-shrink-0" />
-                <span>Final Assessment (80-90%)</span>
-              </div>
+        {assessment.questions.map((question, index) => (
+          <fieldset key={question.id} className="space-y-3 border-b pb-5 last:border-b-0 last:pb-0">
+            <legend className="font-medium leading-6">{index + 1}. {question.question}</legend>
+            <div className="grid gap-2">
+              {question.options.map((option) => {
+                const selected = answers[question.id] === option.id
+                const correct = submitted && option.id === question.correctOptionId
+                return (
+                  <label key={option.id} className={cn("flex cursor-pointer gap-3 rounded-lg border p-3 text-sm transition-colors", selected && "border-primary bg-primary/[0.04]", correct && "border-emerald-400 bg-emerald-50") }>
+                    <input
+                      type="radio"
+                      name={question.id}
+                      value={option.id}
+                      checked={selected}
+                      disabled={submitted}
+                      onChange={() => setAnswers((current) => ({ ...current, [question.id]: option.id }))}
+                      className="mt-0.5 accent-primary"
+                    />
+                    <span>{option.text}</span>
+                  </label>
+                )
+              })}
             </div>
-          </div>
+            {submitted && <p className="text-xs text-muted-foreground">Pembahasan: {question.explanation}</p>}
+          </fieldset>
+        ))}
 
-          {/* Final Project Section */}
-          <div className="p-4 border-t border-border">
-            <h4 className="font-serif font-semibold text-foreground mb-3 flex items-center gap-2">
-              <FileText className="w-4 h-4 text-purple-600" />
-              Final Project
-            </h4>
-            <div className="space-y-2 text-xs">
-              <div className="p-2 bg-purple-50 rounded">
-                <p className="font-medium text-foreground">Tipe:</p>
-                <p className="text-muted-foreground">Proyek Individu / Kelompok</p>
-              </div>
-              <div className="p-2 bg-purple-50 rounded">
-                <p className="font-medium text-foreground">Durasi:</p>
-                <p className="text-muted-foreground">2-4 minggu</p>
-              </div>
-              <div className="p-2 bg-purple-50 rounded">
-                <p className="font-medium text-foreground">Bobot:</p>
-                <p className="text-muted-foreground">30% dari nilai akhir</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Post-Test Button */}
-          {overallProgress === 100 && (
-            <div className="p-4 border-t border-border">
-              <Button 
-                onClick={handleStartPostTest}
-                className="w-full bg-accent text-white hover:bg-accent/90"
-              >
-                <Award className="w-4 h-4 mr-2" />
-                Mulai Post-Test
-              </Button>
-            </div>
+        <div className="flex flex-wrap justify-end gap-2 border-t pt-5">
+          {!submitted ? (
+            <Button onClick={submit} disabled={Object.keys(answers).length !== assessment.questions.length}>
+              <Send className="mr-2 h-4 w-4" /> Kumpulkan jawaban
+            </Button>
+          ) : score < assessment.passingGrade ? (
+            <Button variant="outline" onClick={() => { setAnswers({}); setSubmitted(false); setScore(0) }}>Coba lagi</Button>
+          ) : (
+            <Button onClick={onClose}>Lanjutkan materi</Button>
           )}
         </div>
+      </CardContent>
+    </Card>
+  )
+}
+
+export default function LearningPlayerPage() {
+  const params = useParams<{ courseId: string }>()
+  const router = useRouter()
+  const { user } = useAuth()
+  const course = allCourses.find((item) => item.id === params.courseId)
+  const [state, setState] = useState<PlayerState>(() => readPlayerState(params.courseId))
+  const [activeModuleId, setActiveModuleId] = useState(course?.modules[0]?.id ?? "")
+  const [activeMaterialId, setActiveMaterialId] = useState(course?.modules[0]?.materials[0]?.id ?? "")
+  const [activeAssessment, setActiveAssessment] = useState<Assessment | null>(null)
+  const [assignmentNote, setAssignmentNote] = useState("")
+  const [assignmentLink, setAssignmentLink] = useState("")
+  const [feedback, setFeedback] = useState({ rating: 0, comment: "" })
+
+  useEffect(() => {
+    window.localStorage.setItem(`lms_pid_player_${params.courseId}`, JSON.stringify(state))
+  }, [params.courseId, state])
+
+  const allMaterials = useMemo(() => course?.modules.flatMap((module) => module.materials) ?? [], [course])
+  const progressMaterials = allMaterials.filter((material) => material.countsTowardProgress && material.type !== "posttest")
+  const progress = progressMaterials.length ? Math.round((state.completed.filter((id) => progressMaterials.some((material) => material.id === id)).length / progressMaterials.length) * 100) : 0
+  const activeModule = course?.modules.find((module) => module.id === activeModuleId) ?? course?.modules[0]
+  const activeMaterial = activeModule?.materials.find((material) => material.id === activeMaterialId) ?? activeModule?.materials[0]
+  const activeAssessmentForMaterial = activeMaterial ? getAssessment(activeMaterial) : undefined
+  const assignmentReady = state.assignmentApproved || state.assignmentSubmitted
+  const completionReady = progress === 100 && assignmentReady && Boolean(state.scores["AS-POSTTEST"] && state.scores["AS-POSTTEST"] >= (course?.passingGrade ?? 70))
+
+  if (!course) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-muted/30 p-6">
+        <Card className="max-w-md"><CardContent className="space-y-4 p-6"><p className="font-semibold">Pelatihan tidak ditemukan</p><p className="text-sm text-muted-foreground">Course ini belum tersedia atau link-nya sudah berubah.</p><Button onClick={() => router.push("/dashboard/katalog")}>Kembali ke katalog</Button></CardContent></Card>
       </div>
-      
-      {/* Quiz Dialog */}
-      <Dialog open={showQuiz || showPostTest} onOpenChange={(open) => {
-        if (!open && !quizSubmitted) {
-          // Confirm before closing
-        } else if (!open) {
-          setShowQuiz(false)
-          setShowPostTest(false)
-        }
-      }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="font-serif flex items-center justify-between">
-              <span>{currentQuiz?.title}</span>
-              {!quizSubmitted && (
-                <Badge variant="outline" className={cn(
-                  "font-mono",
-                  timeRemaining < 60 ? "text-destructive border-destructive" : ""
-                )}>
-                  <Clock className="w-3 h-3 mr-1" />
-                  {formatTime(timeRemaining)}
-                </Badge>
-              )}
-            </DialogTitle>
-            <DialogDescription>
-              {quizSubmitted 
-                ? `Nilai Anda: ${quizScore}% ${quizScore >= (currentQuiz?.passingScore || 0) ? "- Lulus!" : "- Belum Lulus"}`
-                : `Skor kelulusan: ${currentQuiz?.passingScore}% | Kesempatan: ${currentQuiz?.maxAttempts}x`
-              }
-            </DialogDescription>
-          </DialogHeader>
-          
-          {!quizSubmitted ? (
-            <div className="py-4">
-              {currentQuiz && currentQuiz.questions.map((question, qIndex) => (
-                <div key={question.id} className="mb-6 pb-6 border-b border-border last:border-0">
-                  <p className="font-medium mb-3">
-                    {qIndex + 1}. {question.question}
-                  </p>
-                  
-                  {question.type === "multiple_choice" ? (
-                    <RadioGroup
-                      value={quizAnswers[question.id] || ""}
-                      onValueChange={(value) => setQuizAnswers(prev => ({
-                        ...prev,
-                        [question.id]: value
-                      }))}
-                    >
-                      {question.options?.map((option, oIndex) => (
-                        <div key={oIndex} className="flex items-center space-x-2 py-2">
-                          <RadioGroupItem value={option} id={`${question.id}-${oIndex}`} />
-                          <Label htmlFor={`${question.id}-${oIndex}`} className="cursor-pointer">
-                            {option}
-                          </Label>
-                        </div>
-                      ))}
-                    </RadioGroup>
-                  ) : (
-                    <Input
-                      placeholder="Ketik jawaban Anda"
-                      value={quizAnswers[question.id] || ""}
-                      onChange={(e) => setQuizAnswers(prev => ({
-                        ...prev,
-                        [question.id]: e.target.value
-                      }))}
-                    />
-                  )}
-                </div>
-              ))}
-            </div>
+    )
+  }
+
+  const markComplete = () => {
+    if (!activeMaterial || state.completed.includes(activeMaterial.id)) return
+    setState((current) => ({ ...current, completed: [...current.completed, activeMaterial.id] }))
+    toast.success("Materi selesai", { description: "Progress kamu sudah tersimpan." })
+  }
+
+  const selectMaterial = (moduleId: string, material: CourseMaterial) => {
+    setActiveModuleId(moduleId)
+    setActiveMaterialId(material.id)
+    setActiveAssessment(null)
+  }
+
+  const submitAssignment = () => {
+    if (!assignmentNote.trim() && !assignmentLink.trim()) {
+      toast.error("Lengkapi submission", { description: "Tambahkan catatan atau tautan repository terlebih dahulu." })
+      return
+    }
+    setState((current) => ({ ...current, assignmentSubmitted: true, assignmentApproved: true, completed: current.completed.includes(activeMaterialId) ? current.completed : [...current.completed, activeMaterialId] }))
+    toast.success("Assignment terkirim", { description: "Submission diterima dan berstatus Lulus untuk demo." })
+  }
+
+  const submitFeedback = () => {
+    if (!feedback.rating || !feedback.comment.trim()) {
+      toast.error("Feedback belum lengkap", { description: "Berikan rating dan komentar singkat." })
+      return
+    }
+    setState((current) => ({ ...current, feedbackSubmitted: true, completed: current.completed.includes(activeMaterialId) ? current.completed : [...current.completed, activeMaterialId] }))
+    toast.success("Feedback tersimpan")
+  }
+
+  const issueCertificate = () => {
+    const certificateNumber = `LMSPID-${new Date().getFullYear()}-${Date.now().toString().slice(-6)}`
+    setState((current) => ({ ...current, certificateIssued: true, certificateNumber }))
+    toast.success("Sertifikat diterbitkan", { description: certificateNumber })
+  }
+
+  return (
+    <div className="min-h-[100dvh] bg-[#f7f9fc] text-foreground">
+      <header className="sticky top-0 z-30 border-b bg-white/95 backdrop-blur">
+        <div className="mx-auto flex max-w-[1500px] items-center gap-3 px-4 py-3 sm:px-6">
+          <Link href="/dashboard/pelatihan" aria-label="Kembali ke Pelatihan Saya"><Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button></Link>
+          <div className="min-w-0 flex-1"><p className="truncate text-sm font-semibold sm:text-base">{course.title}</p><p className="text-xs text-muted-foreground">{user?.name ?? "Peserta"} · akses mandiri</p></div>
+          <div className="hidden min-w-[180px] items-center gap-3 sm:flex"><div className="flex-1"><Progress value={progress} className="h-2" /></div><span className="text-sm font-semibold">{progress}%</span></div>
+          <Link href="/dashboard/sertifikat"><Button variant="outline" size="sm"><Award className="mr-2 h-4 w-4" />Sertifikat</Button></Link>
+        </div>
+      </header>
+
+      <div className="mx-auto grid max-w-[1500px] gap-6 px-4 py-5 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <main className="min-w-0 space-y-5">
+          <div className="flex items-center justify-between gap-3"><div><p className="text-sm text-muted-foreground">Sedang dipelajari</p><h1 className="mt-1 text-2xl font-bold tracking-tight">{activeMaterial?.title}</h1></div>{activeMaterial && <Badge variant="outline"><Clock3 className="mr-1 h-3.5 w-3.5" />{formatMinutes(activeMaterial.duration)}</Badge>}</div>
+
+          {activeAssessment ? (
+            <AssessmentPanel assessment={activeAssessment} onClose={() => setActiveAssessment(null)} onPassed={(score) => {
+              if (!activeMaterial) return
+              setState((current) => ({ ...current, scores: { ...current.scores, [activeAssessment.id]: score }, completed: current.completed.includes(activeMaterial.id) ? current.completed : [...current.completed, activeMaterial.id] }))
+            }} />
+          ) : activeMaterial?.type === "video" ? (
+            <Card className="overflow-hidden border-0 bg-slate-950 shadow-sm">
+              <div className="aspect-video w-full"><iframe className="h-full w-full" src={`https://www.youtube.com/embed/videoseries?list=${course.youtubePlaylistId}`} title={activeMaterial.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-sm text-white"><span className="flex items-center gap-2 text-white/75"><PlayCircle className="h-4 w-4" />Materi video dari playlist course</span><a className="inline-flex items-center gap-1 text-cyan-300 hover:text-white" href={`https://www.youtube.com/playlist?list=${course.youtubePlaylistId}`} target="_blank" rel="noreferrer">Buka playlist <ExternalLink className="h-3.5 w-3.5" /></a></div>
+            </Card>
+          ) : activeMaterial?.type === "artikel" ? (
+            <Card><CardContent className="prose prose-slate max-w-none p-6 sm:p-8"><div className="mb-5 flex items-center gap-3 rounded-lg bg-primary/[0.05] p-4 not-prose"><FileText className="h-5 w-5 text-primary" /><p className="text-sm font-medium">Baca materi ini sampai selesai sebelum lanjut.</p></div><p className="whitespace-pre-line leading-8">{activeMaterial.body}</p></CardContent></Card>
+          ) : activeMaterial?.type === "assignment" ? (
+            <Card><CardHeader><Badge variant="outline" className="w-fit">Final project</Badge><CardTitle>{pythonAssignment.title}</CardTitle><p className="text-sm text-muted-foreground">{pythonAssignment.brief}</p></CardHeader><CardContent className="space-y-5"><div className="rounded-lg border bg-muted/30 p-4 text-sm"><p className="font-medium">Output yang diharapkan</p><p className="mt-1 text-muted-foreground">{pythonAssignment.expectedOutput}</p><p className="mt-3 font-medium">Aturan submission</p><p className="mt-1 text-muted-foreground">{pythonAssignment.submissionRules}</p></div><div className="space-y-2"><Label htmlFor="assignment-note">Catatan submission</Label><Textarea id="assignment-note" value={assignmentNote} onChange={(event) => setAssignmentNote(event.target.value)} placeholder="Jelaskan solusi atau cara menjalankan program..." rows={4} /></div><div className="space-y-2"><Label htmlFor="assignment-link">Link repository atau file</Label><Input id="assignment-link" value={assignmentLink} onChange={(event) => setAssignmentLink(event.target.value)} placeholder="https://github.com/..." /></div>{state.assignmentSubmitted && <div className="flex items-center gap-2 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800"><CheckCircle2 className="h-4 w-4" />Submission diterima · status Lulus untuk demo</div>}<Button onClick={submitAssignment} disabled={state.assignmentSubmitted}><Send className="mr-2 h-4 w-4" />{state.assignmentSubmitted ? "Sudah dikirim" : "Kirim submission"}</Button></CardContent></Card>
+          ) : activeMaterial?.type === "feedback" ? (
+            <Card><CardHeader><CardTitle>Bagikan pengalaman belajar</CardTitle><p className="text-sm text-muted-foreground">Feedback diperlukan sebelum sertifikat bisa diterbitkan.</p></CardHeader><CardContent className="space-y-5"><div><Label>Rating pelatihan</Label><div className="mt-2 flex gap-2" role="radiogroup" aria-label="Rating pelatihan">{[1, 2, 3, 4, 5].map((rating) => <button key={rating} type="button" onClick={() => setFeedback((current) => ({ ...current, rating }))} aria-label={`${rating} bintang`} className={cn("rounded-md p-2", rating <= feedback.rating ? "text-amber-500" : "text-muted-foreground/35")}><Star className="h-6 w-6 fill-current" /></button>)}</div></div><div className="space-y-2"><Label htmlFor="feedback-comment">Komentar</Label><Textarea id="feedback-comment" value={feedback.comment} onChange={(event) => setFeedback((current) => ({ ...current, comment: event.target.value }))} placeholder="Apa yang paling membantu dari pelatihan ini?" rows={4} /></div>{state.feedbackSubmitted && <p className="text-sm text-emerald-700">Feedback sudah tersimpan.</p>}<Button onClick={submitFeedback} disabled={state.feedbackSubmitted}><Send className="mr-2 h-4 w-4" />Kirim feedback</Button></CardContent></Card>
           ) : (
-            <div className="py-6">
-              <div className={cn(
-                "text-center p-6 rounded-lg mb-6",
-                quizScore >= (currentQuiz?.passingScore || 0) 
-                  ? "bg-success/10" 
-                  : "bg-destructive/10"
-              )}>
-                <div className={cn(
-                  "text-5xl font-bold font-serif mb-2",
-                  quizScore >= (currentQuiz?.passingScore || 0) 
-                    ? "text-success" 
-                    : "text-destructive"
-                )}>
-                  {quizScore}%
-                </div>
-                <p className={cn(
-                  "font-medium",
-                  quizScore >= (currentQuiz?.passingScore || 0) 
-                    ? "text-success" 
-                    : "text-destructive"
-                )}>
-                  {quizScore >= (currentQuiz?.passingScore || 0) 
-                    ? "Selamat! Anda lulus quiz ini" 
-                    : "Maaf, Anda belum mencapai nilai minimum"
-                  }
-                </p>
-              </div>
-              
-              {/* Answer Review */}
-              <div className="space-y-4">
-                <h4 className="font-medium">Review Jawaban:</h4>
-                {currentQuiz?.questions.map((question, qIndex) => {
-                  const userAnswer = quizAnswers[question.id]?.toLowerCase().trim()
-                  const isCorrect = userAnswer === question.correctAnswer.toLowerCase().trim()
-                  
-                  return (
-                    <div key={question.id} className="p-3 rounded-lg bg-muted/50">
-                      <p className="text-sm font-medium mb-1">{qIndex + 1}. {question.question}</p>
-                      <p className="text-sm">
-                        Jawaban Anda: <span className={isCorrect ? "text-success" : "text-destructive"}>
-                          {quizAnswers[question.id] || "(tidak dijawab)"}
-                        </span>
-                      </p>
-                      {!isCorrect && (
-                        <p className="text-sm text-success">
-                          Jawaban benar: {question.correctAnswer}
-                        </p>
-                      )}
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
+            <Card><CardContent className="space-y-4 p-8 text-center"><div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary"><ClipboardCheck className="h-8 w-8" /></div><h2 className="text-xl font-semibold">Siap mengukur pemahaman?</h2><p className="mx-auto max-w-md text-sm text-muted-foreground">Kerjakan assessment ini setelah mempelajari materi terkait. Kamu akan melihat nilai dan pembahasan setelah mengumpulkan jawaban.</p><Button onClick={() => activeAssessmentForMaterial && setActiveAssessment(activeAssessmentForMaterial)} disabled={!activeAssessmentForMaterial}>{activeAssessmentForMaterial ? "Mulai assessment" : "Materi belum tersedia"}</Button></CardContent></Card>
           )}
-          
-          <DialogFooter>
-            {!quizSubmitted ? (
-              <Button onClick={handleSubmitQuiz} className="bg-secondary hover:bg-secondary/90">
-                Kumpulkan Jawaban
-              </Button>
-            ) : showPostTest ? (
-              <Button onClick={handlePostTestComplete} className="bg-secondary hover:bg-secondary/90">
-                {quizScore >= (currentQuiz?.passingScore || 0) ? "Lihat Sertifikat" : "Tutup"}
-              </Button>
-            ) : (
-              <Button onClick={() => setShowQuiz(false)}>
-                Tutup
-              </Button>
-            )}
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-      
-      {/* Course Completion Dialog */}
-      <AlertDialog open={showCompletionDialog} onOpenChange={setShowCompletionDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="font-serif flex items-center gap-2">
-              <Award className="w-6 h-6 text-accent" />
-              Selamat! Anda Menyelesaikan Materi
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              Anda telah menyelesaikan semua materi dalam pelatihan ini. 
-              Untuk mendapatkan sertifikat, silakan selesaikan Post-Test dengan nilai minimum 80%.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Nanti Saja</AlertDialogCancel>
-            <AlertDialogAction onClick={handleStartPostTest} className="bg-secondary hover:bg-secondary/90">
-              Mulai Post-Test
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      
-      {/* Certificate Earned Dialog */}
-      <Dialog open={showCertificateEarned} onOpenChange={setShowCertificateEarned}>
-        <DialogContent className="text-center">
-          <DialogHeader>
-            <div className="mx-auto w-20 h-20 rounded-full bg-success/10 flex items-center justify-center mb-4">
-              <Award className="w-10 h-10 text-success" />
-            </div>
-            <DialogTitle className="font-serif text-2xl">Sertifikat Diterbitkan!</DialogTitle>
-            <DialogDescription className="text-base">
-              Selamat! Anda telah berhasil menyelesaikan pelatihan &quot;{course.title}&quot; 
-              dan lulus Post-Test dengan nilai {quizScore}%.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="py-4">
-            <div className="p-4 bg-muted rounded-lg text-left">
-              <p className="text-sm text-muted-foreground">Nomor Sertifikat:</p>
-              <p className="font-mono font-medium">LMSPID-2024-{Date.now().toString().slice(-6)}</p>
-            </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-lg border bg-white p-4">
+            <div className="flex items-center gap-2 text-sm">{activeMaterial && state.completed.includes(activeMaterial.id) ? <><CheckCircle2 className="h-5 w-5 text-emerald-600" /><span className="font-medium text-emerald-700">Materi selesai</span></> : <><Lock className="h-4 w-4 text-muted-foreground" /><span className="text-muted-foreground">Tandai selesai setelah dipelajari</span></>}</div>
+            <Button onClick={markComplete} disabled={!activeMaterial || state.completed.includes(activeMaterial.id) || ["quiz", "pretest", "posttest", "assignment", "feedback"].includes(activeMaterial.type)}>{state.completed.includes(activeMaterial?.id ?? "") ? "Sudah selesai" : "Tandai selesai"}<ChevronRight className="ml-2 h-4 w-4" /></Button>
           </div>
-          <DialogFooter className="flex-col sm:flex-row gap-2">
-            <Button variant="outline" onClick={() => setShowCertificateEarned(false)}>
-              Tutup
-            </Button>
-            <Button 
-              className="bg-secondary hover:bg-secondary/90"
-              onClick={() => router.push('/dashboard/sertifikat')}
-            >
-              <Download className="w-4 h-4 mr-2" />
-              Lihat Sertifikat
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+
+          {completionReady && !state.feedbackSubmitted && <Card className="border-amber-200 bg-amber-50"><CardContent className="flex items-start gap-3 p-4 text-sm"><Award className="mt-0.5 h-5 w-5 text-amber-600" /><div><p className="font-semibold">Hampir selesai</p><p className="mt-1 text-muted-foreground">Selesaikan feedback pelatihan agar sertifikat dapat diterbitkan.</p></div></CardContent></Card>}
+          {completionReady && state.feedbackSubmitted && !state.certificateIssued && <Card className="border-emerald-200 bg-emerald-50"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4"><div className="flex items-start gap-3 text-sm"><Award className="mt-0.5 h-5 w-5 text-emerald-600" /><div><p className="font-semibold text-emerald-900">Semua syarat terpenuhi</p><p className="mt-1 text-emerald-800/80">Sertifikat siap diterbitkan.</p></div></div><Button onClick={issueCertificate}>Terbitkan sertifikat</Button></CardContent></Card>}
+          {state.certificateIssued && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4"><div className="flex items-start gap-3 text-sm"><Award className="mt-0.5 h-5 w-5 text-primary" /><div><p className="font-semibold">Sertifikat sudah diterbitkan</p><p className="mt-1 text-muted-foreground">{state.certificateNumber}</p></div></div><Link href="/dashboard/sertifikat"><Button variant="outline">Lihat sertifikat</Button></Link></CardContent></Card>}
+        </main>
+
+        <aside className="min-w-0 space-y-4">
+          <Card className="overflow-hidden"><CardContent className="p-0"><div className="bg-[#102f49] p-5 text-white"><p className="text-xs uppercase tracking-[0.14em] text-cyan-200">Learning path</p><h2 className="mt-2 text-lg font-bold">{course.title}</h2><div className="mt-4 flex items-center gap-3"><Progress value={progress} className="h-2 bg-white/20" /><span className="text-sm font-semibold">{progress}%</span></div><p className="mt-2 text-xs text-white/70">{state.completed.length} dari {allMaterials.length} aktivitas selesai</p></div><div className="max-h-[calc(100vh-250px)] overflow-y-auto">
+            {course.modules.map((module, index) => { const moduleDone = module.materials.filter((material) => material.countsTowardProgress).every((material) => state.completed.includes(material.id)); const open = activeModuleId === module.id; return <div key={module.id} className="border-b last:border-b-0"><button type="button" onClick={() => setActiveModuleId(open ? "" : module.id)} className="flex w-full items-start gap-3 p-4 text-left hover:bg-muted/40"><span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold", moduleDone ? "bg-emerald-100 text-emerald-700" : "bg-muted text-muted-foreground")}>{moduleDone ? <Check className="h-3.5 w-3.5" /> : index + 1}</span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{module.title}</span><span className="mt-1 block text-xs text-muted-foreground">{module.materials.length} aktivitas · {formatMinutes(module.estimatedMinutes)}</span></span>{open ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}</button>{open && <div className="space-y-1 px-2 pb-3">{module.materials.map((material) => { const Icon = materialIcon[material.type]; const done = state.completed.includes(material.id); const locked = material.type === "posttest" && progress < 100; return <button key={material.id} type="button" disabled={locked} onClick={() => selectMaterial(module.id, material)} className={cn("flex w-full items-start gap-3 rounded-md px-3 py-2.5 text-left text-sm hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50", activeMaterialId === material.id && "bg-primary/10 text-primary") }><span className={cn("mt-0.5 shrink-0", done ? "text-emerald-600" : "text-muted-foreground")}>{done ? <CheckCircle2 className="h-4 w-4" /> : locked ? <Lock className="h-4 w-4" /> : <Icon className="h-4 w-4" />}</span><span className="min-w-0 flex-1"><span className="block leading-5">{material.title}</span><span className="mt-0.5 block text-xs text-muted-foreground">{formatMinutes(material.duration)}{material.required ? " · Wajib" : ""}</span></span></button>})}</div>}</div> })}
+          </div></CardContent></Card>
+
+          <Card><CardHeader className="pb-3"><CardTitle className="text-base">Syarat sertifikat</CardTitle></CardHeader><CardContent className="space-y-3 text-sm">{[
+            ["Materi wajib selesai", progress === 100],
+            ["Assignment dikumpulkan", state.assignmentSubmitted],
+            [`Post-test minimal ${course.passingGrade}%`, Boolean(state.scores["AS-POSTTEST"] && state.scores["AS-POSTTEST"] >= course.passingGrade)],
+            ["Feedback dikirim", state.feedbackSubmitted],
+          ].map(([label, done]) => <div key={String(label)} className="flex items-center gap-2">{done ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <span className="h-4 w-4 rounded-full border" />}<span className={cn(done ? "text-foreground" : "text-muted-foreground")}>{label}</span></div>)}</CardContent></Card>
+        </aside>
+      </div>
     </div>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { 
   Award, 
   Download, 
@@ -54,6 +54,7 @@ import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
 import { dummyCertificates, type Certificate } from "@/lib/data/courses"
 import { PageHeader } from "@/components/dashboard/page-header"
+import { pythonCourse } from "@/lib/learning/seed"
 
 // Extended certificates with more data
 const allCertificates: Certificate[] = [
@@ -233,6 +234,33 @@ export default function SertifikatPage() {
   const [showValidationSheet, setShowValidationSheet] = useState(false)
   const [selectedValidation, setSelectedValidation] = useState<ImpactValidation | null>(null)
   const [showSurveyDialog, setShowSurveyDialog] = useState(false)
+  const [learningCertificate, setLearningCertificate] = useState<Certificate | null>(null)
+
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(`lms_pid_player_${pythonCourse.id}`)
+      const player = saved ? JSON.parse(saved) : null
+      if (player?.certificateIssued) {
+        setLearningCertificate({
+          id: "CERT-PYTHON-DEMO",
+          courseId: pythonCourse.id,
+          courseName: pythonCourse.title,
+          userId: user?.id ?? "USR001",
+          userName: user?.name ?? "Budi Santoso",
+          issuedAt: new Date().toISOString(),
+          certificateNumber: player.certificateNumber || "LMSPID-PYTHON-DEMO",
+          qrCode: `https://lmspid.pelniservices.co.id/verify/${player.certificateNumber || "LMSPID-PYTHON-DEMO"}`,
+          digitalSignature: "Admin SDM - LMS PID",
+          learningHours: pythonCourse.estimatedHours,
+          type: "internal",
+        })
+      }
+    } catch {
+      setLearningCertificate(null)
+    }
+  }, [user?.id, user?.name])
+
+  const certificates = learningCertificate ? [learningCertificate, ...allCertificates] : allCertificates
   
   // Upload form state
   const [uploadForm, setUploadForm] = useState({
@@ -251,7 +279,7 @@ export default function SertifikatPage() {
   const isAdmin = user?.role === 'admin_sdm'
   const isManager = user?.role === 'admin_divisi'
   
-  const filteredCertificates = allCertificates.filter(cert => {
+  const filteredCertificates = certificates.filter(cert => {
     const matchesSearch = cert.courseName.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          cert.certificateNumber.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesType = filterType === "all" || cert.type === filterType
@@ -261,7 +289,7 @@ export default function SertifikatPage() {
   const internalCerts = filteredCertificates.filter(c => c.type === "internal")
   const externalCerts = filteredCertificates.filter(c => c.type === "external")
   
-  const expiringCerts = allCertificates.filter(cert => {
+  const expiringCerts = certificates.filter(cert => {
     if (!cert.expiresAt) return false
     const expiry = new Date(cert.expiresAt)
     const now = new Date()
@@ -269,7 +297,7 @@ export default function SertifikatPage() {
     return daysUntilExpiry > 0 && daysUntilExpiry <= 90
   })
   
-  const totalLearningHours = allCertificates.reduce((sum, cert) => sum + cert.learningHours, 0)
+  const totalLearningHours = certificates.reduce((sum, cert) => sum + cert.learningHours, 0)
   
   const handleUploadSubmit = () => {
     // Simulate upload
@@ -312,7 +340,7 @@ export default function SertifikatPage() {
                 <Award className="w-5 h-5 text-secondary" />
               </div>
               <div>
-                <p className="text-2xl font-bold font-serif text-foreground">{allCertificates.length}</p>
+                <p className="text-2xl font-bold font-serif text-foreground">{certificates.length}</p>
                 <p className="text-sm text-muted-foreground">Total Sertifikat</p>
               </div>
             </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import {
   dummyTrainingRequests,
@@ -676,8 +676,20 @@ function BulkApproval({
 export default function PersetujuanPage() {
   const { user } = useAuth()
   const [searchQuery, setSearchQuery] = useState("")
-  const [requests, setRequests] = useState(dummyTrainingRequests)
+  const [requests, setRequests] = useState<TrainingRequest[]>(() => {
+    if (typeof window === "undefined") return dummyTrainingRequests
+    try {
+      const saved = window.localStorage.getItem("lms_pid_training_requests")
+      return saved ? JSON.parse(saved) : dummyTrainingRequests
+    } catch {
+      return dummyTrainingRequests
+    }
+  })
   const [selectedIds, setSelectedIds] = useState<string[]>([])
+
+  useEffect(() => {
+    window.localStorage.setItem("lms_pid_training_requests", JSON.stringify(requests))
+  }, [requests])
 
   // Determine which level this user can approve
   const getApprovalLevel = (): ApprovalLevel | null => {

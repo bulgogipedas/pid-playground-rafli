@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import {
   dummyTrainingRequests,
@@ -531,7 +531,19 @@ export default function PengajuanPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<RequestStatus | "all">("all")
   const [isFormOpen, setIsFormOpen] = useState(false)
-  const [requests, setRequests] = useState(dummyTrainingRequests)
+  const [requests, setRequests] = useState<TrainingRequest[]>(() => {
+    if (typeof window === "undefined") return dummyTrainingRequests
+    try {
+      const saved = window.localStorage.getItem("lms_pid_training_requests")
+      return saved ? JSON.parse(saved) : dummyTrainingRequests
+    } catch {
+      return dummyTrainingRequests
+    }
+  })
+
+  useEffect(() => {
+    window.localStorage.setItem("lms_pid_training_requests", JSON.stringify(requests))
+  }, [requests])
 
   // Filter requests based on user role
   const userRequests = user?.role === "admin_sdm" 

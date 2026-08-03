@@ -60,6 +60,43 @@ import {
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { PageHeader } from "@/components/dashboard/page-header"
+import { pythonCourse } from "@/lib/learning/seed"
+
+function FeaturedLearningPath() {
+  return (
+    <Card className="overflow-hidden border-primary/20 bg-white shadow-sm">
+      <CardContent className="p-0">
+        <div className="grid gap-0 lg:grid-cols-[1.3fr_1fr]">
+          <div className="bg-[#102f49] p-6 text-white sm:p-8">
+            <div className="mb-4 flex flex-wrap items-center gap-2">
+              <Badge className="border-0 bg-cyan-400/15 text-cyan-100">Learning path baru</Badge>
+              <Badge variant="outline" className="border-white/20 text-white/80">Pemula</Badge>
+            </div>
+            <h2 className="max-w-xl text-2xl font-bold tracking-tight sm:text-3xl">{pythonCourse.title}</h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/75">{pythonCourse.shortDescription}</p>
+            <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/75">
+              <span className="flex items-center gap-2"><Clock className="h-4 w-4 text-cyan-300" />{pythonCourse.estimatedHours} jam</span>
+              <span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-cyan-300" />{pythonCourse.modules.length} modul</span>
+              <span className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-300 text-amber-300" />{pythonCourse.rating} ({pythonCourse.ratingCount})</span>
+            </div>
+            <Link href={`/dashboard/belajar/${pythonCourse.id}`} className="mt-6 inline-flex">
+              <Button className="bg-white text-[#102f49] hover:bg-cyan-50"><Play className="mr-2 h-4 w-4" />Mulai learning path</Button>
+            </Link>
+          </div>
+          <div className="flex flex-col justify-between gap-5 p-6 sm:p-8">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">Yang akan kamu kuasai</p>
+              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
+                {pythonCourse.learningOutcomes.slice(0, 4).map((outcome) => <div key={outcome} className="flex gap-2 text-sm text-muted-foreground"><CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /><span>{outcome}</span></div>)}
+              </div>
+            </div>
+            <div className="rounded-lg bg-muted/60 p-4 text-sm"><p className="font-semibold">Termasuk di dalamnya</p><p className="mt-1 text-muted-foreground">Video playlist, quiz per modul, mini project, post-test, feedback, dan sertifikat.</p></div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
+}
 
 // Course detail sheet
 function CourseDetailSheet({ 
@@ -472,6 +509,8 @@ export default function KatalogPage() {
         title="Katalog Pelatihan"
         description="Jelajahi dan daftar pelatihan untuk mengembangkan kompetensi Anda"
       />
+
+      <FeaturedLearningPath />
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4 sm:gap-4">
