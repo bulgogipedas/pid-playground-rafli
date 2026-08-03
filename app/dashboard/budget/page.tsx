@@ -137,7 +137,7 @@ export default function BudgetPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Terpakai</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-orange-600">Rp {(totalSpent / 1000000).toFixed(0)}M</div>
+            <div className="text-2xl font-bold text-warning">Rp {(totalSpent / 1000000).toFixed(0)}M</div>
             <p className="text-xs text-muted-foreground mt-1">{spentPercentage.toFixed(1)}% dari total</p>
           </CardContent>
         </Card>
@@ -147,7 +147,7 @@ export default function BudgetPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Sisa Budget</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-emerald-600">Rp {(totalRemaining / 1000000).toFixed(0)}M</div>
+            <div className="text-2xl font-bold text-success">Rp {(totalRemaining / 1000000).toFixed(0)}M</div>
             <p className="text-xs text-muted-foreground mt-1">{(100 - spentPercentage).toFixed(1)}% tersedia</p>
           </CardContent>
         </Card>

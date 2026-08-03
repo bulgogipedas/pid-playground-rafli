@@ -12,14 +12,14 @@ const toneClasses = {
   primary: "bg-primary",
   warning: "bg-warning",
   success: "bg-success",
-  violet: "bg-violet-600",
+  violet: "bg-primary",
 }
 
 const headerToneClasses = {
   primary: "from-sidebar to-primary",
   warning: "from-sidebar to-warning",
   success: "from-sidebar to-success",
-  violet: "from-sidebar to-violet-700",
+  violet: "from-sidebar to-primary",
 }
 
 export function InProgressCourses() {
@@ -34,7 +34,7 @@ export function InProgressCourses() {
           {isLearner ? "Pelatihan Berlangsung" : user?.role === "admin_content" || user?.role === "trainer" ? "Konten yang Dipantau" : "Antrian Tindak Lanjut"}
         </CardTitle>
         <Link href={isLearner ? "/dashboard/pelatihan" : user?.role === "manager" ? "/dashboard/persetujuan" : "/dashboard/pengajuan"}>
-          <Button variant="ghost" size="sm" className="text-secondary hover:text-secondary/90">
+          <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
             Lihat semua
             <ArrowRight className="w-4 h-4 ml-1" />
           </Button>
@@ -89,7 +89,7 @@ export function InProgressCourses() {
                 <Link href={course.href}>
                   <Button
                     size="sm"
-                    className={`mt-3 w-full ${toneClasses[course.tone]} text-white hover:opacity-90`}
+                    className={`mt-3 w-full ${toneClasses[course.tone]} text-primary-foreground hover:opacity-90`}
                   >
                     {isLearner ? "Lanjutkan" : "Buka"}
                   </Button>

@@ -40,11 +40,11 @@ export function WelcomeSection() {
   }, [])
   
   return (
-    <div className="bg-gradient-to-r from-[#102F49] to-[#0879B5] rounded-lg p-6 text-white">
+    <div className="rounded-lg bg-gradient-to-r from-sidebar to-primary p-6 text-white shadow-sm">
       <div className="flex items-start justify-between">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <Sparkles className="w-5 h-5 text-[#D97706]" />
+            <Sparkles className="w-5 h-5 text-warning" />
             <span className="text-sm text-white/80">{greeting}</span>
           </div>
           <h2 className="font-serif text-2xl md:text-3xl font-bold mb-2">
@@ -54,7 +54,7 @@ export function WelcomeSection() {
             {getRoleMessage(user?.role)}
           </p>
           <div className="mt-3 flex items-center gap-3">
-            <span className="text-xs bg-white/20 px-2 py-1 rounded-full">
+            <span className="rounded-full bg-white/15 px-2 py-1 text-xs ring-1 ring-white/20">
               {user?.role ? roleLabels[user.role] : 'Peserta'}
             </span>
             <span className="text-xs text-white/70">

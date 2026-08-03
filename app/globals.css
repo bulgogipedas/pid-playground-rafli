@@ -26,9 +26,9 @@
   --muted-foreground: #64748B;
   --accent: #EFF8FF;
   --accent-foreground: #056598;
-  --success: #059669;
+  --success: #047857;
   --success-foreground: #FFFFFF;
-  --warning: #D97706;
+  --warning: #B45309;
   --warning-foreground: #FFFFFF;
   --destructive: #DC2626;
   --destructive-foreground: #FFFFFF;
@@ -154,4 +154,29 @@
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
   }
+}
+
+/* Compatibility aliases for legacy screens. Keep older utility names inside
+   the same semantic palette while those screens are gradually consolidated. */
+@layer utilities {
+  .text-secondary { color: var(--secondary-foreground); }
+  .border-gray-100,
+  .border-gray-200 { border-color: var(--border); }
+  .bg-gray-50,
+  .bg-gray-100 { background-color: var(--muted); }
+  .text-gray-600,
+  .text-gray-700 { color: var(--muted-foreground); }
+  .text-emerald-500,
+  .text-emerald-600,
+  .text-emerald-700 { color: var(--success); }
+  .bg-emerald-100 { background-color: color-mix(in srgb, var(--success) 10%, transparent); }
+  .text-amber-600,
+  .text-amber-700,
+  .text-orange-600,
+  .text-orange-700 { color: var(--warning); }
+  .bg-amber-100,
+  .bg-orange-100 { background-color: color-mix(in srgb, var(--warning) 10%, transparent); }
+  .text-red-600,
+  .text-red-700 { color: var(--destructive); }
+  .bg-red-100 { background-color: color-mix(in srgb, var(--destructive) 10%, transparent); }
 }

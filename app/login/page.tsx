@@ -43,12 +43,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] flex">
+    <div className="flex min-h-screen bg-background">
       {/* Left Side - Branding */}
-      <div className="hidden lg:flex lg:w-1/2 bg-[#102F49] text-white flex-col justify-between p-12">
+      <div className="hidden flex-col justify-between bg-sidebar p-12 text-white lg:flex lg:w-1/2">
         <div>
           <div className="flex items-center gap-3 mb-8">
-            <div className="w-12 h-12 rounded-lg bg-[#0879B5] flex items-center justify-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-sidebar-primary">
               <GraduationCap className="w-7 h-7" />
             </div>
             <div>
@@ -68,15 +68,15 @@ export default function LoginPage() {
           </p>
           <div className="grid grid-cols-2 gap-4 pt-4">
             <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold text-[#D97706]">1,200+</div>
+              <div className="text-3xl font-bold text-warning">1,200+</div>
               <div className="text-sm text-white/70">Karyawan Terdaftar</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold text-[#059669]">85%</div>
+              <div className="text-3xl font-bold text-success">85%</div>
               <div className="text-sm text-white/70">Tingkat Penyelesaian</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold text-[#0879B5]">150+</div>
+              <div className="text-3xl font-bold text-primary">150+</div>
               <div className="text-sm text-white/70">Kursus Tersedia</div>
             </div>
             <div className="bg-white/10 rounded-lg p-4">
@@ -96,18 +96,18 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="w-12 h-12 rounded-lg bg-[#102F49] flex items-center justify-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-sidebar">
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <div>
-              <h1 className="font-serif font-bold text-2xl text-[#102F49]">LMS PID</h1>
+              <h1 className="font-serif text-2xl font-bold text-sidebar">LMS PID</h1>
               <p className="text-sm text-muted-foreground">Pelita Indonesia Djaya</p>
             </div>
           </div>
 
-          <Card className="border-gray-100 shadow-sm">
+          <Card className="shadow-sm">
             <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-serif text-[#102F49]">Selamat Datang</CardTitle>
+              <CardTitle className="font-serif text-2xl text-sidebar">Selamat Datang</CardTitle>
               <CardDescription>
                 Masuk menggunakan akun Zentyal Active Directory Anda
               </CardDescription>
@@ -159,7 +159,7 @@ export default function LoginPage() {
 
                 <Button 
                   type="submit" 
-                  className="w-full bg-[#102F49] hover:bg-[#084E75]"
+                  className="w-full bg-sidebar text-sidebar-foreground hover:bg-sidebar/90"
                   disabled={isLoading}
                 >
                   {isLoading ? (
@@ -174,7 +174,7 @@ export default function LoginPage() {
               </form>
 
               {/* Quick Login for Demo */}
-              <div className="mt-6 pt-6 border-t border-gray-100">
+              <div className="mt-6 border-t border-border pt-6">
                 <p className="text-sm text-muted-foreground text-center mb-4">
                   Demo: Klik untuk login sebagai
                 </p>
@@ -200,7 +200,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Lupa password?{" "}
-            <a href="#" className="text-[#0879B5] hover:underline">
+            <a href="#" className="text-primary hover:underline">
               Hubungi Admin SDM
             </a>
           </p>

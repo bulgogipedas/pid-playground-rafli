@@ -130,7 +130,7 @@ export function Header() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-center text-secondary cursor-pointer justify-center">
+            <DropdownMenuItem className="text-center text-primary cursor-pointer justify-center">
               Lihat Semua Notifikasi
             </DropdownMenuItem>
           </DropdownMenuContent>

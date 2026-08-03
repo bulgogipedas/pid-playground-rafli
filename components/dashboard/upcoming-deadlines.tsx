@@ -63,21 +63,21 @@ function getStatusBadge(status: Deadline["status"], daysLeft: number) {
   switch (status) {
     case "urgent":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium bg-[#DC2626]/10 text-[#DC2626]">
+        <span className="inline-flex items-center gap-1 rounded-full border border-destructive/20 bg-destructive/10 px-2 py-1 text-xs font-medium text-destructive">
           <AlertTriangle className="w-3 h-3" />
           {daysLeft} hari lagi
         </span>
       )
     case "warning":
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium bg-[#D97706]/10 text-[#D97706]">
+        <span className="inline-flex items-center gap-1 rounded-full border border-warning/20 bg-warning/10 px-2 py-1 text-xs font-medium text-warning">
           <Clock className="w-3 h-3" />
           {daysLeft} hari lagi
         </span>
       )
     default:
       return (
-        <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-medium bg-[#059669]/10 text-[#059669]">
+        <span className="inline-flex items-center gap-1 rounded-full border border-success/20 bg-success/10 px-2 py-1 text-xs font-medium text-success">
           <Clock className="w-3 h-3" />
           {daysLeft} hari lagi
         </span>
@@ -128,7 +128,7 @@ export function UpcomingDeadlines() {
           </CardTitle>
         </div>
         <Link href={isLearner ? "/dashboard/pelatihan" : user?.role === "manager" ? "/dashboard/persetujuan" : "/dashboard/pengajuan"}>
-          <Button variant="ghost" size="sm" className="text-secondary hover:text-secondary/90">
+          <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
             Lihat Semua
           </Button>
         </Link>
@@ -144,7 +144,7 @@ export function UpcomingDeadlines() {
             <div
               key={deadline.id}
               className={`flex items-center justify-between py-3 ${
-                index !== deadlines.length - 1 ? "border-b border-gray-100" : ""
+                index !== visibleDeadlines.length - 1 ? "border-b border-border" : ""
               }`}
             >
               <div className="flex-1 min-w-0">
