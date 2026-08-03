@@ -197,7 +197,7 @@ export default function TrainerPage() {
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="gap-2 bg-secondary hover:bg-secondary/90">
+            <Button className="gap-2">
               <Plus className="w-4 h-4" />
               Tambah Trainer
             </Button>
@@ -243,7 +243,7 @@ export default function TrainerPage() {
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                 Batal
               </Button>
-              <Button className="bg-secondary hover:bg-secondary/90" onClick={() => setIsAddDialogOpen(false)}>
+              <Button onClick={() => setIsAddDialogOpen(false)}>
                 Simpan
               </Button>
             </DialogFooter>
@@ -252,7 +252,7 @@ export default function TrainerPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <Card className="rounded-lg border border-gray-100 shadow-sm">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
@@ -329,18 +329,18 @@ export default function TrainerPage() {
                   <CardTitle className="text-lg font-semibold">Daftar Trainer</CardTitle>
                   <CardDescription>Trainer yang terdaftar dalam sistem</CardDescription>
                 </div>
-                <div className="flex gap-2">
-                  <div className="relative">
+                <div className="flex w-full flex-wrap gap-2 md:w-auto">
+                  <div className="relative min-w-0 flex-1 md:flex-none">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
                       placeholder="Cari trainer..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-9 w-64"
+                      className="w-full pl-9 md:w-64"
                     />
                   </div>
                   <Select value={typeFilter} onValueChange={setTypeFilter}>
-                    <SelectTrigger className="w-32">
+                    <SelectTrigger className="w-full sm:w-32">
                       <SelectValue placeholder="Tipe" />
                     </SelectTrigger>
                     <SelectContent>
@@ -350,7 +350,7 @@ export default function TrainerPage() {
                     </SelectContent>
                   </Select>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-32">
+                    <SelectTrigger className="w-full sm:w-32">
                       <SelectValue placeholder="Status" />
                     </SelectTrigger>
                     <SelectContent>
@@ -365,15 +365,15 @@ export default function TrainerPage() {
             <CardContent>
               <div className="space-y-4">
                 {filteredTrainers.map((trainer) => (
-                  <div key={trainer.id} className="flex items-center gap-4 p-4 bg-muted/30 rounded-lg">
+                  <div key={trainer.id} className="flex min-w-0 flex-col gap-4 rounded-lg bg-muted/30 p-4 md:flex-row md:items-center">
                     <Avatar className="w-12 h-12">
                       <AvatarFallback className="bg-secondary text-white">
                         {trainer.name.split(' ').map(n => n[0]).join('').slice(0, 2)}
                       </AvatarFallback>
                     </Avatar>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2">
-                        <p className="font-medium truncate">{trainer.name}</p>
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <p className="min-w-0 max-w-full truncate font-medium">{trainer.name}</p>
                         <Badge className={trainer.type === "internal" ? "bg-blue-100 text-blue-700" : "bg-amber-100 text-amber-700"}>
                           {trainer.type === "internal" ? "Internal" : "Eksternal"}
                         </Badge>
@@ -381,7 +381,7 @@ export default function TrainerPage() {
                           {trainer.status === "active" ? "Aktif" : "Nonaktif"}
                         </Badge>
                       </div>
-                      <div className="flex items-center gap-4 mt-1 text-sm text-muted-foreground">
+                      <div className="mt-1 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-foreground">
                         <span className="flex items-center gap-1">
                           <Mail className="w-3 h-3" />
                           {trainer.email}

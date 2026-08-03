@@ -58,7 +58,7 @@ export function MandatoryTrainingChart() {
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-1 items-center">
-        <div className="flex items-center gap-6">
+        <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4 sm:gap-6">
           {/* Ring Chart */}
           <div className="relative w-32 h-32">
             <ResponsiveContainer width="100%" height="100%">
@@ -87,17 +87,17 @@ export function MandatoryTrainingChart() {
           </div>
 
           {/* Legend */}
-          <div className="flex-1 space-y-3">
+          <div className="min-w-0 space-y-3">
             {data.map((item) => (
-              <div key={item.name} className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
+              <div key={item.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+                <div className="flex min-w-0 items-start gap-2">
                   <div
-                    className="w-3 h-3 rounded-full"
+                    className="mt-1 h-3 w-3 shrink-0 rounded-full"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-sm text-muted-foreground">{item.name}</span>
+                  <span className="min-w-0 text-sm leading-tight text-muted-foreground">{item.name}</span>
                 </div>
-                <span className="text-sm font-medium">{item.value}</span>
+                <span className="shrink-0 tabular-nums text-sm font-medium">{item.value}</span>
               </div>
             ))}
             <div className="border-t border-border pt-2">

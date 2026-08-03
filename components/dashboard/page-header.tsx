@@ -74,7 +74,7 @@ export function PageHeader({
           )}
         </div>
         {actions && (
-          <div className="flex flex-wrap items-center gap-2 sm:shrink-0">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:shrink-0">
             {actions}
           </div>
         )}

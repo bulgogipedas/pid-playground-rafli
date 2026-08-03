@@ -159,6 +159,13 @@
 /* Compatibility aliases for legacy screens. Keep older utility names inside
    the same semantic palette while those screens are gradually consolidated. */
 @layer utilities {
+  [data-slot="button"][data-variant="default"].bg-secondary {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  [data-slot="button"][data-variant="default"].bg-secondary:hover {
+    background-color: color-mix(in srgb, var(--primary) 90%, transparent);
+  }
   .text-secondary { color: var(--secondary-foreground); }
   .border-gray-100,
   .border-gray-200 { border-color: var(--border); }
