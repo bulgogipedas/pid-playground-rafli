@@ -8,8 +8,8 @@ import { dummyTrainingRequests } from "@/lib/data/training-requests"
 
 const chartColors = {
   primary: "#0879B5",
-  success: "#059669",
-  warning: "#D97706",
+  success: "#047857",
+  warning: "#B45309",
   muted: "#E2E8F0",
   violet: "#7C3AED",
 }
@@ -51,13 +51,13 @@ export function MandatoryTrainingChart() {
   const completionLabel = isLearner ? "Selesai" : user?.role === "admin_content" || user?.role === "trainer" ? "Terbit" : "Disetujui"
 
   return (
-    <Card className="rounded-lg border border-border bg-card shadow-sm">
+    <Card className="h-full rounded-xl border border-border bg-card shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="font-serif text-lg font-semibold">
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex flex-1 items-center">
         <div className="flex items-center gap-6">
           {/* Ring Chart */}
           <div className="relative w-32 h-32">
