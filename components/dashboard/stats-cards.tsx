@@ -25,10 +25,10 @@ export function StatsCards() {
   const stats = getDashboardMetrics(user)
 
   return (
-    <div className="grid h-full grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-3 sm:gap-4">
+    <div className="grid grid-cols-1 items-stretch gap-3 sm:grid-cols-2 xl:grid-cols-3 sm:gap-4">
       {stats.map((stat) => (
-        <Card key={stat.label} className="h-full rounded-xl border border-border bg-card shadow-sm">
-          <CardContent className="flex h-full flex-col justify-between p-5">
+        <Card key={stat.label} className="rounded-xl border border-border bg-card shadow-sm">
+          <CardContent className="flex flex-col p-5">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-sm text-muted-foreground mb-1">{stat.label}</p>

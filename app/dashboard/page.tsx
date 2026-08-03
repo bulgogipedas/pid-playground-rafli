@@ -12,7 +12,7 @@ export default function DashboardPage() {
       <WelcomeSection />
 
       {/* Stats Row: Training Chart + Stats Cards */}
-      <div className="grid grid-cols-1 items-stretch gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-3">
         <div className="lg:col-span-1">
           <MandatoryTrainingChart />
         </div>
