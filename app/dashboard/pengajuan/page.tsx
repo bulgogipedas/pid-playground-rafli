@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import {
   dummyTrainingRequests,
@@ -49,7 +50,6 @@ import {
 } from "@/components/ui/sheet"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import {
   Plus,
   Search,
@@ -271,190 +271,6 @@ function RequestForm({
         </Button>
       </div>
     </form>
-  )
-}
-
-// Request detail sheet
-function RequestDetailSheet({ request }: { request: TrainingRequest }) {
-  const getApprovalProgress = () => {
-    if (request.status === "approved") return 100
-    if (request.status === "rejected" || request.status === "revision") return 0
-    const levels = ["atasan_langsung", "kepala_divisi", "sdm_admin"]
-    const currentIndex = levels.indexOf(request.currentLevel)
-    return ((currentIndex) / 3) * 100
-  }
-
-  return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="sm">
-          <Eye className="w-4 h-4 mr-1" />
-          Detail
-        </Button>
-      </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle className="font-serif">{request.trainingName}</SheetTitle>
-          <SheetDescription>
-            ID: {request.id} | Diajukan: {formatDate(request.createdAt)}
-          </SheetDescription>
-        </SheetHeader>
-
-        <div className="mt-6 space-y-6">
-          {/* Status Badge */}
-          <div className="flex items-center gap-3">
-            <Badge className={cn("rounded-full px-3 py-1", statusColors[request.status])}>
-              {statusLabels[request.status]}
-            </Badge>
-            {request.status.startsWith("pending") && (
-              <span className="text-sm text-muted-foreground">
-                Menunggu: {levelLabels[request.currentLevel]}
-              </span>
-            )}
-          </div>
-
-          {/* Approval Progress */}
-          {request.status !== "rejected" && request.status !== "revision" && (
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
-                <span>Progress Persetujuan</span>
-                <span>{Math.round(getApprovalProgress())}%</span>
-              </div>
-              <Progress value={getApprovalProgress()} className="h-2" />
-              <div className="flex justify-between text-xs text-muted-foreground mt-2">
-                <span className={request.approvals.some(a => a.level === "atasan_langsung") ? "text-emerald-600 font-medium" : ""}>
-                  Atasan Langsung
-                </span>
-                <span className={request.approvals.some(a => a.level === "kepala_divisi") ? "text-emerald-600 font-medium" : ""}>
-                  Kepala Divisi
-                </span>
-                <span className={request.approvals.some(a => a.level === "sdm_admin") ? "text-emerald-600 font-medium" : ""}>
-                  Admin SDM
-                </span>
-              </div>
-            </div>
-          )}
-
-          {/* Details */}
-          <div className="space-y-4">
-            <h4 className="font-medium font-serif">Detail Pelatihan</h4>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-muted-foreground">Vendor</span>
-                <p className="font-medium">{request.vendor}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Jenis Kompetensi</span>
-                <p className="font-medium">{skillTypeLabels[request.skillType]}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Jenis Pelatihan</span>
-                <p className="font-medium">{trainingTypeLabels[request.trainingType]}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Estimasi Biaya</span>
-                <p className="font-medium text-secondary">{formatCurrency(request.estimatedCost)}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Tanggal</span>
-                <p className="font-medium">{formatDate(request.startDate)} - {formatDate(request.endDate)}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Jam Pembelajaran</span>
-                <p className="font-medium">{request.learningHours} Jam</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <h4 className="font-medium font-serif">Deskripsi</h4>
-            <p className="text-sm text-muted-foreground">{request.trainingDescription}</p>
-          </div>
-
-          {/* Rationale */}
-          <div className="space-y-2">
-            <h4 className="font-medium font-serif">Alasan / Justifikasi</h4>
-            <p className="text-sm text-muted-foreground">{request.rationale}</p>
-          </div>
-
-          {/* Competency Gap */}
-          {request.competencyGap && (
-            <div className="space-y-2">
-              <h4 className="font-medium font-serif">Gap Kompetensi (TNA)</h4>
-              <Badge variant="outline" className="text-secondary border-secondary">
-                {request.competencyGap}
-              </Badge>
-            </div>
-          )}
-
-          {/* Approval History */}
-          {request.approvals.length > 0 && (
-            <div className="space-y-3">
-              <h4 className="font-medium font-serif">Riwayat Persetujuan</h4>
-              <div className="space-y-3">
-                {request.approvals.map((approval) => (
-                  <div 
-                    key={approval.id} 
-                    className={cn(
-                      "p-3 rounded-lg border",
-                      approval.action === "approve" && "border-emerald-200 bg-emerald-50",
-                      approval.action === "reject" && "border-red-200 bg-red-50",
-                      approval.action === "revision" && "border-blue-200 bg-blue-50"
-                    )}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        {approval.action === "approve" && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
-                        {approval.action === "reject" && <XCircle className="w-4 h-4 text-red-600" />}
-                        {approval.action === "revision" && <AlertCircle className="w-4 h-4 text-blue-600" />}
-                        <span className="font-medium text-sm">{levelLabels[approval.level]}</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">{formatDateTime(approval.timestamp)}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{approval.approverName}</p>
-                    <p className="text-sm mt-2">{approval.comment}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Attachments */}
-          {request.attachments.length > 0 && (
-            <div className="space-y-3">
-              <h4 className="font-medium font-serif">Lampiran</h4>
-              <div className="space-y-2">
-                {request.attachments.map((att) => (
-                  <div key={att.id} className="flex items-center gap-3 p-2 border rounded-lg">
-                    <FileText className="w-5 h-5 text-muted-foreground" />
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{att.name}</p>
-                      <p className="text-xs text-muted-foreground">{(att.size / 1000).toFixed(1)} KB</p>
-                    </div>
-                    <Button variant="ghost" size="sm">Unduh</Button>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
-          {/* Actions */}
-          {(request.status === "draft" || request.status === "revision") && (
-            <div className="flex gap-3 pt-4 border-t">
-              <Button variant="outline" className="flex-1">
-                <Edit className="w-4 h-4 mr-2" />
-                Edit
-              </Button>
-              <Button variant="destructive" className="flex-1">
-                <Trash2 className="w-4 h-4 mr-2" />
-                Hapus
-              </Button>
-            </div>
-          )}
-        </div>
-      </SheetContent>
-    </Sheet>
   )
 }
 
@@ -797,7 +613,12 @@ export default function PengajuanPage() {
                           )}
                         </div>
                         <div className="flex items-center gap-2">
-                          <RequestDetailSheet request={request} />
+                          <Button asChild variant="ghost" size="sm">
+                            <Link href={`/dashboard/pengajuan/${request.id}`}>
+                              <Eye className="mr-1 h-4 w-4" />
+                              Detail
+                            </Link>
+                          </Button>
                           {request.status === "revision" && (
                             <Button variant="outline" size="sm">
                               <Edit className="w-4 h-4 mr-1" />

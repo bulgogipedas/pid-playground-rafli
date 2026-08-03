@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import {
   dummyTrainingRequests,
@@ -43,14 +44,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from "@/components/ui/sheet"
-import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogCancel,
@@ -63,7 +56,6 @@ import {
 } from "@/components/ui/alert-dialog"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
 import {
   Search,
   Filter,
@@ -195,135 +187,16 @@ function ApprovalDialog({
   )
 }
 
-// Request detail view
+// Heavy request information lives on a dedicated page so the decision context
+// is not cramped inside a side sheet.
 function RequestDetail({ request }: { request: TrainingRequest }) {
   return (
-    <Sheet>
-      <SheetTrigger asChild>
-        <Button variant="ghost" size="sm">
-          <Eye className="w-4 h-4 mr-1" />
-          Detail
-        </Button>
-      </SheetTrigger>
-      <SheetContent className="w-full sm:max-w-xl overflow-y-auto">
-        <SheetHeader>
-          <SheetTitle className="font-serif">{request.trainingName}</SheetTitle>
-          <SheetDescription>
-            ID: {request.id} | Diajukan: {formatDate(request.createdAt)}
-          </SheetDescription>
-        </SheetHeader>
-
-        <div className="mt-6 space-y-6">
-          {/* Employee Info */}
-          <div className="p-4 bg-gray-50 rounded-lg space-y-2">
-            <h4 className="font-medium font-serif mb-3">Informasi Karyawan</h4>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div>
-                <span className="text-muted-foreground">Nama</span>
-                <p className="font-medium">{request.employeeName}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">NIK</span>
-                <p className="font-medium">{request.employeeNik}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Divisi</span>
-                <p className="font-medium">{request.division}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Job Family</span>
-                <p className="font-medium">{request.jobFamily}</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Training Details */}
-          <div className="space-y-4">
-            <h4 className="font-medium font-serif">Detail Pelatihan</h4>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="text-muted-foreground">Vendor</span>
-                <p className="font-medium">{request.vendor}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Jenis Kompetensi</span>
-                <p className="font-medium">{skillTypeLabels[request.skillType]}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Jenis Pelatihan</span>
-                <p className="font-medium">{trainingTypeLabels[request.trainingType]}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Estimasi Biaya</span>
-                <p className="font-medium text-secondary">{formatCurrency(request.estimatedCost)}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Tanggal</span>
-                <p className="font-medium">{formatDate(request.startDate)} - {formatDate(request.endDate)}</p>
-              </div>
-              <div>
-                <span className="text-muted-foreground">Jam Pembelajaran</span>
-                <p className="font-medium">{request.learningHours} Jam</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Description */}
-          <div className="space-y-2">
-            <h4 className="font-medium font-serif">Deskripsi</h4>
-            <p className="text-sm text-muted-foreground">{request.trainingDescription}</p>
-          </div>
-
-          {/* Rationale */}
-          <div className="space-y-2">
-            <h4 className="font-medium font-serif">Alasan / Justifikasi</h4>
-            <p className="text-sm text-muted-foreground">{request.rationale}</p>
-          </div>
-
-          {/* Competency Gap */}
-          {request.competencyGap && (
-            <div className="space-y-2">
-              <h4 className="font-medium font-serif">Gap Kompetensi (TNA)</h4>
-              <Badge variant="outline" className="text-secondary border-secondary">
-                {request.competencyGap}
-              </Badge>
-            </div>
-          )}
-
-          {/* Approval History */}
-          {request.approvals.length > 0 && (
-            <div className="space-y-3">
-              <h4 className="font-medium font-serif">Riwayat Persetujuan</h4>
-              <div className="space-y-3">
-                {request.approvals.map((approval) => (
-                  <div 
-                    key={approval.id} 
-                    className={cn(
-                      "p-3 rounded-lg border",
-                      approval.action === "approve" && "border-emerald-200 bg-emerald-50",
-                      approval.action === "reject" && "border-red-200 bg-red-50",
-                      approval.action === "revision" && "border-blue-200 bg-blue-50"
-                    )}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        {approval.action === "approve" && <CheckCircle2 className="w-4 h-4 text-emerald-600" />}
-                        {approval.action === "reject" && <XCircle className="w-4 h-4 text-red-600" />}
-                        {approval.action === "revision" && <AlertCircle className="w-4 h-4 text-blue-600" />}
-                        <span className="font-medium text-sm">{levelLabels[approval.level]}</span>
-                      </div>
-                      <span className="text-xs text-muted-foreground">{formatDateTime(approval.timestamp)}</span>
-                    </div>
-                    <p className="text-sm text-muted-foreground">{approval.approverName}</p>
-                    <p className="text-sm mt-2">{approval.comment}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      </SheetContent>
-    </Sheet>
+    <Button asChild variant="ghost" size="sm">
+      <Link href={`/dashboard/pengajuan/${request.id}?from=persetujuan`}>
+        <Eye className="mr-1 h-4 w-4" />
+        Detail
+      </Link>
+    </Button>
   )
 }
 
