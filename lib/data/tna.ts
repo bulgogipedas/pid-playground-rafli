@@ -1,4 +1,4 @@
-// Training Needs Analysis (TNA) data for LMS PID
+// Training Needs Analysis (TNA) data for Pyridam Learning
 
 export interface CompetencyGap {
   id: string

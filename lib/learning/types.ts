@@ -1,4 +1,4 @@
-// Centralized learning-flow data model for LMS PID.
+// Centralized learning-flow data model for Pyridam Learning.
 // Single source of truth for the end-to-end demo flow:
 // Pengajuan -> Approval -> Enrollment -> Belajar -> Assessment -> Sertifikat.
 

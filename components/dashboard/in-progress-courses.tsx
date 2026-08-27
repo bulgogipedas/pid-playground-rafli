@@ -8,18 +8,11 @@ import Link from "next/link"
 import { useAuth } from "@/lib/auth-context"
 import { getDashboardQueue } from "@/lib/dashboard-metrics"
 
-const toneClasses = {
-  primary: "bg-primary",
-  warning: "bg-warning",
-  success: "bg-success",
-  violet: "bg-primary",
-}
-
 const headerToneClasses = {
-  primary: "from-sidebar to-primary",
-  warning: "from-sidebar to-warning",
-  success: "from-sidebar to-success",
-  violet: "from-sidebar to-primary",
+  primary: "from-[#292929] to-[#101010]",
+  warning: "from-[#292929] to-[#101010]",
+  success: "from-[#292929] to-[#101010]",
+  violet: "from-[#292929] to-[#101010]",
 }
 
 export function InProgressCourses() {
@@ -89,7 +82,7 @@ export function InProgressCourses() {
                 <Link href={course.href}>
                   <Button
                     size="sm"
-                    className={`mt-3 w-full ${toneClasses[course.tone]} text-primary-foreground hover:opacity-90`}
+                    className="mt-3 w-full"
                   >
                     {isLearner ? "Lanjutkan" : "Buka"}
                   </Button>

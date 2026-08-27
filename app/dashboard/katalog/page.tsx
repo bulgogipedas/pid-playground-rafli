@@ -57,6 +57,8 @@ import {
   PlayCircle,
   Lock,
   Unlock,
+  Youtube,
+  ArrowUpRight,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { PageHeader } from "@/components/dashboard/page-header"
@@ -64,33 +66,36 @@ import { pythonCourse } from "@/lib/learning/seed"
 
 function FeaturedLearningPath() {
   return (
-    <Card className="overflow-hidden border-primary/20 bg-white shadow-sm">
+    <Card className="overflow-hidden rounded-[30px] border-white/10 bg-card py-0">
       <CardContent className="p-0">
-        <div className="grid gap-0 lg:grid-cols-[1.3fr_1fr]">
-          <div className="bg-[#233873] p-6 text-white sm:p-8">
+        <div className="grid gap-0 lg:grid-cols-[1.08fr_0.92fr]">
+          <div className="relative overflow-hidden bg-[radial-gradient(circle_at_18%_8%,rgba(236,72,153,0.78),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(37,99,235,0.7),transparent_43%),linear-gradient(135deg,#6D28D9,#24123D_58%,#111)] p-6 text-white sm:p-8 lg:p-10">
+            <div aria-hidden="true" className="absolute -bottom-20 -left-16 h-64 w-64 rounded-full border border-white/15" />
             <div className="mb-4 flex flex-wrap items-center gap-2">
-              <Badge className="border-0 bg-cyan-400/15 text-cyan-100">Learning path baru</Badge>
+              <Badge className="border-white/15 bg-white/15 text-white"><Youtube className="h-3.5 w-3.5" /> Open class · YouTube</Badge>
+              <Badge variant="outline" className="border-white/20 text-white/80">Gratis</Badge>
               <Badge variant="outline" className="border-white/20 text-white/80">Pemula</Badge>
             </div>
-            <h2 className="max-w-xl text-2xl font-bold tracking-tight sm:text-3xl">{pythonCourse.title}</h2>
-            <p className="mt-3 max-w-2xl text-sm leading-6 text-white/75">{pythonCourse.shortDescription}</p>
+            <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/55">Pilihan editor</p>
+            <h2 className="mt-3 max-w-xl text-4xl font-medium leading-[0.94] tracking-[-0.055em] sm:text-5xl">{pythonCourse.title}</h2>
+            <p className="mt-4 max-w-2xl text-sm leading-6 text-white/70 sm:text-base">{pythonCourse.shortDescription}</p>
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/75">
-              <span className="flex items-center gap-2"><Clock className="h-4 w-4 text-cyan-300" />{pythonCourse.estimatedHours} jam</span>
-              <span className="flex items-center gap-2"><BookOpen className="h-4 w-4 text-cyan-300" />{pythonCourse.modules.length} modul</span>
+              <span className="flex items-center gap-2"><Clock className="h-4 w-4" />{pythonCourse.estimatedHours} jam</span>
+              <span className="flex items-center gap-2"><BookOpen className="h-4 w-4" />{pythonCourse.modules.length} modul</span>
               <span className="flex items-center gap-2"><Star className="h-4 w-4 fill-amber-300 text-amber-300" />{pythonCourse.rating} ({pythonCourse.ratingCount})</span>
             </div>
-            <Link href={`/dashboard/belajar/${pythonCourse.id}`} className="mt-6 inline-flex">
-              <Button className="bg-white text-primary hover:bg-blue-50"><Play className="mr-2 h-4 w-4" />Mulai learning path</Button>
-            </Link>
-          </div>
-          <div className="flex flex-col justify-between gap-5 p-6 sm:p-8">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-[0.14em] text-primary">Yang akan kamu kuasai</p>
-              <div className="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-                {pythonCourse.learningOutcomes.slice(0, 4).map((outcome) => <div key={outcome} className="flex gap-2 text-sm text-muted-foreground"><CheckCircle className="mt-0.5 h-4 w-4 shrink-0 text-emerald-600" /><span>{outcome}</span></div>)}
-              </div>
+            <div className="relative z-10 mt-7 flex flex-wrap gap-2">
+              <Link href={`/dashboard/belajar/${pythonCourse.id}`}><Button><Play className="h-4 w-4" />Coba kelas sekarang</Button></Link>
+              <a href={`https://www.youtube.com/playlist?list=${pythonCourse.youtubePlaylistId}`} target="_blank" rel="noreferrer"><Button variant="secondary">Lihat playlist <ArrowUpRight className="h-4 w-4" /></Button></a>
             </div>
-            <div className="rounded-lg bg-muted/60 p-4 text-sm"><p className="font-semibold">Termasuk di dalamnya</p><p className="mt-1 text-muted-foreground">Video playlist, quiz per modul, mini project, post-test, feedback, dan sertifikat.</p></div>
+          </div>
+          <div className="flex min-w-0 flex-col justify-between gap-5 bg-[#111] p-4 sm:p-6">
+            <div className="overflow-hidden rounded-[20px] border border-white/10 bg-black shadow-2xl">
+              <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-3"><span className="h-2 w-2 rounded-full bg-white/25" /><span className="h-2 w-2 rounded-full bg-white/15" /><span className="h-2 w-2 rounded-full bg-white/10" /><span className="ml-2 text-[11px] text-white/40">youtube.com · kelas terbuka</span></div>
+              <div className="aspect-video w-full"><iframe className="h-full w-full" src={`https://www.youtube.com/embed/videoseries?list=${pythonCourse.youtubePlaylistId}`} title={`Preview ${pythonCourse.title}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-center"><div className="rounded-[14px] bg-white/[0.06] p-3"><p className="text-lg font-medium">9</p><p className="text-[11px] text-muted-foreground">Modul</p></div><div className="rounded-[14px] bg-white/[0.06] p-3"><p className="text-lg font-medium">40+</p><p className="text-[11px] text-muted-foreground">Aktivitas</p></div><div className="rounded-[14px] bg-white/[0.06] p-3"><p className="text-lg font-medium">1</p><p className="text-[11px] text-muted-foreground">Sertifikat</p></div></div>
+            <p className="text-sm leading-relaxed text-muted-foreground">Versi demo sudah lengkap: playlist video, quiz, mini project, post-test, feedback, progress tersimpan, dan penerbitan sertifikat.</p>
           </div>
         </div>
       </CardContent>
@@ -496,7 +501,7 @@ export default function KatalogPage() {
 
   // Stats
   const stats = {
-    total: dummyCourses.filter(c => c.status === "published").length,
+    total: dummyCourses.filter(c => c.status === "published").length + 1,
     mandatory: dummyCourses.filter(c => c.status === "published" && c.type === "wajib").length,
     optional: dummyCourses.filter(c => c.status === "published" && c.type === "pilihan").length,
     enrolled: enrollments.filter(e => e.userId === user?.id).length,

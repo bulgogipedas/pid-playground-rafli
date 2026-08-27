@@ -66,8 +66,8 @@ const allCertificates: Certificate[] = [
     userId: "USR001",
     userName: "Budi Santoso",
     issuedAt: "2024-01-10",
-    certificateNumber: "LMSPID-2024-000056",
-    qrCode: "https://lmspid.pelniservices.co.id/verify/LMSPID-2024-000056",
+    certificateNumber: "PYFA-2024-000056",
+    qrCode: "https://learning.pyfa.co.id/verify/PYFA-2024-000056",
     digitalSignature: "Siti Rahayu - Kepala Bagian Pengembangan SDM",
     learningHours: 2,
     type: "internal",
@@ -79,8 +79,8 @@ const allCertificates: Certificate[] = [
     userId: "USR001",
     userName: "Budi Santoso",
     issuedAt: "2024-01-05",
-    certificateNumber: "LMSPID-2024-000045",
-    qrCode: "https://lmspid.pelniservices.co.id/verify/LMSPID-2024-000045",
+    certificateNumber: "PYFA-2024-000045",
+    qrCode: "https://learning.pyfa.co.id/verify/PYFA-2024-000045",
     digitalSignature: "Siti Rahayu - Kepala Bagian Pengembangan SDM",
     learningHours: 1.25,
     type: "internal",
@@ -108,8 +108,8 @@ const allCertificates: Certificate[] = [
     userId: "USR001",
     userName: "Budi Santoso",
     issuedAt: "2023-08-30",
-    certificateNumber: "LMSPID-2023-000892",
-    qrCode: "https://lmspid.pelniservices.co.id/verify/LMSPID-2023-000892",
+    certificateNumber: "PYFA-2023-000892",
+    qrCode: "https://learning.pyfa.co.id/verify/PYFA-2023-000892",
     digitalSignature: "Siti Rahayu - Kepala Bagian Pengembangan SDM",
     learningHours: 4,
     type: "internal",
@@ -248,9 +248,9 @@ export default function SertifikatPage() {
           userId: user?.id ?? "USR001",
           userName: user?.name ?? "Budi Santoso",
           issuedAt: new Date().toISOString(),
-          certificateNumber: player.certificateNumber || "LMSPID-PYTHON-DEMO",
-          qrCode: `https://lmspid.pelniservices.co.id/verify/${player.certificateNumber || "LMSPID-PYTHON-DEMO"}`,
-          digitalSignature: "Admin SDM - LMS PID",
+          certificateNumber: player.certificateNumber || "PYFA-PYTHON-DEMO",
+          qrCode: `https://learning.pyfa.co.id/verify/${player.certificateNumber || "PYFA-PYTHON-DEMO"}`,
+          digitalSignature: "Admin SDM - Pyridam Learning",
           learningHours: pythonCourse.estimatedHours,
           type: "internal",
         })
@@ -687,7 +687,7 @@ export default function SertifikatPage() {
                   </div>
                   <div className="h-full flex flex-col justify-between">
                     <div>
-                      <p className="text-sm opacity-80">PT Pelita Indonesia Djaya</p>
+                      <p className="text-sm opacity-80">PT Pyridam Farma Tbk</p>
                       <h3 className="font-serif text-xl font-bold mt-1">SERTIFIKAT</h3>
                     </div>
                     <div>

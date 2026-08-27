@@ -56,7 +56,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b border-border bg-card/95 px-3 pl-16 backdrop-blur supports-[backdrop-filter]:bg-card/80 sm:px-6 sm:pl-16 lg:pl-6">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b border-white/10 bg-background/85 px-3 pl-16 backdrop-blur-xl sm:px-7 sm:pl-16 lg:px-10">
       {/* Search */}
       <div className="min-w-0 max-w-md flex-1">
         <form role="search" onSubmit={handleSearch} className="relative">
@@ -72,7 +72,7 @@ export function Header() {
             name="query"
             type="search"
             placeholder="Cari pelatihan, sertifikat..."
-            className="bg-muted border-0 pl-10 pr-10 focus-visible:ring-1 focus-visible:ring-secondary"
+            className="border-white/10 bg-card pl-10 pr-10 focus-visible:ring-ring/20"
           />
           <Button
             type="submit"
@@ -119,7 +119,7 @@ export function Header() {
               <DropdownMenuItem key={notification.id} className="flex flex-col items-start gap-1 py-3 cursor-pointer">
                 <div className="flex items-start gap-2 w-full">
                   {notification.unread && (
-                    <span className="w-2 h-2 rounded-full bg-secondary mt-1.5 shrink-0" />
+                    <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-ring" />
                   )}
                   <div className={notification.unread ? "" : "pl-4"}>
                     <p className="font-medium text-sm">{notification.title}</p>

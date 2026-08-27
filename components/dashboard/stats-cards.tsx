@@ -14,10 +14,10 @@ const iconByLabel = (label: string) => {
 }
 
 const toneClasses = {
-  primary: "bg-primary",
-  success: "bg-success",
-  warning: "bg-warning",
-  violet: "bg-primary",
+  primary: "bg-white/10",
+  success: "bg-white/10",
+  warning: "bg-white/10",
+  violet: "bg-white/10",
 }
 
 export function StatsCards() {
@@ -43,10 +43,10 @@ export function StatsCards() {
                   <span className="text-xs text-success">{stat.trend}</span>
                 </div>
               </div>
-              <div className={`${toneClasses[stat.tone]} rounded-lg p-3`}>
+              <div className={`${toneClasses[stat.tone]} rounded-full border border-white/10 p-3`}>
                 {(() => {
                   const Icon = iconByLabel(stat.label)
-                  return <Icon aria-hidden="true" className="h-5 w-5 text-primary-foreground" />
+                  return <Icon aria-hidden="true" className="h-5 w-5 text-foreground" />
                 })()}
               </div>
             </div>

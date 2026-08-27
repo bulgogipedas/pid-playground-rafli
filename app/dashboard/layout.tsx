@@ -17,7 +17,7 @@ export default function DashboardLayout({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Skip to content (keyboard/screen-reader users) */}
       <a
         href="#main-content"
@@ -30,14 +30,14 @@ export default function DashboardLayout({
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="min-w-0 transition-all duration-300 lg:pl-64">
+      <div className="min-w-0 transition-all duration-300 lg:pl-[260px]">
         <Header />
         <main
           id="main-content"
           tabIndex={-1}
-          className="min-w-0 px-4 pb-8 pt-20 focus:outline-none sm:px-6 sm:pb-10 sm:pt-6"
+          className="min-w-0 px-4 pb-10 pt-20 focus:outline-none sm:px-7 sm:pt-8 lg:px-10"
         >
-          <div className="mx-auto w-full max-w-[1600px]">{children}</div>
+          <div className="mx-auto w-full max-w-[1199px]">{children}</div>
         </main>
       </div>
     </div>

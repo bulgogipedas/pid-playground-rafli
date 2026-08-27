@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { GraduationCap, Eye, EyeOff, Loader2, AlertCircle } from "lucide-react"
+import { Pill, Eye, EyeOff, Loader2, AlertCircle, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -45,49 +45,50 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen bg-background">
       {/* Left Side - Branding */}
-      <div className="hidden flex-col justify-between bg-sidebar p-12 text-white lg:flex lg:w-1/2">
+      <div className="relative hidden flex-col justify-between overflow-hidden border-r border-white/10 bg-[#090909] p-12 text-white lg:flex lg:w-1/2">
+        <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(circle_at_30%_100%,rgba(168,85,247,0.55),transparent_48%),radial-gradient(circle_at_80%_90%,rgba(236,72,153,0.38),transparent_42%)]" />
         <div>
           <div className="flex items-center gap-3 mb-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-sidebar-primary">
-              <GraduationCap className="w-7 h-7" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-foreground text-background">
+              <Pill className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="font-serif font-bold text-2xl">LMS PID</h1>
-              <p className="text-sm text-white/70">Pelita Indonesia Djaya</p>
+              <h1 className="font-serif text-xl font-medium tracking-[-0.04em]">Pyridam Learning</h1>
+              <p className="text-sm text-white/55">PT Pyridam Farma Tbk</p>
             </div>
           </div>
         </div>
         
-        <div className="space-y-6">
-          <h2 className="font-serif text-4xl font-bold leading-tight text-balance">
-            Sistem Pembelajaran Terintegrasi untuk Pengembangan SDM
+        <div className="relative z-10 space-y-6">
+          <p className="text-xs font-medium uppercase tracking-[0.16em] text-white/55">Grow with purpose</p>
+          <h2 className="max-w-xl text-balance font-serif text-6xl font-medium leading-[0.9] tracking-[-0.06em]">
+            Belajar hari ini. Berdampak esok hari.
           </h2>
-          <p className="text-lg text-white/80 leading-relaxed">
-            Platform Learning Management System yang menghubungkan analisis kebutuhan pelatihan, 
-            pelaksanaan pembelajaran, hingga sertifikasi digital dalam satu ekosistem.
+          <p className="max-w-xl text-lg leading-relaxed text-white/65">
+            Satu ruang belajar untuk mengembangkan kapabilitas insan Pyridam—dari kebutuhan kompetensi hingga sertifikasi.
           </p>
           <div className="grid grid-cols-2 gap-4 pt-4">
-            <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold text-warning">1,200+</div>
+            <div className="rounded-[20px] border border-white/10 bg-white/[0.07] p-5 backdrop-blur">
+              <div className="text-3xl font-medium tracking-[-0.04em]">1,200+</div>
               <div className="text-sm text-white/70">Karyawan Terdaftar</div>
             </div>
-            <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold text-success">85%</div>
+            <div className="rounded-[20px] border border-white/10 bg-white/[0.07] p-5 backdrop-blur">
+              <div className="text-3xl font-medium tracking-[-0.04em]">85%</div>
               <div className="text-sm text-white/70">Tingkat Penyelesaian</div>
             </div>
-            <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold text-blue-300">150+</div>
+            <div className="rounded-[20px] border border-white/10 bg-white/[0.07] p-5 backdrop-blur">
+              <div className="text-3xl font-medium tracking-[-0.04em]">150+</div>
               <div className="text-sm text-white/70">Kursus Tersedia</div>
             </div>
-            <div className="bg-white/10 rounded-lg p-4">
-              <div className="text-3xl font-bold text-white">5,000+</div>
+            <div className="rounded-[20px] border border-white/10 bg-white/[0.07] p-5 backdrop-blur">
+              <div className="text-3xl font-medium tracking-[-0.04em]">5,000+</div>
               <div className="text-sm text-white/70">Sertifikat Diterbitkan</div>
             </div>
           </div>
         </div>
         
         <div className="text-sm text-white/50">
-          &copy; 2024 PT Pelita Indonesia Djaya. Hak Cipta Dilindungi.
+          &copy; 2026 PT Pyridam Farma Tbk. Hak Cipta Dilindungi.
         </div>
       </div>
 
@@ -96,18 +97,18 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
           <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-sidebar">
-              <GraduationCap className="w-7 h-7 text-white" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-foreground text-background">
+              <Pill className="h-6 w-6" />
             </div>
             <div>
-              <h1 className="font-serif text-2xl font-bold text-sidebar">LMS PID</h1>
-              <p className="text-sm text-muted-foreground">Pelita Indonesia Djaya</p>
+              <h1 className="font-serif text-xl font-medium tracking-[-0.04em] text-foreground">Pyridam Learning</h1>
+              <p className="text-sm text-muted-foreground">PT Pyridam Farma Tbk</p>
             </div>
           </div>
 
           <Card className="shadow-sm">
             <CardHeader className="space-y-1">
-              <CardTitle className="font-serif text-2xl text-sidebar">Selamat Datang</CardTitle>
+              <CardTitle className="font-serif text-3xl font-medium tracking-[-0.04em] text-foreground">Selamat datang</CardTitle>
               <CardDescription>
                 Masuk menggunakan akun Zentyal Active Directory Anda
               </CardDescription>
@@ -126,7 +127,7 @@ export default function LoginPage() {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="nama@pelniservices.co.id"
+                    placeholder="nama@pyfa.co.id"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
@@ -168,7 +169,7 @@ export default function LoginPage() {
                       Memproses...
                     </>
                   ) : (
-                    "Masuk"
+                    <>Masuk <ArrowRight className="ml-1 h-4 w-4" /></>
                   )}
                 </Button>
               </form>

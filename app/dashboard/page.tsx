@@ -7,7 +7,7 @@ import { UpcomingDeadlines } from "@/components/dashboard/upcoming-deadlines"
 export default function DashboardPage() {
   return (
     <div className="space-y-6 max-w-7xl mx-auto">
-      <h1 className="sr-only">Dashboard LMS PID</h1>
+      <h1 className="sr-only">Dashboard Pyridam Learning</h1>
       {/* Welcome Section */}
       <WelcomeSection />
 

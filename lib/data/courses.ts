@@ -1,4 +1,4 @@
-// Dummy course and training data for LMS PID
+// Dummy course and training data for Pyridam Learning
 
 export type CourseStatus = "belum_mulai" | "sedang_berjalan" | "selesai"
 export type CourseType = "wajib" | "pilihan"
@@ -76,7 +76,7 @@ export const dummyCourses: Course[] = [
   {
     id: "CRS001",
     title: "Pengenalan Keselamatan dan Kesehatan Kerja (K3)",
-    description: "Pelatihan wajib tentang dasar-dasar K3 untuk seluruh karyawan PT Pelita Indonesia Djaya.",
+    description: "Pelatihan wajib tentang dasar-dasar K3 untuk seluruh karyawan PT Pyridam Farma Tbk.",
     thumbnail: "/placeholder.svg?height=200&width=300",
     duration: 120,
     type: "wajib",
@@ -341,8 +341,8 @@ export const dummyCertificates: Certificate[] = [
     userId: "USR001",
     userName: "Budi Santoso",
     issuedAt: "2023-12-15",
-    certificateNumber: "LMSPID-2023-001234",
-    qrCode: "https://lmspid.pelniservices.co.id/verify/LMSPID-2023-001234",
+    certificateNumber: "PYFA-2023-001234",
+    qrCode: "https://learning.pyfa.co.id/verify/PYFA-2023-001234",
     digitalSignature: "Siti Rahayu - Kepala Bagian Pengembangan SDM",
     learningHours: 1.5,
     type: "internal",
@@ -354,8 +354,8 @@ export const dummyCertificates: Certificate[] = [
     userId: "USR001",
     userName: "Budi Santoso",
     issuedAt: "2023-11-25",
-    certificateNumber: "LMSPID-2023-001198",
-    qrCode: "https://lmspid.pelniservices.co.id/verify/LMSPID-2023-001198",
+    certificateNumber: "PYFA-2023-001198",
+    qrCode: "https://learning.pyfa.co.id/verify/PYFA-2023-001198",
     digitalSignature: "Siti Rahayu - Kepala Bagian Pengembangan SDM",
     learningHours: 1,
     type: "internal",

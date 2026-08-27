@@ -64,11 +64,11 @@ export function PageHeader({
       )}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
-          <h1 className="text-2xl font-serif font-bold text-foreground text-balance">
+          <h1 className="text-balance font-serif text-3xl font-medium leading-none tracking-[-0.045em] text-foreground sm:text-4xl">
             {title}
           </h1>
           {description && (
-            <p className="mt-1 text-sm text-muted-foreground text-pretty">
+            <p className="mt-2 max-w-2xl text-pretty text-sm leading-relaxed text-muted-foreground">
               {description}
             </p>
           )}

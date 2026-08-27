@@ -22,6 +22,7 @@ import {
   X,
   DollarSign,
   PieChart,
+  Pill,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -211,21 +212,21 @@ export function Sidebar() {
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-50 flex h-[100dvh] flex-col bg-sidebar text-white transition-all duration-300",
-          isCollapsed ? "w-20" : "w-64",
+          "fixed left-0 top-0 z-50 flex h-[100dvh] flex-col border-r border-white/10 bg-sidebar text-white transition-all duration-300",
+          isCollapsed ? "w-20" : "w-[260px]",
           isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
         )}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between p-4 border-b border-white/10">
+        <div className="flex min-h-16 items-center justify-between border-b border-white/10 p-4">
           <Link href="/dashboard" className="flex items-center gap-3">
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-sidebar-primary">
-              <GraduationCap className="w-6 h-6 text-white" />
+            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground text-background">
+              <Pill className="h-5 w-5" />
             </div>
             {!isCollapsed && (
               <div className="overflow-hidden">
-                <span className="block font-serif text-lg font-bold leading-tight">LMS PID</span>
-                <p className="text-xs text-white/70 truncate">Pelita Indonesia Djaya</p>
+                <span className="block font-serif text-base font-medium tracking-[-0.04em]">Pyridam Learning</span>
+                <p className="truncate text-[11px] text-white/55">PT Pyridam Farma Tbk</p>
               </div>
             )}
           </Link>
@@ -251,13 +252,13 @@ export function Sidebar() {
         </div>
 
         {/* Navigation */}
-        <nav aria-label="Navigasi utama" className="flex-1 p-4 overflow-y-auto">
+        <nav aria-label="Navigasi utama" className="flex-1 overflow-y-auto p-3">
           {navigationSections.map((section, sectionIndex) => (
             <div key={section.label}>
               {/* Section Label */}
               {!isCollapsed && (
-                <div className="px-3 py-3 mb-2">
-                  <p className="text-xs font-semibold text-white/60 uppercase tracking-wider">
+                <div className="mb-1 px-3 pb-2 pt-4">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.12em] text-white/45">
                     {section.label}
                   </p>
                 </div>
@@ -276,9 +277,9 @@ export function Sidebar() {
                         onClick={() => setIsMobileOpen(false)}
                         aria-current={isActive ? "page" : undefined}
                         className={cn(
-                          "flex min-h-11 items-center gap-3 rounded-lg px-3 py-2.5 transition-colors",
+                          "flex min-h-11 items-center gap-3 rounded-[12px] px-3 py-2.5 transition-colors",
                           isActive
-                            ? "bg-sidebar-primary text-white"
+                            ? "bg-foreground text-background"
                             : "text-white/80 hover:bg-white/10 hover:text-white"
                         )}
                       >
@@ -371,7 +372,7 @@ export function Sidebar() {
         variant="ghost"
         size="icon"
         onClick={() => setIsMobileOpen(true)}
-        className="fixed top-4 left-4 z-40 lg:hidden bg-sidebar text-white hover:bg-sidebar-primary"
+        className="fixed left-3 top-2.5 z-40 bg-secondary text-white hover:bg-accent lg:hidden"
         aria-label="Buka menu"
         aria-expanded={isMobileOpen}
       >

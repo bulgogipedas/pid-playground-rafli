@@ -825,7 +825,7 @@ export const pythonCourse: Course = {
   method: "E-Learning",
   format: "Online Mandiri",
   language: "Bahasa Indonesia",
-  provider: "Internal LMS PID",
+  provider: "Pyridam Learning",
   instructor: "Trainer Teknologi Informasi",
   shortDescription:
     "Pelajari dasar-dasar pemrograman Python mulai dari sintaks, variabel, percabangan, perulangan, fungsi, hingga mini project sederhana.",

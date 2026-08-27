@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Plus_Jakarta_Sans } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/lib/auth-context'
 import { Toaster } from '@/components/ui/sonner'
@@ -11,16 +11,9 @@ const inter = Inter({
   display: 'swap',
 })
 
-const plusJakarta = Plus_Jakarta_Sans({ 
-  subsets: ["latin"],
-  variable: '--font-plus-jakarta',
-  display: 'swap',
-})
-
 export const metadata: Metadata = {
-  title: 'LMS PID - Learning Management System',
-  description: 'Sistem Manajemen Pembelajaran PT Pelita Indonesia Djaya',
-  generator: 'v0.app',
+  title: 'Pyridam Learning — PT Pyridam Farma Tbk',
+  description: 'Ekosistem pembelajaran dan pengembangan kompetensi PT Pyridam Farma Tbk',
   icons: {
     icon: [
       {
@@ -41,7 +34,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#233873',
+  themeColor: '#050505',
   width: 'device-width',
   initialScale: 1,
 }
@@ -52,7 +45,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="id" data-scroll-behavior="smooth" className={`${inter.variable} ${plusJakarta.variable} bg-background`}>
+    <html lang="id" data-scroll-behavior="smooth" className={`${inter.variable} bg-background dark`}>
       <body className="font-sans antialiased bg-background">
         <AuthProvider>
           {children}

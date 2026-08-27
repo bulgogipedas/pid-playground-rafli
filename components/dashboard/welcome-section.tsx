@@ -40,21 +40,22 @@ export function WelcomeSection() {
   }, [])
   
   return (
-    <div className="rounded-lg bg-gradient-to-r from-sidebar to-primary p-6 text-white shadow-sm">
+    <section className="relative overflow-hidden rounded-[30px] bg-[radial-gradient(circle_at_88%_18%,rgba(236,72,153,0.72),transparent_32%),radial-gradient(circle_at_60%_120%,rgba(37,99,235,0.78),transparent_48%),linear-gradient(135deg,#5B21B6_0%,#1D1038_55%,#101010_100%)] p-6 text-white shadow-[0_22px_70px_rgba(88,28,135,0.28)] sm:p-8">
+      <div aria-hidden="true" className="absolute -right-16 -top-16 h-52 w-52 rounded-full border border-white/15" />
       <div className="flex items-start justify-between">
-        <div>
+        <div className="relative z-10">
           <div className="flex items-center gap-2 mb-1">
             <Sparkles className="w-5 h-5 text-warning" />
             <span className="text-sm text-white/80">{greeting}</span>
           </div>
-          <h2 className="font-serif text-2xl md:text-3xl font-bold mb-2">
+          <h2 className="mb-3 font-serif text-3xl font-medium leading-[0.98] tracking-[-0.05em] sm:text-5xl">
             {user?.name || 'Pengguna'}!
           </h2>
-          <p className="max-w-lg text-sm text-white/80 md:text-base">
+          <p className="max-w-xl text-sm leading-relaxed text-white/75 md:text-base">
             {getRoleMessage(user?.role)}
           </p>
           <div className="mt-3 flex items-center gap-3">
-            <span className="rounded-full bg-white/15 px-2 py-1 text-xs ring-1 ring-white/20">
+            <span className="rounded-full bg-white/15 px-3 py-1.5 text-xs ring-1 ring-white/20">
               {user?.role ? roleLabels[user.role] : 'Peserta'}
             </span>
             <span className="text-xs text-white/70">
@@ -62,7 +63,7 @@ export function WelcomeSection() {
             </span>
           </div>
         </div>
-        <div className="hidden md:block">
+        <div className="relative z-10 hidden md:block">
           <div className="w-24 h-24 rounded-full bg-white/10 flex items-center justify-center">
             <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center">
               <span className="text-3xl font-bold font-serif">{initials}</span>
@@ -70,6 +71,6 @@ export function WelcomeSection() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   )
 }

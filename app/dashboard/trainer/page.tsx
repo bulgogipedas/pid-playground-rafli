@@ -61,7 +61,7 @@ const trainers = [
   {
     id: "TR001",
     name: "Dewi Lestari",
-    email: "dewi.lestari@pelniservices.co.id",
+    email: "dewi.lestari@pyfa.co.id",
     phone: "081234567893",
     type: "internal",
     specialization: ["Leadership", "Soft Skills", "Communication"],
@@ -75,7 +75,7 @@ const trainers = [
   {
     id: "TR002",
     name: "Agus Prasetyo",
-    email: "agus.prasetyo@pelniservices.co.id",
+    email: "agus.prasetyo@pyfa.co.id",
     phone: "081234567901",
     type: "internal",
     specialization: ["Technical Training", "IT Skills", "Project Management"],
@@ -131,7 +131,7 @@ const trainers = [
   {
     id: "TR006",
     name: "Sinta Maharani",
-    email: "sinta.maharani@pelniservices.co.id",
+    email: "sinta.maharani@pyfa.co.id",
     phone: "081234567950",
     type: "internal",
     specialization: ["Customer Service", "Business Ethics", "Compliance"],
@@ -158,7 +158,7 @@ const pendingRequests = [
   {
     id: "REQ002",
     name: "Rudi Hartono",
-    email: "rudi.hartono@pelniservices.co.id",
+    email: "rudi.hartono@pyfa.co.id",
     type: "internal",
     specialization: ["Safety Training", "Risk Management"],
     requestDate: "2024-01-13",
