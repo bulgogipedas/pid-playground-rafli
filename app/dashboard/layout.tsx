@@ -30,7 +30,7 @@ export default function DashboardLayout({
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="min-w-0 transition-all duration-300 lg:pl-[260px]">
+      <div className="min-w-0 transition-all duration-300 lg:pl-[260px] peer-data-[collapsed=true]/sidebar:lg:pl-20">
         <Header />
         <main
           id="main-content"
