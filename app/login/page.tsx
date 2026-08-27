@@ -1,8 +1,9 @@
 "use client"
 
+import Image from "next/image"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Pill, Eye, EyeOff, Loader2, AlertCircle, ArrowRight } from "lucide-react"
+import { Eye, EyeOff, Loader2, AlertCircle, ArrowRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -48,13 +49,13 @@ export default function LoginPage() {
       <div className="relative hidden flex-col justify-between overflow-hidden border-r border-white/10 bg-[#090909] p-12 text-white lg:flex lg:w-1/2">
         <div aria-hidden="true" className="absolute inset-x-0 bottom-0 h-1/2 bg-[radial-gradient(circle_at_30%_100%,rgba(168,85,247,0.55),transparent_48%),radial-gradient(circle_at_80%_90%,rgba(236,72,153,0.38),transparent_42%)]" />
         <div>
-          <div className="flex items-center gap-3 mb-8">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-foreground text-background">
-              <Pill className="h-6 w-6" />
+          <div className="mb-8 flex items-center gap-3">
+            <div className="flex h-[58px] w-[166px] items-center rounded-[14px] bg-[#fff] px-3 py-2 shadow-[0_12px_30px_rgba(0,0,0,.3)]">
+              <Image src="/pyridam-farma-logo.png" alt="Logo PT Pyridam Farma Tbk" width={300} height={105} priority className="h-full w-full object-contain" />
             </div>
             <div>
-              <h1 className="font-serif text-xl font-medium tracking-[-0.04em]">Pyridam Learning</h1>
-              <p className="text-sm text-white/55">PT Pyridam Farma Tbk</p>
+              <h1 className="font-serif text-xl font-medium tracking-[-0.04em]">Learning</h1>
+              <p className="text-sm text-white/55">Learning Management System</p>
             </div>
           </div>
         </div>
@@ -96,13 +97,13 @@ export default function LoginPage() {
       <div className="flex-1 flex items-center justify-center p-8">
         <div className="w-full max-w-md">
           {/* Mobile Logo */}
-          <div className="lg:hidden flex items-center gap-3 mb-8 justify-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-foreground text-background">
-              <Pill className="h-6 w-6" />
+          <div className="mb-8 flex items-center justify-center gap-3 lg:hidden">
+            <div className="flex h-[54px] w-[154px] items-center rounded-[13px] bg-[#fff] px-3 py-2 shadow-[0_10px_28px_rgba(0,0,0,.24)]">
+              <Image src="/pyridam-farma-logo.png" alt="Logo PT Pyridam Farma Tbk" width={300} height={105} priority className="h-full w-full object-contain" />
             </div>
             <div>
-              <h1 className="font-serif text-xl font-medium tracking-[-0.04em] text-foreground">Pyridam Learning</h1>
-              <p className="text-sm text-muted-foreground">PT Pyridam Farma Tbk</p>
+              <h1 className="font-serif text-xl font-medium tracking-[-0.04em] text-foreground">Learning</h1>
+              <p className="text-xs text-muted-foreground">Learning Management System</p>
             </div>
           </div>
 

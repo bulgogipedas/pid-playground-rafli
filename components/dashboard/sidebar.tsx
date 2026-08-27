@@ -1,6 +1,7 @@
 "use client"
 
 import Link from "next/link"
+import Image from "next/image"
 import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import {
@@ -22,7 +23,6 @@ import {
   X,
   DollarSign,
   PieChart,
-  Pill,
 } from "lucide-react"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
@@ -219,16 +219,20 @@ export function Sidebar() {
       >
         {/* Logo */}
         <div className="flex min-h-16 items-center justify-between border-b border-white/10 p-4">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-foreground text-background">
-              <Pill className="h-5 w-5" />
+          <Link href="/dashboard" aria-label="Pyridam Learning" className="flex min-w-0 items-center">
+            <div className={cn(
+              "flex h-10 shrink-0 items-center overflow-hidden rounded-[10px] bg-[#fff] shadow-[0_6px_20px_rgba(0,0,0,.22)]",
+              isCollapsed ? "w-10" : "w-[148px] px-2 py-1",
+            )}>
+              <Image
+                src="/pyridam-farma-logo.png"
+                alt="Logo PT Pyridam Farma Tbk"
+                width={300}
+                height={105}
+                priority
+                className={cn("max-w-none object-contain", isCollapsed ? "h-10 w-[114px] object-left" : "h-full w-full")}
+              />
             </div>
-            {!isCollapsed && (
-              <div className="overflow-hidden">
-                <span className="block font-serif text-base font-medium tracking-[-0.04em]">Pyridam Learning</span>
-                <p className="truncate text-[11px] text-white/55">PT Pyridam Farma Tbk</p>
-              </div>
-            )}
           </Link>
           <Button
             variant="ghost"
