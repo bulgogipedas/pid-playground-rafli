@@ -64,8 +64,7 @@ function FeaturedLearningPath() {
 
   return (
     <Card className="featured-course-shell overflow-hidden rounded-[26px] border-white/10 bg-card py-0 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
-      <CardContent className="p-0">
-        <div className="featured-course-grid grid gap-0">
+      <div className="featured-course-grid grid gap-0">
           <div className="featured-course-copy relative flex min-h-[420px] flex-col justify-center overflow-hidden bg-[radial-gradient(circle_at_18%_8%,rgba(236,72,153,0.78),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(37,99,235,0.7),transparent_43%),linear-gradient(135deg,#6D28D9,#24123D_58%,#111)] p-6 text-white sm:p-8 lg:p-10">
             <div aria-hidden="true" className="absolute -bottom-20 -left-16 h-64 w-64 rounded-full border border-white/15" />
             <div className="mb-4 flex flex-wrap items-center gap-2">
@@ -94,8 +93,7 @@ function FeaturedLearningPath() {
             <div className="grid grid-cols-3 gap-2 text-center"><div className="rounded-[14px] border border-white/[0.06] bg-white/[0.05] p-3"><p className="text-lg font-medium">{pythonCourse.modules.length}</p><p className="text-[11px] text-muted-foreground">Tahap</p></div><div className="rounded-[14px] border border-white/[0.06] bg-white/[0.05] p-3"><p className="text-lg font-medium">{videoCount}</p><p className="text-[11px] text-muted-foreground">Video</p></div><div className="rounded-[14px] border border-white/[0.06] bg-white/[0.05] p-3"><p className="text-lg font-medium">{activityCount}</p><p className="text-[11px] text-muted-foreground">Aktivitas</p></div></div>
             <p className="text-sm leading-relaxed text-muted-foreground">Learning path lengkap dengan quiz, project CRUD, post-test, progress tersimpan, feedback, dan sertifikat.</p>
           </div>
-        </div>
-      </CardContent>
+      </div>
     </Card>
   )
 }
