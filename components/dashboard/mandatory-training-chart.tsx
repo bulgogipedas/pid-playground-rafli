@@ -1,7 +1,6 @@
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
 import { useAuth } from "@/lib/auth-context"
 import { dummyCourses, dummyEnrollments } from "@/lib/data/courses"
 import { dummyTrainingRequests } from "@/lib/data/training-requests"
@@ -49,38 +48,27 @@ export function MandatoryTrainingChart() {
   const percentage = total ? Math.round((completed / total) * 100) : 0
   const title = isLearner ? "Progress Pelatihan" : user?.role === "admin_content" || user?.role === "trainer" ? "Status Konten" : "Status Pengajuan"
   const completionLabel = isLearner ? "Selesai" : user?.role === "admin_content" || user?.role === "trainer" ? "Terbit" : "Disetujui"
+  let currentAngle = 0
+  const ringGradient = total
+    ? `conic-gradient(${data.map((item) => {
+        const start = currentAngle
+        currentAngle += (item.value / total) * 360
+        return `${item.color} ${start}deg ${currentAngle}deg`
+      }).join(", ")})`
+    : "conic-gradient(#2a2a2a 0deg 360deg)"
 
   return (
-    <Card className="h-full rounded-xl border border-border bg-card shadow-sm">
+    <Card className="h-full border border-border bg-card shadow-sm">
       <CardHeader className="pb-2">
         <CardTitle className="font-serif text-lg font-semibold">
           {title}
         </CardTitle>
       </CardHeader>
-      <CardContent className="flex flex-1 items-center">
-        <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-4 sm:gap-6">
+      <CardContent className="flex flex-1 items-center justify-center">
+        <div className="grid w-full max-w-[480px] grid-cols-[auto_minmax(0,1fr)] items-center gap-5 sm:gap-8">
           {/* Ring Chart */}
-          <div className="relative w-32 h-32">
-            <ResponsiveContainer width="100%" height="100%">
-              <PieChart>
-                <Pie
-                  data={data}
-                  cx="50%"
-                  cy="50%"
-                  innerRadius={35}
-                  outerRadius={50}
-                  paddingAngle={2}
-                  dataKey="value"
-                  strokeWidth={0}
-                >
-                  {data.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-              </PieChart>
-            </ResponsiveContainer>
-            {/* Center Text */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="relative h-28 w-28 shrink-0 rounded-full p-3 sm:h-32 sm:w-32" style={{ background: ringGradient }}>
+            <div className="flex h-full w-full flex-col items-center justify-center rounded-full bg-card shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]">
               <span className="text-2xl font-bold font-serif text-foreground">{percentage}%</span>
               <span className="text-xs text-muted-foreground">{completionLabel}</span>
             </div>

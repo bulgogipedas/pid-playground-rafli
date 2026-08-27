@@ -14,10 +14,9 @@ import {
   type TrainingMethod,
 } from "@/lib/data/courses"
 import { jobFamilies } from "@/lib/data/users"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
 import {
   Select,
   SelectContent,
@@ -39,7 +38,6 @@ import { Badge } from "@/components/ui/badge"
 import { Progress } from "@/components/ui/progress"
 import {
   Search,
-  Filter,
   Clock,
   Users,
   Star,
@@ -51,10 +49,6 @@ import {
   FileText,
   Grid3X3,
   List,
-  Calendar,
-  Tag,
-  ChevronRight,
-  PlayCircle,
   Lock,
   Unlock,
   Youtube,
@@ -65,11 +59,14 @@ import { PageHeader } from "@/components/dashboard/page-header"
 import { pythonCourse } from "@/lib/learning/seed"
 
 function FeaturedLearningPath() {
+  const videoCount = pythonCourse.modules.flatMap((module) => module.materials).filter((material) => material.type === "video").length
+  const activityCount = pythonCourse.modules.reduce((total, module) => total + module.materials.length, 0)
+
   return (
-    <Card className="overflow-hidden rounded-[30px] border-white/10 bg-card py-0">
+    <Card className="overflow-hidden rounded-[26px] border-white/10 bg-card py-0 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
       <CardContent className="p-0">
-        <div className="grid gap-0 lg:grid-cols-[1.08fr_0.92fr]">
-          <div className="relative overflow-hidden bg-[radial-gradient(circle_at_18%_8%,rgba(236,72,153,0.78),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(37,99,235,0.7),transparent_43%),linear-gradient(135deg,#6D28D9,#24123D_58%,#111)] p-6 text-white sm:p-8 lg:p-10">
+        <div className="grid gap-0 md:grid-cols-[minmax(0,1.06fr)_minmax(300px,0.94fr)]">
+          <div className="relative flex min-h-[420px] flex-col justify-center overflow-hidden bg-[radial-gradient(circle_at_18%_8%,rgba(236,72,153,0.78),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(37,99,235,0.7),transparent_43%),linear-gradient(135deg,#6D28D9,#24123D_58%,#111)] p-6 text-white sm:p-8 md:min-h-0 lg:p-10">
             <div aria-hidden="true" className="absolute -bottom-20 -left-16 h-64 w-64 rounded-full border border-white/15" />
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <Badge className="border-white/15 bg-white/15 text-white"><Youtube className="h-3.5 w-3.5" /> Open class · YouTube</Badge>
@@ -77,7 +74,7 @@ function FeaturedLearningPath() {
               <Badge variant="outline" className="border-white/20 text-white/80">Pemula</Badge>
             </div>
             <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/55">Pilihan editor</p>
-            <h2 className="mt-3 max-w-xl text-4xl font-medium leading-[0.94] tracking-[-0.055em] sm:text-5xl">{pythonCourse.title}</h2>
+            <h2 className="mt-3 max-w-xl text-4xl font-medium leading-[0.94] tracking-[-0.055em] sm:text-[44px] lg:text-5xl">{pythonCourse.title}</h2>
             <p className="mt-4 max-w-2xl text-sm leading-6 text-white/70 sm:text-base">{pythonCourse.shortDescription}</p>
             <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-white/75">
               <span className="flex items-center gap-2"><Clock className="h-4 w-4" />{pythonCourse.estimatedHours} jam</span>
@@ -89,13 +86,13 @@ function FeaturedLearningPath() {
               <a href={`https://www.youtube.com/playlist?list=${pythonCourse.youtubePlaylistId}`} target="_blank" rel="noreferrer"><Button variant="secondary">Lihat playlist <ArrowUpRight className="h-4 w-4" /></Button></a>
             </div>
           </div>
-          <div className="flex min-w-0 flex-col justify-between gap-5 bg-[#111] p-4 sm:p-6">
+          <div className="flex min-w-0 flex-col justify-center gap-4 bg-[#111] p-4 sm:p-5 lg:p-6">
             <div className="overflow-hidden rounded-[20px] border border-white/10 bg-black shadow-2xl">
               <div className="flex items-center gap-1.5 border-b border-white/10 px-4 py-3"><span className="h-2 w-2 rounded-full bg-white/25" /><span className="h-2 w-2 rounded-full bg-white/15" /><span className="h-2 w-2 rounded-full bg-white/10" /><span className="ml-2 text-[11px] text-white/40">youtube.com · kelas terbuka</span></div>
-              <div className="aspect-video w-full"><iframe className="h-full w-full" src={`https://www.youtube.com/embed/videoseries?list=${pythonCourse.youtubePlaylistId}`} title={`Preview ${pythonCourse.title}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+              <div className="aspect-video w-full"><iframe className="h-full w-full" src={`https://www.youtube.com/embed/iA8lLwmtKQM?list=${pythonCourse.youtubePlaylistId}&rel=0`} title={`Preview ${pythonCourse.title}`} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
             </div>
-            <div className="grid grid-cols-3 gap-2 text-center"><div className="rounded-[14px] bg-white/[0.06] p-3"><p className="text-lg font-medium">9</p><p className="text-[11px] text-muted-foreground">Modul</p></div><div className="rounded-[14px] bg-white/[0.06] p-3"><p className="text-lg font-medium">40+</p><p className="text-[11px] text-muted-foreground">Aktivitas</p></div><div className="rounded-[14px] bg-white/[0.06] p-3"><p className="text-lg font-medium">1</p><p className="text-[11px] text-muted-foreground">Sertifikat</p></div></div>
-            <p className="text-sm leading-relaxed text-muted-foreground">Versi demo sudah lengkap: playlist video, quiz, mini project, post-test, feedback, progress tersimpan, dan penerbitan sertifikat.</p>
+            <div className="grid grid-cols-3 gap-2 text-center"><div className="rounded-[14px] border border-white/[0.06] bg-white/[0.05] p-3"><p className="text-lg font-medium">{pythonCourse.modules.length}</p><p className="text-[11px] text-muted-foreground">Tahap</p></div><div className="rounded-[14px] border border-white/[0.06] bg-white/[0.05] p-3"><p className="text-lg font-medium">{videoCount}</p><p className="text-[11px] text-muted-foreground">Video</p></div><div className="rounded-[14px] border border-white/[0.06] bg-white/[0.05] p-3"><p className="text-lg font-medium">{activityCount}</p><p className="text-[11px] text-muted-foreground">Aktivitas</p></div></div>
+            <p className="text-sm leading-relaxed text-muted-foreground">Learning path lengkap dengan quiz, project CRUD, post-test, progress tersimpan, feedback, dan sertifikat.</p>
           </div>
         </div>
       </CardContent>
@@ -127,7 +124,7 @@ function CourseDetailSheet({
           <div className="flex items-center gap-2 mb-2">
             <Badge className={cn(
               "rounded-full px-2 py-0.5 text-xs font-medium",
-              course.type === "wajib" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"
+              course.type === "wajib" ? "bg-rose-400/15 text-rose-200" : "bg-sky-400/15 text-sky-200"
             )}>
               {typeLabels[course.type]}
             </Badge>
@@ -141,23 +138,21 @@ function CourseDetailSheet({
 
         <div className="mt-6 space-y-6">
           {/* Course Image */}
-          <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg flex items-center justify-center">
-            <PlayCircle className="w-16 h-16 text-primary/50" />
-          </div>
+          <div role="img" aria-label={`Sampul ${course.title}`} className="aspect-video rounded-[18px] border border-white/10 bg-cover bg-center" style={{ backgroundImage: `linear-gradient(180deg, transparent, rgba(0,0,0,.42)), url(${course.thumbnail})` }} />
 
           {/* Stats */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="rounded-[14px] border border-white/[0.06] bg-white/[0.04] p-3 text-center">
               <Clock className="w-5 h-5 mx-auto text-muted-foreground mb-1" />
               <p className="font-medium">{Math.floor(course.duration / 60)} Jam</p>
               <p className="text-xs text-muted-foreground">Durasi</p>
             </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="rounded-[14px] border border-white/[0.06] bg-white/[0.04] p-3 text-center">
               <Users className="w-5 h-5 mx-auto text-muted-foreground mb-1" />
               <p className="font-medium">{course.enrollmentCount}</p>
               <p className="text-xs text-muted-foreground">Peserta</p>
             </div>
-            <div className="text-center p-3 bg-gray-50 rounded-lg">
+            <div className="rounded-[14px] border border-white/[0.06] bg-white/[0.04] p-3 text-center">
               <Star className="w-5 h-5 mx-auto text-amber-500 mb-1" />
               <p className="font-medium">{course.rating}</p>
               <p className="text-xs text-muted-foreground">Rating</p>
@@ -166,9 +161,9 @@ function CourseDetailSheet({
 
           {/* Progress if enrolled */}
           {isEnrolled && enrollment && (
-            <div className="space-y-2 p-4 bg-emerald-50 rounded-lg">
+            <div className="space-y-2 rounded-[14px] border border-emerald-400/15 bg-emerald-400/[0.08] p-4">
               <div className="flex justify-between text-sm">
-                <span className="text-emerald-700 font-medium">Progress Anda</span>
+                <span className="font-medium text-emerald-300">Progress Anda</span>
                 <span className="font-medium">{enrollment.progress}%</span>
               </div>
               <Progress value={enrollment.progress} className="h-2" />
@@ -213,7 +208,7 @@ function CourseDetailSheet({
           {/* Job Families */}
           <div className="space-y-2">
             <h4 className="font-medium font-serif">Target Job Family</h4>
-            <div className="flex flex-wrap gap-2">
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:flex-wrap">
               {course.jobFamilies.map((jf) => (
                 <Badge key={jf} variant="outline" className="text-xs">
                   {jf}
@@ -225,16 +220,16 @@ function CourseDetailSheet({
           {/* Learning Path */}
           <div className="space-y-3">
             <h4 className="font-medium font-serif">Learning Path</h4>
-            <div className="relative p-4 bg-blue-50 rounded-lg">
+            <div className="relative rounded-[16px] border border-white/[0.06] bg-white/[0.04] p-4">
               <div className="space-y-3">
                 {course.sections.map((section, idx) => (
                   <div key={section.id} className="flex items-center gap-3">
                     <div className="flex flex-col items-center">
-                      <div className="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-semibold">
+                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white text-xs font-semibold text-black">
                         {idx + 1}
                       </div>
                       {idx < course.sections.length - 1 && (
-                        <div className="w-0.5 h-8 bg-blue-300 mt-2" />
+                        <div className="mt-2 h-8 w-px bg-white/15" />
                       )}
                     </div>
                     <div className="pb-3">
@@ -253,9 +248,9 @@ function CourseDetailSheet({
             <div className="space-y-2">
               {course.sections.map((section, index) => (
                 <div key={section.id} className="border rounded-lg overflow-hidden">
-                  <div className="p-3 bg-gray-50 flex items-center justify-between">
+                  <div className="flex items-center justify-between bg-white/[0.04] p-3">
                     <div className="flex items-center gap-2">
-                      <span className="w-6 h-6 rounded-full bg-primary text-white text-xs flex items-center justify-center">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white text-xs text-black">
                         {index + 1}
                       </span>
                       <span className="font-medium text-sm">{section.title}</span>
@@ -282,7 +277,7 @@ function CourseDetailSheet({
           </div>
 
           {/* Assessment Training */}
-          <div className="space-y-3 p-4 bg-orange-50 rounded-lg border border-orange-200">
+          <div className="space-y-3 rounded-[16px] border border-amber-400/20 bg-amber-400/[0.06] p-4">
             <h4 className="font-medium font-serif flex items-center gap-2">
               <CheckCircle className="w-4 h-4 text-orange-600" />
               Assessment Pelatihan
@@ -307,7 +302,7 @@ function CourseDetailSheet({
           </div>
 
           {/* Final Project */}
-          <div className="space-y-3 p-4 bg-purple-50 rounded-lg border border-purple-200">
+          <div className="space-y-3 rounded-[16px] border border-fuchsia-400/20 bg-fuchsia-400/[0.06] p-4">
             <h4 className="font-medium font-serif flex items-center gap-2">
               <FileText className="w-4 h-4 text-purple-600" />
               Final Project
@@ -317,15 +312,15 @@ function CourseDetailSheet({
             </p>
             <div className="space-y-2 text-sm">
               <div className="flex items-center gap-2">
-                <Badge className="bg-purple-100 text-purple-700">Tipe</Badge>
+                <Badge className="bg-fuchsia-400/15 text-fuchsia-200">Tipe</Badge>
                 <span>Proyek Individu / Kelompok</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge className="bg-purple-100 text-purple-700">Durasi</Badge>
+                <Badge className="bg-fuchsia-400/15 text-fuchsia-200">Durasi</Badge>
                 <span>2-4 minggu</span>
               </div>
               <div className="flex items-center gap-2">
-                <Badge className="bg-purple-100 text-purple-700">Bobot</Badge>
+                <Badge className="bg-fuchsia-400/15 text-fuchsia-200">Bobot</Badge>
                 <span>30% dari nilai akhir</span>
               </div>
             </div>
@@ -365,12 +360,11 @@ function CourseCard({
   onEnroll: () => void
 }) {
   return (
-    <Card className="border-gray-100 shadow-sm hover:shadow-md transition-shadow overflow-hidden flex flex-col">
+    <Card className="group flex flex-col overflow-hidden border-white/10 bg-card transition duration-300 hover:-translate-y-1 hover:border-white/20 hover:shadow-[0_22px_55px_rgba(0,0,0,0.28)]">
       {/* Thumbnail */}
-      <div className="aspect-video bg-gradient-to-br from-primary/20 to-secondary/20 relative">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <PlayCircle className="w-12 h-12 text-primary/30" />
-        </div>
+      <div className="relative aspect-video overflow-hidden bg-cover bg-center transition-transform duration-500 group-hover:bg-[length:105%]" role="img" aria-label={`Sampul ${course.title}`} style={{ backgroundImage: `linear-gradient(180deg, transparent 45%, rgba(0,0,0,.72)), url(${course.thumbnail})` }}>
+        <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
+        <div className="absolute bottom-3 right-3 flex h-10 w-10 items-center justify-center rounded-full bg-white text-black shadow-lg transition-transform group-hover:scale-110"><Play className="h-4 w-4 fill-current" /></div>
         <div className="absolute top-2 left-2 flex gap-1">
           <Badge className={cn(
             "rounded-full px-2 py-0.5 text-xs font-medium shadow-sm",
@@ -398,7 +392,7 @@ function CourseCard({
             {methodLabels[course.method]}
           </Badge>
         </div>
-        <h3 className="font-medium font-serif line-clamp-2 mb-2">{course.title}</h3>
+        <h3 className="mb-2 line-clamp-2 min-h-12 text-base font-medium leading-6 tracking-[-0.02em]">{course.title}</h3>
         <p className="text-sm text-muted-foreground line-clamp-2 mb-3 flex-1">
           {course.description}
         </p>
@@ -518,54 +512,54 @@ export default function KatalogPage() {
       <FeaturedLearningPath />
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4 sm:gap-4">
-        <Card className="border-gray-100 shadow-sm">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <Card className="border-white/10 bg-card">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-primary" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-white/10">
+                <BookOpen className="w-5 h-5 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-primary">{stats.total}</p>
+                <p className="text-2xl font-semibold text-foreground">{stats.total}</p>
                 <p className="text-xs text-muted-foreground">Total Pelatihan</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-gray-100 shadow-sm">
+        <Card className="border-white/10 bg-card">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-red-100 flex items-center justify-center">
-                <GraduationCap className="w-5 h-5 text-red-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-rose-400/10">
+                <GraduationCap className="w-5 h-5 text-rose-300" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-red-600">{stats.mandatory}</p>
+                <p className="text-2xl font-semibold text-foreground">{stats.mandatory}</p>
                 <p className="text-xs text-muted-foreground">Wajib</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-gray-100 shadow-sm">
+        <Card className="border-white/10 bg-card">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
-                <BookOpen className="w-5 h-5 text-blue-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-sky-400/10">
+                <BookOpen className="w-5 h-5 text-sky-300" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-blue-600">{stats.optional}</p>
+                <p className="text-2xl font-semibold text-foreground">{stats.optional}</p>
                 <p className="text-xs text-muted-foreground">Pilihan</p>
               </div>
             </div>
           </CardContent>
         </Card>
-        <Card className="border-gray-100 shadow-sm">
+        <Card className="border-white/10 bg-card">
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-emerald-100 flex items-center justify-center">
-                <CheckCircle className="w-5 h-5 text-emerald-600" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-[12px] bg-emerald-400/10">
+                <CheckCircle className="w-5 h-5 text-emerald-300" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-emerald-600">{stats.enrolled}</p>
+                <p className="text-2xl font-semibold text-foreground">{stats.enrolled}</p>
                 <p className="text-xs text-muted-foreground">Terdaftar</p>
               </div>
             </div>
@@ -574,7 +568,7 @@ export default function KatalogPage() {
       </div>
 
       {/* Filters */}
-      <Card className="border-gray-100 shadow-sm">
+      <Card className="border-white/10 bg-card">
         <CardContent className="p-4">
           <div className="flex flex-col lg:flex-row gap-4">
             <div className="relative flex-1">
@@ -588,7 +582,7 @@ export default function KatalogPage() {
             </div>
             <div className="flex flex-wrap gap-2">
               <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v as CourseType | "all")}>
-                <SelectTrigger className="w-32">
+                <SelectTrigger className="w-full sm:w-32">
                   <SelectValue placeholder="Tipe" />
                 </SelectTrigger>
                 <SelectContent>
@@ -598,7 +592,7 @@ export default function KatalogPage() {
                 </SelectContent>
               </Select>
               <Select value={methodFilter} onValueChange={(v) => setMethodFilter(v as TrainingMethod | "all")}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder="Metode" />
                 </SelectTrigger>
                 <SelectContent>
@@ -610,7 +604,7 @@ export default function KatalogPage() {
                 </SelectContent>
               </Select>
               <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-                <SelectTrigger className="w-40">
+                <SelectTrigger className="w-full sm:w-40">
                   <SelectValue placeholder="Kategori" />
                 </SelectTrigger>
                 <SelectContent>
@@ -620,7 +614,7 @@ export default function KatalogPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <div className="flex rounded-md border">
+              <div className="flex rounded-full border border-white/10 p-0.5">
                 <Button 
                   variant={viewMode === "grid" ? "secondary" : "ghost"} 
                   size="icon"
@@ -647,7 +641,7 @@ export default function KatalogPage() {
 
       {/* Course Tabs */}
       <Tabs defaultValue="all" className="space-y-4">
-        <TabsList>
+        <TabsList className="max-w-full overflow-x-auto">
           <TabsTrigger value="all">Semua ({filteredCourses.length})</TabsTrigger>
           <TabsTrigger value="wajib">Wajib ({mandatoryCourses.length})</TabsTrigger>
           <TabsTrigger value="pilihan">Pilihan ({optionalCourses.length})</TabsTrigger>
@@ -660,14 +654,14 @@ export default function KatalogPage() {
           return (
             <TabsContent key={tab} value={tab}>
               {tabCourses.length === 0 ? (
-                <Card className="border-gray-100 shadow-sm">
+                <Card className="border-white/10 bg-card">
                   <CardContent className="p-8 text-center">
                     <BookOpen className="w-12 h-12 mx-auto text-muted-foreground mb-3" />
                     <p className="text-muted-foreground">Tidak ada pelatihan ditemukan</p>
                   </CardContent>
                 </Card>
               ) : viewMode === "grid" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
                   {tabCourses.map((course) => (
                     <CourseCard
                       key={course.id}
@@ -685,19 +679,17 @@ export default function KatalogPage() {
                     const enrollment = getEnrollment(course.id)
                     
                     return (
-                      <Card key={course.id} className="border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+                      <Card key={course.id} className="border-white/10 bg-card transition duration-300 hover:-translate-y-0.5 hover:border-white/20 hover:shadow-[0_18px_45px_rgba(0,0,0,0.24)]">
                         <CardContent className="p-4">
-                          <div className="flex gap-4">
+                          <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                             {/* Thumbnail */}
-                            <div className="w-32 h-20 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
-                              <PlayCircle className="w-8 h-8 text-primary/30" />
-                            </div>
+                            <div role="img" aria-label={`Sampul ${course.title}`} className="aspect-video w-full shrink-0 rounded-[14px] bg-cover bg-center sm:h-20 sm:w-32" style={{ backgroundImage: `linear-gradient(180deg, transparent, rgba(0,0,0,.45)), url(${course.thumbnail})` }} />
                             
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-1">
                                 <Badge className={cn(
                                   "rounded-full px-2 py-0.5 text-xs font-medium",
-                                  course.type === "wajib" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"
+                                  course.type === "wajib" ? "bg-rose-400/15 text-rose-200" : "bg-sky-400/15 text-sky-200"
                                 )}>
                                   {typeLabels[course.type]}
                                 </Badge>
@@ -705,7 +697,7 @@ export default function KatalogPage() {
                                   {course.category}
                                 </Badge>
                               </div>
-                              <h3 className="font-medium font-serif line-clamp-1">{course.title}</h3>
+                              <h3 className="line-clamp-1 font-medium tracking-[-0.02em]">{course.title}</h3>
                               <p className="text-sm text-muted-foreground line-clamp-1 mt-0.5">
                                 {course.instructor}
                               </p>
@@ -731,14 +723,11 @@ export default function KatalogPage() {
                               </div>
                             </div>
 
-                            <div className="flex items-center shrink-0">
+                            <div className="flex shrink-0 items-center">
                               {enrolled ? (
-                                <Button size="sm">
-                                  <Play className="w-4 h-4 mr-2" />
-                                  Lanjutkan
-                                </Button>
+                                <Link href={`/dashboard/belajar/${course.id}`} className="w-full sm:w-auto"><Button size="sm" className="w-full"><Play className="w-4 h-4 mr-2" />Lanjutkan</Button></Link>
                               ) : (
-                                <Button size="sm" variant="outline" onClick={() => handleEnroll(course.id)}>
+                                <Button className="w-full sm:w-auto" size="sm" variant="outline" onClick={() => handleEnroll(course.id)}>
                                   <GraduationCap className="w-4 h-4 mr-2" />
                                   Daftar
                                 </Button>

@@ -25,7 +25,8 @@ import {
   Video,
 } from "lucide-react"
 import { allCourses, pythonAssessments, pythonAssignment } from "@/lib/learning/seed"
-import type { Assessment, CourseMaterial } from "@/lib/learning/types"
+import { dummyCourses, type Course as CatalogCourse } from "@/lib/data/courses"
+import type { Assessment, Course as LearningCourse, CourseMaterial } from "@/lib/learning/types"
 import { useAuth } from "@/lib/auth-context"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -86,6 +87,59 @@ function readPlayerState(courseId: string): PlayerState {
 
 function getAssessment(material: CourseMaterial): Assessment | undefined {
   return material.assessmentId ? pythonAssessments.find((assessment) => assessment.id === material.assessmentId) : undefined
+}
+
+function adaptCatalogCourse(course: CatalogCourse): LearningCourse {
+  return {
+    id: course.id,
+    slug: course.id.toLowerCase(),
+    title: course.title,
+    category: course.category,
+    kind: course.type,
+    level: "pemula",
+    method: course.method,
+    format: course.method === "e_learning" ? "Online Mandiri" : "Kelas Terjadwal",
+    language: "Bahasa Indonesia",
+    provider: "Pyridam Learning",
+    instructor: course.instructor,
+    shortDescription: course.description,
+    about: course.description,
+    targetAudience: course.jobFamilies,
+    learningOutcomes: ["Memahami konsep utama pelatihan", "Menerapkan materi dalam aktivitas kerja", "Menyelesaikan latihan singkat di setiap bagian"],
+    prerequisites: ["Terdaftar sebagai peserta Pyridam Learning"],
+    competencies: [course.category],
+    faq: [],
+    estimatedHours: Math.max(1, Math.round(course.duration / 60)),
+    accessDays: 30,
+    passingGrade: 70,
+    maxPostTestAttempts: 3,
+    coolingOffMinutes: 10,
+    certificateEnabled: false,
+    feedbackRequired: false,
+    requiresSuratTugas: false,
+    cost: 0,
+    thumbnail: course.thumbnail,
+    createdAt: course.createdAt,
+    status: course.status,
+    rating: course.rating,
+    ratingCount: course.enrollmentCount,
+    modules: course.sections.map((section, moduleIndex) => ({
+      id: section.id,
+      slug: section.id.toLowerCase(),
+      title: `${String(moduleIndex + 1).padStart(2, "0")} · ${section.title}`,
+      estimatedMinutes: section.items.reduce((total, item) => total + item.duration, 0),
+      materials: section.items.map((item) => ({
+        id: item.id,
+        slug: item.id.toLowerCase(),
+        title: item.title.replace(/^(Video|PDF|Quiz):\s*/i, ""),
+        type: "artikel" as const,
+        duration: item.duration,
+        countsTowardProgress: true,
+        required: true,
+        body: `Materi demo ${item.title.toLowerCase()} membantu peserta memahami konteks, contoh penerapan, dan checklist praktik yang relevan dengan pekerjaan di Pyridam Farma. Gunakan bagian ini untuk meninjau poin utama sebelum melanjutkan ke aktivitas berikutnya.`,
+      })),
+    })),
+  }
 }
 
 function AssessmentPanel({
@@ -180,7 +234,8 @@ export default function LearningPlayerPage() {
   const params = useParams<{ courseId: string }>()
   const router = useRouter()
   const { user } = useAuth()
-  const course = allCourses.find((item) => item.id === params.courseId)
+  const sourceCourse = dummyCourses.find((item) => item.id === params.courseId)
+  const course = allCourses.find((item) => item.id === params.courseId) ?? (sourceCourse ? adaptCatalogCourse(sourceCourse) : undefined)
   const [state, setState] = useState<PlayerState>(() => readPlayerState(params.courseId))
   const [activeModuleId, setActiveModuleId] = useState(course?.modules[0]?.id ?? "")
   const [activeMaterialId, setActiveMaterialId] = useState(course?.modules[0]?.materials[0]?.id ?? "")
@@ -203,8 +258,12 @@ export default function LearningPlayerPage() {
   const activeModule = course?.modules.find((module) => module.id === activeModuleId) ?? course?.modules[0]
   const activeMaterial = activeModule?.materials.find((material) => material.id === activeMaterialId) ?? activeModule?.materials[0]
   const activeAssessmentForMaterial = activeMaterial ? getAssessment(activeMaterial) : undefined
+  const hasAssignment = allMaterials.some((material) => material.type === "assignment")
+  const postTest = allMaterials.find((material) => material.type === "posttest")
+  const hasFeedback = allMaterials.some((material) => material.type === "feedback")
   const assignmentReady = state.assignmentApproved || state.assignmentSubmitted
-  const completionReady = progress === 100 && assignmentReady && Boolean(state.scores["AS-POSTTEST"] && state.scores["AS-POSTTEST"] >= (course?.passingGrade ?? 70))
+  const postTestReady = !postTest || Boolean(postTest.assessmentId && state.scores[postTest.assessmentId] >= (course?.passingGrade ?? 70))
+  const completionReady = progress === 100 && (!hasAssignment || assignmentReady) && postTestReady
 
   if (!course) {
     return (
@@ -255,9 +314,9 @@ export default function LearningPlayerPage() {
       <header className="sticky top-0 z-30 border-b border-white/10 bg-background/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1500px] items-center gap-3 px-4 py-3 sm:px-6">
           <Link href="/dashboard/pelatihan" aria-label="Kembali ke Pelatihan Saya"><Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button></Link>
-          <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium sm:text-base">{course.title}</p><p className="text-xs text-muted-foreground">Open class · YouTube · {user?.name ?? "Peserta"}</p></div>
+          <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium sm:text-base">{course.title}</p><p className="text-xs text-muted-foreground">{course.youtubePlaylistId ? "Open class · YouTube" : course.format} · {user?.name ?? "Peserta"}</p></div>
           <div className="hidden min-w-[180px] items-center gap-3 sm:flex"><div className="flex-1"><Progress value={progress} className="h-2" /></div><span className="text-sm font-semibold">{progress}%</span></div>
-          <Link href="/dashboard/sertifikat"><Button variant="outline" size="sm"><Award className="mr-2 h-4 w-4" />Sertifikat</Button></Link>
+          {course.certificateEnabled && <Link href="/dashboard/sertifikat"><Button variant="outline" size="sm"><Award className="mr-2 h-4 w-4" />Sertifikat</Button></Link>}
         </div>
       </header>
 
@@ -272,8 +331,8 @@ export default function LearningPlayerPage() {
             }} />
           ) : activeMaterial?.type === "video" ? (
             <Card className="overflow-hidden border-0 bg-slate-950 shadow-sm">
-              <div className="aspect-video w-full"><iframe className="h-full w-full" src={`https://www.youtube.com/embed/videoseries?list=${course.youtubePlaylistId}`} title={activeMaterial.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
-              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-sm text-white"><span className="flex items-center gap-2 text-white/75"><PlayCircle className="h-4 w-4" />Materi video dari playlist course</span><a className="inline-flex items-center gap-1 text-cyan-300 hover:text-white" href={`https://www.youtube.com/playlist?list=${course.youtubePlaylistId}`} target="_blank" rel="noreferrer">Buka playlist <ExternalLink className="h-3.5 w-3.5" /></a></div>
+              <div className="aspect-video w-full"><iframe className="h-full w-full" src={`https://www.youtube.com/embed/${activeMaterial.youtubeId}?list=${course.youtubePlaylistId}&rel=0`} title={activeMaterial.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-sm text-white"><span className="flex items-center gap-2 text-white/75"><PlayCircle className="h-4 w-4" />Episode ini sesuai tahap learning path</span><a className="inline-flex cursor-pointer items-center gap-1 font-medium text-cyan-300 transition-colors hover:text-white hover:underline" href={`https://www.youtube.com/watch?v=${activeMaterial.youtubeId}&list=${course.youtubePlaylistId}`} target="_blank" rel="noreferrer">Buka di YouTube <ExternalLink className="h-3.5 w-3.5" /></a></div>
             </Card>
           ) : activeMaterial?.type === "artikel" ? (
             <Card><CardContent className="max-w-none p-6 text-foreground sm:p-8"><div className="mb-5 flex items-center gap-3 rounded-[14px] bg-white/[0.06] p-4"><FileText className="h-5 w-5 text-foreground" /><p className="text-sm font-medium">Baca materi ini sampai selesai sebelum lanjut.</p></div><p className="whitespace-pre-line leading-8 text-white/75">{activeMaterial.body}</p></CardContent></Card>
@@ -290,9 +349,9 @@ export default function LearningPlayerPage() {
             <Button onClick={markComplete} disabled={!activeMaterial || state.completed.includes(activeMaterial.id) || ["quiz", "pretest", "posttest", "assignment", "feedback"].includes(activeMaterial.type)}>{state.completed.includes(activeMaterial?.id ?? "") ? "Sudah selesai" : "Tandai selesai"}<ChevronRight className="ml-2 h-4 w-4" /></Button>
           </div>
 
-          {completionReady && !state.feedbackSubmitted && <Card className="border-amber-200 bg-amber-50"><CardContent className="flex items-start gap-3 p-4 text-sm"><Award className="mt-0.5 h-5 w-5 text-amber-600" /><div><p className="font-semibold">Hampir selesai</p><p className="mt-1 text-muted-foreground">Selesaikan feedback pelatihan agar sertifikat dapat diterbitkan.</p></div></CardContent></Card>}
-          {completionReady && state.feedbackSubmitted && !state.certificateIssued && <Card className="border-emerald-200 bg-emerald-50"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4"><div className="flex items-start gap-3 text-sm"><Award className="mt-0.5 h-5 w-5 text-emerald-600" /><div><p className="font-semibold text-emerald-900">Semua syarat terpenuhi</p><p className="mt-1 text-emerald-800/80">Sertifikat siap diterbitkan.</p></div></div><Button onClick={issueCertificate}>Terbitkan sertifikat</Button></CardContent></Card>}
-          {state.certificateIssued && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4"><div className="flex items-start gap-3 text-sm"><Award className="mt-0.5 h-5 w-5 text-primary" /><div><p className="font-semibold">Sertifikat sudah diterbitkan</p><p className="mt-1 text-muted-foreground">{state.certificateNumber}</p></div></div><Link href="/dashboard/sertifikat"><Button variant="outline">Lihat sertifikat</Button></Link></CardContent></Card>}
+          {course.certificateEnabled && completionReady && hasFeedback && !state.feedbackSubmitted && <Card className="border-amber-400/20 bg-amber-400/10"><CardContent className="flex items-start gap-3 p-4 text-sm"><Award className="mt-0.5 h-5 w-5 text-amber-400" /><div><p className="font-semibold">Hampir selesai</p><p className="mt-1 text-muted-foreground">Selesaikan feedback pelatihan agar sertifikat dapat diterbitkan.</p></div></CardContent></Card>}
+          {course.certificateEnabled && completionReady && (!hasFeedback || state.feedbackSubmitted) && !state.certificateIssued && <Card className="border-emerald-400/20 bg-emerald-400/10"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4"><div className="flex items-start gap-3 text-sm"><Award className="mt-0.5 h-5 w-5 text-emerald-400" /><div><p className="font-semibold">Semua syarat terpenuhi</p><p className="mt-1 text-muted-foreground">Sertifikat siap diterbitkan.</p></div></div><Button onClick={issueCertificate}>Terbitkan sertifikat</Button></CardContent></Card>}
+          {course.certificateEnabled && state.certificateIssued && <Card className="border-primary/20 bg-primary/[0.03]"><CardContent className="flex flex-wrap items-center justify-between gap-3 p-4"><div className="flex items-start gap-3 text-sm"><Award className="mt-0.5 h-5 w-5 text-primary" /><div><p className="font-semibold">Sertifikat sudah diterbitkan</p><p className="mt-1 text-muted-foreground">{state.certificateNumber}</p></div></div><Link href="/dashboard/sertifikat"><Button variant="outline">Lihat sertifikat</Button></Link></CardContent></Card>}
         </main>
 
         <aside className="min-w-0 space-y-4">
@@ -300,12 +359,12 @@ export default function LearningPlayerPage() {
             {course.modules.map((module, index) => { const moduleDone = module.materials.filter((material) => material.countsTowardProgress).every((material) => state.completed.includes(material.id)); const open = activeModuleId === module.id; return <div key={module.id} className="border-b last:border-b-0"><button type="button" onClick={() => setActiveModuleId(open ? "" : module.id)} className="flex w-full items-start gap-3 p-4 text-left hover:bg-muted/40"><span className={cn("mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold", moduleDone ? "bg-emerald-100 text-emerald-700" : "bg-muted text-muted-foreground")}>{moduleDone ? <Check className="h-3.5 w-3.5" /> : index + 1}</span><span className="min-w-0 flex-1"><span className="block text-sm font-semibold">{module.title}</span><span className="mt-1 block text-xs text-muted-foreground">{module.materials.length} aktivitas · {formatMinutes(module.estimatedMinutes)}</span></span>{open ? <ChevronDown className="h-4 w-4 text-muted-foreground" /> : <ChevronRight className="h-4 w-4 text-muted-foreground" />}</button>{open && <div className="space-y-1 px-2 pb-3">{module.materials.map((material) => { const Icon = materialIcon[material.type]; const done = state.completed.includes(material.id); const locked = material.type === "posttest" && progress < 100; return <button key={material.id} type="button" disabled={locked} onClick={() => selectMaterial(module.id, material)} className={cn("flex w-full items-start gap-3 rounded-md px-3 py-2.5 text-left text-sm hover:bg-muted/60 disabled:cursor-not-allowed disabled:opacity-50", activeMaterialId === material.id && "bg-primary/10 text-primary") }><span className={cn("mt-0.5 shrink-0", done ? "text-emerald-600" : "text-muted-foreground")}>{done ? <CheckCircle2 className="h-4 w-4" /> : locked ? <Lock className="h-4 w-4" /> : <Icon className="h-4 w-4" />}</span><span className="min-w-0 flex-1"><span className="block leading-5">{material.title}</span><span className="mt-0.5 block text-xs text-muted-foreground">{formatMinutes(material.duration)}{material.required ? " · Wajib" : ""}</span></span></button>})}</div>}</div> })}
           </div></CardContent></Card>
 
-          <Card><CardHeader className="pb-3"><CardTitle className="text-base">Syarat sertifikat</CardTitle></CardHeader><CardContent className="space-y-3 text-sm">{[
+          {course.certificateEnabled && <Card><CardHeader className="pb-3"><CardTitle className="text-base">Syarat sertifikat</CardTitle></CardHeader><CardContent className="space-y-3 text-sm">{[
             ["Materi wajib selesai", progress === 100],
-            ["Assignment dikumpulkan", state.assignmentSubmitted],
-            [`Post-test minimal ${course.passingGrade}%`, Boolean(state.scores["AS-POSTTEST"] && state.scores["AS-POSTTEST"] >= course.passingGrade)],
-            ["Feedback dikirim", state.feedbackSubmitted],
-          ].map(([label, done]) => <div key={String(label)} className="flex items-center gap-2">{done ? <CheckCircle2 className="h-4 w-4 text-emerald-600" /> : <span className="h-4 w-4 rounded-full border" />}<span className={cn(done ? "text-foreground" : "text-muted-foreground")}>{label}</span></div>)}</CardContent></Card>
+            ...(hasAssignment ? [["Assignment dikumpulkan", state.assignmentSubmitted] as [string, boolean]] : []),
+            ...(postTest ? [[`Post-test minimal ${course.passingGrade}%`, postTestReady] as [string, boolean]] : []),
+            ...(hasFeedback ? [["Feedback dikirim", state.feedbackSubmitted] as [string, boolean]] : []),
+          ].map(([label, done]) => <div key={String(label)} className="flex items-center gap-2">{done ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <span className="h-4 w-4 rounded-full border border-white/20" />}<span className={cn(done ? "text-foreground" : "text-muted-foreground")}>{label}</span></div>)}</CardContent></Card>}
         </aside>
       </div>
     </div>

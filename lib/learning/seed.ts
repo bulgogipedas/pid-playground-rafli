@@ -3,11 +3,32 @@ import type {
   AssessmentQuestion,
   Assignment,
   Course,
+  CourseMaterial,
+  CourseModule,
   Enrollment,
   TrainingRequest,
 } from "./types"
 
-export const PYTHON_PLAYLIST_ID = "PLZS-MHyEIRo7cgStrKAMhgnOT66z2qKz1"
+export const PYTHON_PLAYLIST_ID = "PLZS-MHyEIRo59lUBwU-XHH7Ymmb04ffOY"
+
+type PlaylistVideo = readonly [youtubeId: string, title: string, duration?: number]
+
+function playlistMaterials(moduleId: string, videos: readonly PlaylistVideo[]): CourseMaterial[] {
+  return videos.map(([youtubeId, title, duration = 12], index) => ({
+    id: `${moduleId}-V${String(index + 1).padStart(2, "0")}`,
+    slug: title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/(^-|-$)/g, ""),
+    title,
+    type: "video",
+    duration,
+    countsTowardProgress: true,
+    required: true,
+    minWatchSeconds: 5,
+    youtubeId,
+  }))
+}
 
 // ---------------------------------------------------------------------------
 // Assessment questions
@@ -815,6 +836,172 @@ export const pythonAssessments: Assessment[] = [
 // Course
 // ---------------------------------------------------------------------------
 
+const pythonPlaylistModules: CourseModule[] = [
+  {
+    id: "PY-MOD-0",
+    slug: "orientasi-dan-persiapan",
+    title: "01 · Orientasi & Persiapan",
+    estimatedMinutes: 70,
+    materials: [
+      { id: "PY-WELCOME", slug: "selamat-datang", title: "Mulai dari sini", type: "artikel", duration: 5, countsTowardProgress: true, required: true, body: "Selamat datang di kelas terbuka Python Dasar. Ikuti episode secara berurutan, tandai materi yang selesai, lalu kerjakan evaluasi dan mini project di bagian akhir." },
+      { id: "PY-PRETEST", slug: "pre-test", title: "Cek pemahaman awal", type: "pretest", duration: 10, countsTowardProgress: false, required: false, assessmentId: "AS-PRETEST" },
+      ...playlistMaterials("PY-M0", [
+        ["iA8lLwmtKQM", "Apa itu Python?", 11],
+        ["xETkm9H6aaY", "Instalasi Python & VS Code di Windows", 18],
+        ["HSAm6s10G7g", "Instalasi Python & VS Code di macOS", 14],
+        ["-auWrbiaoGc", "Cara kerja program dan bytecode", 13],
+      ]),
+    ],
+  },
+  {
+    id: "PY-MOD-1",
+    slug: "fundamental-python",
+    title: "02 · Fundamental Python",
+    estimatedMinutes: 230,
+    materials: [
+      ...playlistMaterials("PY-M1", [
+        ["gxmTFXfrMzk", "Mengenal variabel"],
+        ["b3X0CH98Y9g", "Tipe data"],
+        ["3d8JbMafZOY", "Casting tipe data"],
+        ["Ar1xxIsyuvI", "Mengambil input dari pengguna"],
+        ["RoDGGTWbKK4", "Operasi aritmatika"],
+        ["SmiUsrGTnpY", "Latihan kalkulasi sederhana"],
+        ["Kv_lDWq8kCc", "Operasi perbandingan"],
+        ["Sl7zqPpC2VI", "Operasi logika dan Boolean"],
+        ["-FqgZRDRuIM", "Latihan komparasi dan logika"],
+        ["-VrqfCGwr88", "Bitwise operator"],
+        ["49KDyhzgCmA", "Assignment operator"],
+        ["fhAEh1Z9YuY", "Pengenalan string"],
+        ["MPvC9uWATLI", "Operasi string · bagian 1"],
+        ["ORda-LwrEwE", "Operasi string · bagian 2"],
+        ["D66WxqZnjXg", "Format string"],
+        ["q9GW5rzOMu4", "String width & alignment"],
+        ["n9vTAmq3GHE", "Latihan date & time"],
+      ]),
+      { id: "PY-Q1", slug: "quiz-fundamental", title: "Quiz · Fundamental Python", type: "quiz", duration: 10, countsTowardProgress: true, required: true, assessmentId: "AS-QUIZ-1" },
+    ],
+  },
+  {
+    id: "PY-MOD-2",
+    slug: "percabangan-dan-perulangan",
+    title: "03 · Percabangan & Perulangan",
+    estimatedMinutes: 115,
+    materials: [
+      ...playlistMaterials("PY-M2", [
+        ["rF8rh40z_X0", "Percabangan IF dan ELSE"],
+        ["ICowoqcLp4E", "Percabangan ELIF"],
+        ["61OgFKJim6E", "Latihan kalkulator sederhana"],
+        ["Z4qfMhx4XzQ", "For loop"],
+        ["ZupffvoCChQ", "While loop"],
+        ["hGvikdHVRME", "Continue dan pass"],
+        ["B6scLunzn0I", "Break"],
+        ["szyfqq_whIg", "Latihan perulangan"],
+      ]),
+      { id: "PY-Q2", slug: "quiz-control-flow", title: "Quiz · Control flow", type: "quiz", duration: 10, countsTowardProgress: true, required: true, assessmentId: "AS-QUIZ-2" },
+    ],
+  },
+  {
+    id: "PY-MOD-3",
+    slug: "struktur-data",
+    title: "04 · Struktur Data",
+    estimatedMinutes: 205,
+    materials: [
+      ...playlistMaterials("PY-M3", [
+        ["tERK7b5Woqs", "List"],
+        ["Xqvui6Bmrj0", "Manipulasi list"],
+        ["HVyMl3GIw20", "Operasi list"],
+        ["mATeKWmB7YM", "Copy list"],
+        ["u3xOkmxzeBE", "Nested list"],
+        ["scxyFiudGug", "Deep copy nested list"],
+        ["gyO6OzzMtJs", "Looping list dan enumerate"],
+        ["cS-VYthhO9A", "Latihan list"],
+        ["BWQn2TQqvY8", "Tuple dan set"],
+        ["Z0hbtSr-Oaw", "Dictionary"],
+        ["6khlVRLJTl0", "Operasi dictionary"],
+        ["tEqYmvykGII", "Looping dictionary"],
+        ["NTHdVRV2qhE", "Copy dan pop dictionary"],
+        ["rO-aLyWJ1Jk", "Multi-key dan nested dictionary"],
+        ["WLHNJCW62qo", "Latihan dictionary · bagian 1"],
+        ["OrCG-jbyAO8", "Latihan dictionary · bagian 2"],
+      ]),
+      { id: "PY-Q3", slug: "quiz-struktur-data", title: "Quiz · Struktur data", type: "quiz", duration: 10, countsTowardProgress: true, required: true, assessmentId: "AS-QUIZ-4" },
+    ],
+  },
+  {
+    id: "PY-MOD-4",
+    slug: "functions",
+    title: "05 · Functions",
+    estimatedMinutes: 135,
+    materials: [
+      ...playlistMaterials("PY-M4", [
+        ["ywE2eqG3-kc", "Pengenalan function"],
+        ["wQwf5eKpxqs", "Function dengan argument"],
+        ["ADcQu-8R0Ok", "Function dengan return"],
+        ["dZGr1bbfHZU", "Default argument"],
+        ["AcyUE59S53U", "Latihan function"],
+        ["NR3m8VJA738", "Type hints pada function"],
+        ["mTlO4mFvD5A", "*args pada function"],
+        ["2BSf8Kr-0cw", "**kwargs pada function"],
+        ["pZye35-Nx4o", "Anonymous dan lambda function"],
+        ["KzinFz7ExJ4", "Global dan local scope"],
+      ]),
+      { id: "PY-Q4", slug: "quiz-functions", title: "Quiz · Functions", type: "quiz", duration: 10, countsTowardProgress: true, required: true, assessmentId: "AS-QUIZ-5" },
+    ],
+  },
+  {
+    id: "PY-MOD-5",
+    slug: "modules-files-dan-ecosystem",
+    title: "06 · Modules, Files & Ecosystem",
+    estimatedMinutes: 175,
+    materials: [
+      ...playlistMaterials("PY-M5", [
+        ["bk3IYcuZyt8", "Import statement"],
+        ["N4XExIBYriI", "Membuat module"],
+        ["WVRMWH4EmfY", "Membuat package sederhana"],
+        ["7GhxT1svylc", "__init__.py pada package"],
+        ["LWIzgB8NOyk", "Menggunakan standard library"],
+        ["L4dbeLNDFlc", "tkinter · Python GUI"],
+        ["WL1d21PcDC8", "Mengenal PIP"],
+        ["y9fw9g6xSIU", "Package NumPy"],
+        ["cQOhLpmR6CY", "Eksplorasi Pygame"],
+        ["XQThsEBvX_8", "__main__ sebagai gerbang program"],
+        ["9xiuFrL0wSw", "Membaca file eksternal"],
+        ["3FfNwPIAtNw", "Menulis file eksternal"],
+        ["ObTWBJ4QCPQ", "Exception, error, try dan except"],
+      ]),
+      { id: "PY-Q5", slug: "quiz-ecosystem", title: "Quiz · Ecosystem Python", type: "quiz", duration: 10, countsTowardProgress: true, required: true, assessmentId: "AS-QUIZ-6" },
+    ],
+  },
+  {
+    id: "PY-MOD-6",
+    slug: "mini-project-crud",
+    title: "07 · Mini Project CRUD",
+    estimatedMinutes: 190,
+    materials: [
+      ...playlistMaterials("PY-M6", [
+        ["PmdQwH_NU3U", "Project · Persiapan", 15],
+        ["Dz3BGBy0cEM", "Project · Database dan read", 18],
+        ["TnZCxPbT1I8", "Project · Create", 15],
+        ["nOH5fy3Wz2c", "Project · Update", 15],
+        ["GSBZyHoJPuE", "Project · Delete", 15],
+      ]),
+      { id: "PY-ASG", slug: "assignment-mini-project", title: "Kumpulkan mini project", type: "assignment", duration: 120, countsTowardProgress: true, required: true, assignmentId: "ASG-MINIPROJECT" },
+    ],
+  },
+  {
+    id: "PY-MOD-7",
+    slug: "evaluasi-dan-sertifikat",
+    title: "08 · Evaluasi & Sertifikat",
+    estimatedMinutes: 50,
+    materials: [
+      { id: "PY-RECAP", slug: "ringkasan-belajar", title: "Ringkasan learning path", type: "artikel", duration: 10, countsTowardProgress: true, required: true, body: "Kamu telah mengikuti 73 episode: mulai dari instalasi, fundamental Python, control flow, struktur data, functions, modules, file handling, exception, sampai mini project CRUD." },
+      { id: "PY-POSTTEST", slug: "post-test", title: "Post-test", type: "posttest", duration: 25, countsTowardProgress: true, required: true, assessmentId: "AS-POSTTEST" },
+      { id: "PY-FEEDBACK", slug: "feedback", title: "Feedback kelas", type: "feedback", duration: 5, countsTowardProgress: false, required: false },
+      { id: "PY-CERT", slug: "sertifikat", title: "Sertifikat kelulusan", type: "artikel", duration: 10, countsTowardProgress: false, required: false, body: "Setelah semua syarat terpenuhi, sertifikat dapat diterbitkan dan diakses dari menu Sertifikat." },
+    ],
+  },
+]
+
 export const pythonCourse: Course = {
   id: "python-basic-001",
   slug: "python-dasar-untuk-pemula",
@@ -875,7 +1062,7 @@ export const pythonCourse: Course = {
       answer: "Nilai post-test minimal 70 dengan maksimal 3 kali percobaan.",
     },
   ],
-  estimatedHours: 12,
+  estimatedHours: 18,
   accessDays: 30,
   passingGrade: 70,
   maxPostTestAttempts: 3,
@@ -890,157 +1077,7 @@ export const pythonCourse: Course = {
   status: "published",
   rating: 4.7,
   ratingCount: 128,
-  modules: [
-    {
-      id: "MOD-0",
-      slug: "modul-0-orientasi",
-      title: "Modul 0: Orientasi Pelatihan",
-      estimatedMinutes: 20,
-      materials: [
-        {
-          id: "M0-1",
-          slug: "selamat-datang",
-          title: "Selamat Datang di Pelatihan",
-          type: "artikel",
-          duration: 5,
-          countsTowardProgress: true,
-          required: true,
-          body: "Selamat datang di pelatihan Python Dasar untuk Pemula. Pada pelatihan ini Anda akan belajar langkah demi langkah dari nol hingga mampu membuat program sederhana.",
-        },
-        {
-          id: "M0-2",
-          slug: "cara-mengikuti-pelatihan",
-          title: "Cara Mengikuti Pelatihan",
-          type: "artikel",
-          duration: 5,
-          countsTowardProgress: true,
-          required: true,
-          body: "Ikuti materi secara berurutan. Tandai setiap materi selesai setelah dipelajari. Kerjakan quiz pada setiap modul, kumpulkan assignment, lalu selesaikan post-test untuk memperoleh sertifikat.",
-        },
-        {
-          id: "M0-3",
-          slug: "aturan-kelulusan",
-          title: "Aturan Kelulusan",
-          type: "artikel",
-          duration: 5,
-          countsTowardProgress: true,
-          required: true,
-          body: "Syarat lulus: seluruh materi wajib selesai, progress 100%, assignment berstatus Lulus, nilai post-test minimal 70, dan feedback pelatihan telah dikirim.",
-        },
-        {
-          id: "M0-4",
-          slug: "pre-test",
-          title: "Pre-Test",
-          type: "pretest",
-          duration: 15,
-          countsTowardProgress: false,
-          required: false,
-          assessmentId: "AS-PRETEST",
-        },
-      ],
-    },
-    {
-      id: "MOD-1",
-      slug: "modul-1-pengenalan-python",
-      title: "Modul 1: Pengenalan Python",
-      estimatedMinutes: 90,
-      materials: [
-        { id: "M1-1", slug: "apa-itu-python", title: "Apa itu Python", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M1-2", slug: "instalasi-python", title: "Instalasi Python", type: "video", duration: 25, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M1-3", slug: "menjalankan-program-pertama", title: "Menjalankan Program Pertama", type: "video", duration: 25, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M1-4", slug: "quiz-modul-1", title: "Quiz Modul 1", type: "quiz", duration: 10, countsTowardProgress: true, required: false, assessmentId: "AS-QUIZ-1" },
-      ],
-    },
-    {
-      id: "MOD-2",
-      slug: "modul-2-variabel-tipe-data",
-      title: "Modul 2: Variabel dan Tipe Data",
-      estimatedMinutes: 120,
-      materials: [
-        { id: "M2-1", slug: "variabel", title: "Variabel", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M2-2", slug: "string", title: "String", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M2-3", slug: "number", title: "Number", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M2-4", slug: "boolean", title: "Boolean", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M2-5", slug: "konversi-tipe-data", title: "Konversi Tipe Data", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M2-6", slug: "quiz-modul-2", title: "Quiz Modul 2", type: "quiz", duration: 10, countsTowardProgress: true, required: false, assessmentId: "AS-QUIZ-2" },
-      ],
-    },
-    {
-      id: "MOD-3",
-      slug: "modul-3-operator-input",
-      title: "Modul 3: Operator dan Input Pengguna",
-      estimatedMinutes: 90,
-      materials: [
-        { id: "M3-1", slug: "operator-aritmatika", title: "Operator Aritmatika", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M3-2", slug: "operator-perbandingan", title: "Operator Perbandingan", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M3-3", slug: "input-pengguna", title: "Input Pengguna", type: "video", duration: 25, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M3-4", slug: "latihan-praktik", title: "Latihan Praktik", type: "artikel", duration: 25, countsTowardProgress: true, required: true, body: "Latihan: buat program yang meminta dua angka dari pengguna lalu menampilkan hasil penjumlahan, pengurangan, perkalian, dan pembagiannya." },
-      ],
-    },
-    {
-      id: "MOD-4",
-      slug: "modul-4-percabangan",
-      title: "Modul 4: Percabangan",
-      estimatedMinutes: 120,
-      materials: [
-        { id: "M4-1", slug: "if", title: "If", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M4-2", slug: "else", title: "Else", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M4-3", slug: "elif", title: "Elif", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M4-4", slug: "nested-condition", title: "Nested Condition", type: "video", duration: 25, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M4-5", slug: "quiz-modul-4", title: "Quiz Modul 4", type: "quiz", duration: 10, countsTowardProgress: true, required: false, assessmentId: "AS-QUIZ-4" },
-      ],
-    },
-    {
-      id: "MOD-5",
-      slug: "modul-5-perulangan",
-      title: "Modul 5: Perulangan",
-      estimatedMinutes: 120,
-      materials: [
-        { id: "M5-1", slug: "for-loop", title: "For Loop", type: "video", duration: 25, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M5-2", slug: "while-loop", title: "While Loop", type: "video", duration: 25, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M5-3", slug: "break-continue", title: "Break dan Continue", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M5-4", slug: "latihan-perulangan", title: "Latihan Perulangan", type: "artikel", duration: 20, countsTowardProgress: true, required: true, body: "Latihan: gunakan perulangan untuk menampilkan angka 1 sampai 10 dan hitung totalnya." },
-        { id: "M5-5", slug: "quiz-modul-5", title: "Quiz Modul 5", type: "quiz", duration: 10, countsTowardProgress: true, required: false, assessmentId: "AS-QUIZ-5" },
-      ],
-    },
-    {
-      id: "MOD-6",
-      slug: "modul-6-function",
-      title: "Modul 6: Function",
-      estimatedMinutes: 120,
-      materials: [
-        { id: "M6-1", slug: "membuat-function", title: "Membuat Function", type: "video", duration: 25, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M6-2", slug: "parameter-argument", title: "Parameter dan Argument", type: "video", duration: 25, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M6-3", slug: "return-value", title: "Return Value", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M6-4", slug: "scope", title: "Scope", type: "video", duration: 20, countsTowardProgress: true, required: true, minWatchSeconds: 5 },
-        { id: "M6-5", slug: "quiz-modul-6", title: "Quiz Modul 6", type: "quiz", duration: 10, countsTowardProgress: true, required: false, assessmentId: "AS-QUIZ-6" },
-      ],
-    },
-    {
-      id: "MOD-7",
-      slug: "modul-7-mini-project",
-      title: "Modul 7: Mini Project",
-      estimatedMinutes: 180,
-      materials: [
-        { id: "M7-1", slug: "brief-mini-project", title: "Brief Mini Project", type: "artikel", duration: 15, countsTowardProgress: true, required: true, body: "Buat program Python untuk menghitung total biaya perjalanan dinas berdasarkan biaya transportasi, biaya penginapan, uang makan, dan jumlah hari." },
-        { id: "M7-2", slug: "contoh-output", title: "Contoh Output", type: "artikel", duration: 15, countsTowardProgress: true, required: true, body: "Contoh: Total biaya perjalanan dinas selama 3 hari = Rp1.500.000 (transportasi + penginapan + uang makan)." },
-        { id: "M7-3", slug: "ketentuan-pengumpulan", title: "Ketentuan Pengumpulan", type: "artikel", duration: 10, countsTowardProgress: true, required: true, body: "Kumpulkan file .py, .zip, atau tautan repository. Sertakan catatan singkat cara menjalankan program." },
-        { id: "M7-4", slug: "assignment-submission", title: "Assignment Submission", type: "assignment", duration: 140, countsTowardProgress: true, required: true, assignmentId: "ASG-MINIPROJECT" },
-      ],
-    },
-    {
-      id: "MOD-8",
-      slug: "modul-8-post-test-penyelesaian",
-      title: "Modul 8: Post-Test dan Penyelesaian",
-      estimatedMinutes: 60,
-      materials: [
-        { id: "M8-1", slug: "ringkasan-pelatihan", title: "Ringkasan Pelatihan", type: "artikel", duration: 10, countsTowardProgress: true, required: true, body: "Ringkasan: Anda telah mempelajari sintaks dasar, variabel, tipe data, operator, percabangan, perulangan, function, dan menyelesaikan mini project." },
-        { id: "M8-2", slug: "post-test", title: "Post-Test", type: "posttest", duration: 30, countsTowardProgress: true, required: true, assessmentId: "AS-POSTTEST" },
-        { id: "M8-3", slug: "feedback-pelatihan", title: "Feedback Pelatihan", type: "feedback", duration: 10, countsTowardProgress: false, required: false },
-        { id: "M8-4", slug: "sertifikat", title: "Sertifikat", type: "artikel", duration: 10, countsTowardProgress: false, required: false, body: "Selamat! Setelah seluruh syarat kelulusan terpenuhi, sertifikat Anda akan otomatis diterbitkan dan dapat diunduh." },
-      ],
-    },
-  ],
+  modules: pythonPlaylistModules,
 }
 
 // Demo training request for the approval flow (Budi Santoso -> Python course).
