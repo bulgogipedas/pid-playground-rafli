@@ -208,6 +208,20 @@
   .text-gray-900 { color: var(--foreground); }
 }
 
+.featured-course-shell {
+  container-type: inline-size;
+}
+
+@container (min-width: 700px) {
+  .featured-course-grid {
+    grid-template-columns: minmax(0, 1.06fr) minmax(300px, 0.94fr);
+  }
+
+  .featured-course-copy {
+    min-height: 0;
+  }
+}
+
 ::selection {
   background: rgba(0, 153, 255, 0.35);
   color: #fff;

@@ -63,10 +63,10 @@ function FeaturedLearningPath() {
   const activityCount = pythonCourse.modules.reduce((total, module) => total + module.materials.length, 0)
 
   return (
-    <Card className="overflow-hidden rounded-[26px] border-white/10 bg-card py-0 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
+    <Card className="featured-course-shell overflow-hidden rounded-[26px] border-white/10 bg-card py-0 shadow-[0_24px_80px_rgba(0,0,0,0.22)]">
       <CardContent className="p-0">
-        <div className="grid gap-0 md:grid-cols-[minmax(0,1.06fr)_minmax(300px,0.94fr)]">
-          <div className="relative flex min-h-[420px] flex-col justify-center overflow-hidden bg-[radial-gradient(circle_at_18%_8%,rgba(236,72,153,0.78),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(37,99,235,0.7),transparent_43%),linear-gradient(135deg,#6D28D9,#24123D_58%,#111)] p-6 text-white sm:p-8 md:min-h-0 lg:p-10">
+        <div className="featured-course-grid grid gap-0">
+          <div className="featured-course-copy relative flex min-h-[420px] flex-col justify-center overflow-hidden bg-[radial-gradient(circle_at_18%_8%,rgba(236,72,153,0.78),transparent_30%),radial-gradient(circle_at_90%_100%,rgba(37,99,235,0.7),transparent_43%),linear-gradient(135deg,#6D28D9,#24123D_58%,#111)] p-6 text-white sm:p-8 lg:p-10">
             <div aria-hidden="true" className="absolute -bottom-20 -left-16 h-64 w-64 rounded-full border border-white/15" />
             <div className="mb-4 flex flex-wrap items-center gap-2">
               <Badge className="border-white/15 bg-white/15 text-white"><Youtube className="h-3.5 w-3.5" /> Open class · YouTube</Badge>
