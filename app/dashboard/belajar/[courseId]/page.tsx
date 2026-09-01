@@ -332,7 +332,7 @@ export default function LearningPlayerPage() {
             }} />
           ) : activeMaterial?.type === "video" ? (
             <Card className="overflow-hidden border-0 bg-slate-950 shadow-sm">
-              <div className="aspect-video w-full"><iframe className="h-full w-full" src={`https://www.youtube.com/embed/${activeMaterial.youtubeId}?list=${course.youtubePlaylistId}&rel=0`} title={activeMaterial.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
+              <div className="aspect-video w-full"><iframe key={activeMaterial.id} className="h-full w-full" src={`https://www.youtube.com/embed/${activeMaterial.youtubeId}?list=${course.youtubePlaylistId}&autoplay=1&mute=1&playsinline=1&rel=0`} title={activeMaterial.title} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen /></div>
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-sm text-white"><span className="flex items-center gap-2 text-white/75"><PlayCircle className="h-4 w-4" />Episode ini sesuai tahap learning path</span><a className="inline-flex cursor-pointer items-center gap-1 font-medium text-cyan-300 transition-colors hover:text-white hover:underline" href={`https://www.youtube.com/watch?v=${activeMaterial.youtubeId}&list=${course.youtubePlaylistId}`} target="_blank" rel="noreferrer">Buka di YouTube <ExternalLink className="h-3.5 w-3.5" /></a></div>
             </Card>
           ) : activeMaterial?.type === "artikel" ? (
