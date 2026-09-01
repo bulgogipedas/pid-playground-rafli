@@ -617,7 +617,7 @@ function CourseEditorSheet({ course, onSave }: { course: Course; onSave: (sectio
                         <span className="text-xs text-muted-foreground">{item.duration} menit</span>
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-6 w-6">
+                            <Button variant="ghost" size="icon" className="h-6 w-6" aria-label={`Aksi materi ${item.title}`}>
                               <MoreVertical className="w-4 h-4" />
                             </Button>
                           </DropdownMenuTrigger>
@@ -997,7 +997,7 @@ export default function KontenPage() {
                             </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
-                                <Button variant="ghost" size="sm">
+                                <Button variant="ghost" size="sm" aria-label={`Aksi pelatihan ${course.title}`}>
                                   <MoreVertical className="w-4 h-4" />
                                 </Button>
                               </DropdownMenuTrigger>

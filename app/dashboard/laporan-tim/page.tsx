@@ -314,13 +314,15 @@ export default function LaporanTimPage() {
       </div>
 
       <Tabs defaultValue="overview" className="space-y-4">
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="overview">Ringkasan</TabsTrigger>
-          <TabsTrigger value="learning-hours">Jam Belajar</TabsTrigger>
-          <TabsTrigger value="certification">Sertifikasi</TabsTrigger>
-          <TabsTrigger value="statistics">Statistik</TabsTrigger>
-          <TabsTrigger value="cost-dashboard">Biaya</TabsTrigger>
-          <TabsTrigger value="members">Anggota Tim</TabsTrigger>
+        <TabsList className="flex w-full justify-start overflow-x-auto">
+          <TabsTrigger className="shrink-0" value="overview">Ringkasan</TabsTrigger>
+          <TabsTrigger className="shrink-0" value="learning-hours">Jam Belajar</TabsTrigger>
+          <TabsTrigger className="shrink-0" value="certification">Sertifikasi</TabsTrigger>
+          <TabsTrigger className="shrink-0" value="statistics">Statistik</TabsTrigger>
+          <TabsTrigger className="shrink-0" value="cost-dashboard">Biaya</TabsTrigger>
+          <TabsTrigger className="shrink-0" value="members">Anggota Tim</TabsTrigger>
+          <TabsTrigger className="shrink-0" value="approvals">Persetujuan ({approvals.length})</TabsTrigger>
+          <TabsTrigger className="shrink-0" value="deadlines">Deadline</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
