@@ -78,7 +78,7 @@ function formatMinutes(minutes: number) {
 function readPlayerState(courseId: string): PlayerState {
   if (typeof window === "undefined") return initialState
   try {
-    const saved = window.localStorage.getItem(`pyridam_learning_player_${courseId}`)
+    const saved = window.localStorage.getItem(`pyfa_lms_player_${courseId}`) || window.localStorage.getItem(`pyridam_learning_player_${courseId}`)
     return saved ? { ...initialState, ...JSON.parse(saved) } : initialState
   } catch {
     return initialState
@@ -245,7 +245,8 @@ export default function LearningPlayerPage() {
   const [feedback, setFeedback] = useState({ rating: 0, comment: "" })
 
   useEffect(() => {
-    window.localStorage.setItem(`pyridam_learning_player_${params.courseId}`, JSON.stringify(state))
+    window.localStorage.setItem(`pyfa_lms_player_${params.courseId}`, JSON.stringify(state))
+    window.localStorage.removeItem(`pyridam_learning_player_${params.courseId}`)
   }, [params.courseId, state])
 
   useEffect(() => {

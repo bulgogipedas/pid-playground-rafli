@@ -17,6 +17,8 @@ interface AuthContextType {
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
+const USER_STORAGE_KEY = "pyfa_lms_user"
+const LEGACY_USER_STORAGE_KEY = "lms_pid_user"
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
@@ -25,12 +27,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // Check for existing session
-    const storedUser = localStorage.getItem("lms_pid_user")
+    const storedUser = localStorage.getItem(USER_STORAGE_KEY) || localStorage.getItem(LEGACY_USER_STORAGE_KEY)
     if (storedUser) {
       try {
         setUser(JSON.parse(storedUser))
       } catch {
-        localStorage.removeItem("lms_pid_user")
+        localStorage.removeItem(USER_STORAGE_KEY)
+        localStorage.removeItem(LEGACY_USER_STORAGE_KEY)
       }
     }
     setIsLoading(false)
@@ -63,7 +66,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Set user and store in localStorage
     setUser(foundUser)
-    localStorage.setItem("lms_pid_user", JSON.stringify(foundUser))
+    localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(foundUser))
+    localStorage.removeItem(LEGACY_USER_STORAGE_KEY)
     setIsLoading(false)
     
     return { success: true }
@@ -71,7 +75,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setUser(null)
-    localStorage.removeItem("lms_pid_user")
+    localStorage.removeItem(USER_STORAGE_KEY)
+    localStorage.removeItem(LEGACY_USER_STORAGE_KEY)
   }
 
   // Demo function to switch between roles
@@ -79,7 +84,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const userWithRole = dummyUsers.find(u => u.role === role && u.status === "aktif")
     if (userWithRole) {
       setUser(userWithRole)
-      localStorage.setItem("lms_pid_user", JSON.stringify(userWithRole))
+      localStorage.setItem(USER_STORAGE_KEY, JSON.stringify(userWithRole))
+      localStorage.removeItem(LEGACY_USER_STORAGE_KEY)
     }
   }
 

@@ -42,6 +42,8 @@ import {
 } from "@/components/ui/table"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
+import { downloadCsv } from "@/lib/client-actions"
+import { toast } from "sonner"
 import { 
   BarChart, 
   Bar, 
@@ -180,7 +182,7 @@ export default function ManajemenDashboardPage() {
               <SelectItem value="q3-2024">Q3 2024</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => { downloadCsv(`dashboard-manajemen-${period}`, divisionStats); toast.success("Laporan manajemen diunduh") }}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>
@@ -692,7 +694,7 @@ export default function ManajemenDashboardPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={() => toast.success("Pengingat dikirim", { description: "Ahmad Wijaya · AWS Cloud Practitioner" })}>
                         Kirim Pengingat
                       </Button>
                     </TableCell>
@@ -708,7 +710,7 @@ export default function ManajemenDashboardPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={() => toast.success("Pengingat dikirim", { description: "Siti Aminah · ISO 9001 Lead Auditor" })}>
                         Kirim Pengingat
                       </Button>
                     </TableCell>
@@ -724,7 +726,7 @@ export default function ManajemenDashboardPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={() => toast.success("Pengingat dikirim", { description: "Budi Santoso · PMP" })}>
                         Kirim Pengingat
                       </Button>
                     </TableCell>

@@ -39,6 +39,8 @@ import {
   Cell,
 } from "recharts"
 import { cn } from "@/lib/utils"
+import { downloadCsv } from "@/lib/client-actions"
+import { toast } from "sonner"
 
 const categoryLabels = {
   external_trainer: "External Trainer",
@@ -114,7 +116,7 @@ export default function BudgetPage() {
           <h1 className="text-3xl font-serif font-bold">Biaya & Budget Pelatihan</h1>
           <p className="text-muted-foreground mt-1">Tahun {selectedYear}</p>
         </div>
-        <Button>
+        <Button onClick={() => { downloadCsv(`laporan-budget-${selectedYear}`, transactions); toast.success("Laporan budget diunduh") }}>
           <Download className="w-4 h-4 mr-2" />
           Ekspor Laporan
         </Button>

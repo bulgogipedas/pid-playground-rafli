@@ -70,12 +70,13 @@ export default function UploadSertifikatPage() {
   const { user } = useAuth()
   const [activeTab, setActiveTab] = useState("upload")
   const [formData, setFormData] = useState({
+    certificateFile: "",
     trainingName: "",
     certificateCode: "",
     institution: "",
     completionDate: "",
-    attendanceFile: null,
-    assignmentLetterFile: null,
+    attendanceFile: "",
+    assignmentLetterFile: "",
     learningHours: "",
     category: "",
     notes: "",
@@ -93,22 +94,44 @@ export default function UploadSertifikatPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!formData.certificateFile) {
+      toast.error("Unggah scan sertifikat terlebih dahulu")
+      return
+    }
     setSubmitted(true)
     toast.success("Sertifikat berhasil diunggah", {
       description: "Sertifikat Anda akan diverifikasi oleh Admin SDM.",
     })
     setFormData({
+      certificateFile: "",
       trainingName: "",
       certificateCode: "",
       institution: "",
       completionDate: "",
-      attendanceFile: null,
-      assignmentLetterFile: null,
+      attendanceFile: "",
+      assignmentLetterFile: "",
       learningHours: "",
       category: "",
       notes: "",
     })
     setTimeout(() => setSubmitted(false), 3000)
+  }
+
+  const reviseSubmission = () => {
+    const certificate = submittedCertificates.find((item) => item.status === "revision")
+    if (!certificate) return
+    setFormData((current) => ({
+      ...current,
+      certificateFile: certificate.file,
+      trainingName: certificate.trainingName,
+      certificateCode: certificate.certificateCode,
+      institution: certificate.institution,
+      completionDate: certificate.completionDate,
+      learningHours: String(certificate.learningHours),
+      category: "technical",
+    }))
+    setActiveTab("upload")
+    toast.info("Data pengajuan dimuat untuk diperbaiki")
   }
 
   const getStatusColor = (status: string) => {
@@ -167,11 +190,19 @@ export default function UploadSertifikatPage() {
                 {/* Scan Sertifikat */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium">Scan Sertifikat *</label>
-                  <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-secondary transition-colors cursor-pointer">
+                  <input
+                    id="certificate-file"
+                    type="file"
+                    accept="application/pdf,image/jpeg,image/png"
+                    className="sr-only"
+                    onChange={(event) => setFormData({ ...formData, certificateFile: event.target.files?.[0]?.name || "" })}
+                  />
+                  <label htmlFor="certificate-file" className="block border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-secondary transition-colors cursor-pointer">
                     <Upload className="w-8 h-8 mx-auto mb-2 text-muted-foreground" />
                     <p className="text-sm text-muted-foreground">Drag & drop file PDF atau klik untuk upload</p>
                     <p className="text-xs text-muted-foreground mt-1">Format: PDF, JPG, PNG (Max 5MB)</p>
-                  </div>
+                    {formData.certificateFile && <p className="mt-2 text-sm font-medium text-foreground">{formData.certificateFile}</p>}
+                  </label>
                 </div>
 
                 {/* Kode Sertifikat */}
@@ -230,19 +261,21 @@ export default function UploadSertifikatPage() {
                   {/* Absensi Pribadi */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Absensi Pribadi</label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer hover:border-secondary transition-colors">
+                    <input id="attendance-file" type="file" accept="application/pdf,image/*" className="sr-only" onChange={(event) => setFormData({ ...formData, attendanceFile: event.target.files?.[0]?.name || "" })} />
+                    <label htmlFor="attendance-file" className="block border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer hover:border-secondary transition-colors">
                       <FileText className="w-6 h-6 mx-auto mb-1 text-muted-foreground" />
-                      <p className="text-xs text-muted-foreground">Unggah file</p>
-                    </div>
+                      <p className="text-xs text-muted-foreground">{formData.attendanceFile || "Unggah file"}</p>
+                    </label>
                   </div>
 
                   {/* Surat Tugas Pembelajaran */}
                   <div className="space-y-2">
                     <label className="text-sm font-medium">Surat Tugas Pembelajaran</label>
-                    <div className="border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer hover:border-secondary transition-colors">
+                    <input id="assignment-file" type="file" accept="application/pdf,image/*" className="sr-only" onChange={(event) => setFormData({ ...formData, assignmentLetterFile: event.target.files?.[0]?.name || "" })} />
+                    <label htmlFor="assignment-file" className="block border-2 border-dashed border-border rounded-lg p-4 text-center cursor-pointer hover:border-secondary transition-colors">
                       <FileText className="w-6 h-6 mx-auto mb-1 text-muted-foreground" />
-                      <p className="text-xs text-muted-foreground">Unggah file</p>
-                    </div>
+                      <p className="text-xs text-muted-foreground">{formData.assignmentLetterFile || "Unggah file"}</p>
+                    </label>
                   </div>
                 </div>
 
@@ -348,7 +381,12 @@ export default function UploadSertifikatPage() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <button className="text-secondary hover:text-secondary/80 text-sm font-medium">
+                          <button
+                            type="button"
+                            aria-label={`Lihat ${cert.trainingName}`}
+                            className="text-secondary hover:text-secondary/80 text-sm font-medium"
+                            onClick={() => toast.info(cert.trainingName, { description: `${cert.certificateCode} · ${getStatusLabel(cert.status)}` })}
+                          >
                             <Eye className="w-4 h-4" />
                           </button>
                         </TableCell>
@@ -367,7 +405,7 @@ export default function UploadSertifikatPage() {
                     <p className="text-sm text-orange-800 mt-1">
                       Sertifikat "Data Analysis with Python" perlu diperbaiki. {submittedCertificates.find(c => c.status === "revision")?.rejectionReason}
                     </p>
-                    <Button size="sm" className="mt-2">
+                    <Button size="sm" className="mt-2" onClick={reviseSubmission}>
                       Perbaiki Pengajuan
                     </Button>
                   </div>

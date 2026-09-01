@@ -38,6 +38,8 @@ import {
   BarChart3,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
+import { downloadCsv, printCurrentPage } from "@/lib/client-actions"
+import { toast } from "sonner"
 import {
   BarChart,
   Bar,
@@ -195,6 +197,15 @@ export default function LaporanTimPage() {
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [approvals, setApprovals] = useState(pendingApprovals)
+
+  const decideRequest = (requestId: string, decision: "approved" | "rejected") => {
+    const request = approvals.find((item) => item.id === requestId)
+    setApprovals((current) => current.filter((item) => item.id !== requestId))
+    toast.success(decision === "approved" ? "Pengajuan disetujui" : "Pengajuan ditolak", {
+      description: request ? `${request.employeeName} · ${request.trainingName}` : undefined,
+    })
+  }
 
   const filteredMembers = teamMembers.filter(member => {
     const matchesSearch = member.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -232,11 +243,11 @@ export default function LaporanTimPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => { toast.info("Dialog cetak dibuka", { description: "Pilih Save as PDF pada tujuan printer." }); printCurrentPage() }}>
             <Download className="w-4 h-4" />
             Export PDF
           </Button>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => { downloadCsv("laporan-tim", filteredMembers); toast.success("Laporan tim diunduh") }}>
             <FileText className="w-4 h-4" />
             Export Excel
           </Button>
@@ -484,7 +495,7 @@ export default function LaporanTimPage() {
               <CardDescription>Pengajuan pelatihan dari anggota tim yang perlu Anda setujui</CardDescription>
             </CardHeader>
             <CardContent>
-              {pendingApprovals.length > 0 ? (
+              {approvals.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -497,7 +508,7 @@ export default function LaporanTimPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pendingApprovals.map((request) => (
+                    {approvals.map((request) => (
                       <TableRow key={request.id}>
                         <TableCell className="font-medium">{request.employeeName}</TableCell>
                         <TableCell>{request.trainingName}</TableCell>
@@ -508,10 +519,10 @@ export default function LaporanTimPage() {
                         <TableCell>{new Date(request.submittedDate).toLocaleDateString("id-ID")}</TableCell>
                         <TableCell className="text-center">
                           <div className="flex justify-center gap-2">
-                            <Button size="sm" variant="success">
+                            <Button size="sm" variant="success" onClick={() => decideRequest(request.id, "approved")}>
                               Setujui
                             </Button>
-                            <Button size="sm" variant="destructive">
+                            <Button size="sm" variant="destructive" onClick={() => decideRequest(request.id, "rejected")}>
                               Tolak
                             </Button>
                           </div>

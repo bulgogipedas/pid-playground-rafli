@@ -202,7 +202,7 @@ export default function LoginPage() {
 
           <p className="text-center text-sm text-muted-foreground mt-6">
             Lupa password?{" "}
-            <a href="#" className="text-primary hover:underline">
+            <a href="mailto:learning@pyfa.co.id?subject=Permintaan%20reset%20password%20PYFA%20LMS" className="text-primary hover:underline">
               Hubungi Admin SDM
             </a>
           </p>

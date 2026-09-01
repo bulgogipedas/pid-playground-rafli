@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label"
 import { Switch } from "@/components/ui/switch"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
   Select,
   SelectContent,
@@ -38,6 +38,16 @@ import { PageHeader } from "@/components/dashboard/page-header"
 export default function PengaturanPage() {
   const { user } = useAuth()
   const [showPassword, setShowPassword] = useState(false)
+  const [avatarUrl, setAvatarUrl] = useState("")
+  const avatarInputRef = useRef<HTMLInputElement>(null)
+  const [oldPassword, setOldPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [sessions, setSessions] = useState([
+    { id: "current", device: "Chrome di Windows", location: "Jakarta, Indonesia", time: "Hari ini, 08:30", current: true },
+    { id: "iphone", device: "Safari di iPhone", location: "Jakarta, Indonesia", time: "Kemarin, 18:45", current: false },
+    { id: "mac", device: "Chrome di macOS", location: "Surabaya, Indonesia", time: "3 hari lalu", current: false },
+  ])
   
   // Notification settings
   const [emailNotifications, setEmailNotifications] = useState(true)
@@ -52,6 +62,40 @@ export default function PengaturanPage() {
 
   const handleSave = (section: string) => {
     toast.success("Perubahan disimpan", { description: section })
+  }
+
+  const handleAvatarChange = (file?: File) => {
+    if (!file) return
+    if (!file.type.startsWith("image/")) {
+      toast.error("Pilih file gambar JPG atau PNG")
+      return
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Ukuran foto maksimal 2MB")
+      return
+    }
+    setAvatarUrl(URL.createObjectURL(file))
+    toast.success("Foto profil siap disimpan", { description: file.name })
+  }
+
+  const handlePasswordChange = () => {
+    if (!oldPassword || newPassword.length < 8) {
+      toast.error("Lengkapi password lama dan gunakan minimal 8 karakter")
+      return
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("Konfirmasi password tidak sama")
+      return
+    }
+    setOldPassword("")
+    setNewPassword("")
+    setConfirmPassword("")
+    toast.success("Password berhasil diperbarui")
+  }
+
+  const endSession = (sessionId: string) => {
+    setSessions((current) => current.filter((session) => session.id !== sessionId))
+    toast.success("Sesi perangkat telah diakhiri")
   }
 
   return (
@@ -93,12 +137,20 @@ export default function PengaturanPage() {
               {/* Avatar Section */}
               <div className="flex items-center gap-4">
                 <Avatar className="w-20 h-20">
+                  <AvatarImage src={avatarUrl} alt={user?.name || "Foto profil"} />
                   <AvatarFallback className="bg-secondary text-white text-2xl">
                     {user?.name?.split(' ').map(n => n[0]).join('').slice(0, 2) || 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div>
-                  <Button variant="outline" size="sm" className="gap-2">
+                  <input
+                    ref={avatarInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png"
+                    className="sr-only"
+                    onChange={(event) => handleAvatarChange(event.target.files?.[0])}
+                  />
+                  <Button variant="outline" size="sm" className="gap-2" onClick={() => avatarInputRef.current?.click()}>
                     <Camera className="w-4 h-4" />
                     Ubah Foto
                   </Button>
@@ -254,6 +306,8 @@ export default function PengaturanPage() {
                         type={showPassword ? "text" : "password"} 
                         placeholder="Masukkan password lama" 
                         className="pl-9 pr-9" 
+                        value={oldPassword}
+                        onChange={(event) => setOldPassword(event.target.value)}
                       />
                       <button
                         type="button"
@@ -275,6 +329,8 @@ export default function PengaturanPage() {
                         type={showPassword ? "text" : "password"} 
                         placeholder="Masukkan password baru" 
                         className="pl-9" 
+                        value={newPassword}
+                        onChange={(event) => setNewPassword(event.target.value)}
                       />
                     </div>
                   </div>
@@ -286,11 +342,13 @@ export default function PengaturanPage() {
                         type={showPassword ? "text" : "password"} 
                         placeholder="Konfirmasi password baru" 
                         className="pl-9" 
+                        value={confirmPassword}
+                        onChange={(event) => setConfirmPassword(event.target.value)}
                       />
                     </div>
                   </div>
                 </div>
-                <Button variant="outline">Ubah Password</Button>
+                <Button variant="outline" onClick={handlePasswordChange}>Ubah Password</Button>
               </div>
 
               <Separator />
@@ -299,12 +357,8 @@ export default function PengaturanPage() {
               <div className="space-y-4">
                 <h4 className="font-medium">Riwayat Login</h4>
                 <div className="space-y-3">
-                  {[
-                    { device: "Chrome di Windows", location: "Jakarta, Indonesia", time: "Hari ini, 08:30", current: true },
-                    { device: "Safari di iPhone", location: "Jakarta, Indonesia", time: "Kemarin, 18:45", current: false },
-                    { device: "Chrome di macOS", location: "Surabaya, Indonesia", time: "3 hari lalu", current: false },
-                  ].map((session, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
+                  {sessions.map((session) => (
+                    <div key={session.id} className="flex items-center justify-between gap-4 p-3 bg-muted/50 rounded-lg">
                       <div>
                         <p className="font-medium">{session.device}</p>
                         <p className="text-sm text-muted-foreground">{session.location} - {session.time}</p>
@@ -312,7 +366,7 @@ export default function PengaturanPage() {
                       {session.current ? (
                         <span className="text-xs text-emerald-600 font-medium">Sesi Aktif</span>
                       ) : (
-                        <Button variant="outline" size="sm">Logout</Button>
+                        <Button variant="outline" size="sm" onClick={() => endSession(session.id)}>Logout</Button>
                       )}
                     </div>
                   ))}
@@ -368,19 +422,12 @@ export default function PengaturanPage() {
               {/* Theme */}
               <div className="space-y-4">
                 <h4 className="font-medium">Tema</h4>
-                <div className="grid grid-cols-3 gap-4">
-                  <button className="p-4 border-2 border-secondary rounded-lg text-center">
-                    <div className="w-full h-8 bg-white rounded mb-2 border" />
-                    <span className="text-sm font-medium">Terang</span>
-                  </button>
-                  <button className="p-4 border rounded-lg text-center hover:border-secondary">
-                    <div className="w-full h-8 bg-gray-800 rounded mb-2" />
-                    <span className="text-sm font-medium">Gelap</span>
-                  </button>
-                  <button className="p-4 border rounded-lg text-center hover:border-secondary">
-                    <div className="w-full h-8 bg-gradient-to-r from-white to-gray-800 rounded mb-2" />
-                    <span className="text-sm font-medium">Sistem</span>
-                  </button>
+                <div className="flex items-center gap-4 rounded-xl border border-border bg-muted/30 p-4">
+                  <div className="h-10 w-16 rounded-lg border border-white/10 bg-gray-900" aria-hidden="true" />
+                  <div>
+                    <p className="font-medium">Gelap</p>
+                    <p className="text-sm text-muted-foreground">Tema standar PYFA LMS untuk konsistensi dan kenyamanan visual.</p>
+                  </div>
                 </div>
               </div>
 

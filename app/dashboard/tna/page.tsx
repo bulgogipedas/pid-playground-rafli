@@ -54,6 +54,8 @@ import {
   categoryLabels,
 } from "@/lib/data/tna"
 import { divisions, jobFamilies } from "@/lib/data/users"
+import { downloadCsv, printCurrentPage } from "@/lib/client-actions"
+import { toast } from "sonner"
 
 export default function TNAPage() {
   const [activeTab, setActiveTab] = useState("overview")
@@ -112,11 +114,11 @@ export default function TNAPage() {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { downloadCsv("training-needs-analysis", filteredGaps); toast.success("Data TNA diekspor") }}>
                 <FileSpreadsheet className="w-4 h-4 mr-2" />
                 Export Excel
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => { toast.info("Menyiapkan laporan TNA untuk dicetak"); printCurrentPage() }}>
                 <FileText className="w-4 h-4 mr-2" />
                 Export PDF
               </DropdownMenuItem>
@@ -421,7 +423,12 @@ export default function TNAPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label={`Lihat gap divisi ${div.division}`}
+                          onClick={() => { setDivisionFilter(div.division); setActiveTab("individual") }}
+                        >
                           <ChevronRight className="w-4 h-4" />
                         </Button>
                       </TableCell>
@@ -485,7 +492,12 @@ export default function TNAPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          aria-label={`Lihat ringkasan ${jf.jobFamily}`}
+                          onClick={() => toast.info(jf.jobFamily, { description: `${jf.employeesWithGap} karyawan memiliki gap · rata-rata ${jf.averageGap.toFixed(1)}` })}
+                        >
                           <ChevronRight className="w-4 h-4" />
                         </Button>
                       </TableCell>

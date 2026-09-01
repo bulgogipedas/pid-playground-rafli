@@ -35,6 +35,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { dummyAuditLogs, AuditLog } from "@/lib/data/users"
+import { downloadCsv } from "@/lib/client-actions"
+import { toast } from "sonner"
 
 const actionIcons: Record<string, React.ReactNode> = {
   LOGIN: <LogIn className="w-4 h-4 text-[#2A438A]" />,
@@ -65,6 +67,7 @@ export default function AuditLogPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [moduleFilter, setModuleFilter] = useState<string>("all")
   const [actionFilter, setActionFilter] = useState<string>("all")
+  const [dateFilter, setDateFilter] = useState("")
 
   // Get unique modules and actions
   const modules = [...new Set(logs.map(log => log.module))]
@@ -77,7 +80,8 @@ export default function AuditLogPage() {
       log.details.toLowerCase().includes(searchQuery.toLowerCase())
     const matchesModule = moduleFilter === "all" || log.module === moduleFilter
     const matchesAction = actionFilter === "all" || log.action === actionFilter
-    return matchesSearch && matchesModule && matchesAction
+    const matchesDate = !dateFilter || log.timestamp.slice(0, 10) === dateFilter
+    return matchesSearch && matchesModule && matchesAction && matchesDate
   })
 
   const formatDate = (timestamp: string) => {
@@ -107,7 +111,7 @@ export default function AuditLogPage() {
             Rekam jejak semua aktivitas pengguna dalam sistem
           </p>
         </div>
-        <Button variant="outline">
+        <Button variant="outline" onClick={() => { downloadCsv("audit-log", filteredLogs); toast.success("Audit log diunduh") }}>
           <Download className="w-4 h-4 mr-2" />
           Export Log
         </Button>
@@ -195,10 +199,10 @@ export default function AuditLogPage() {
                   ))}
                 </SelectContent>
               </Select>
-              <Button variant="outline">
-                <Calendar className="w-4 h-4 mr-2" />
-                Pilih Tanggal
-              </Button>
+              <div className="relative">
+                <Calendar className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                <Input type="date" aria-label="Filter tanggal audit" value={dateFilter} onChange={(event) => setDateFilter(event.target.value)} className="w-[170px] pl-9" />
+              </div>
             </div>
           </div>
         </CardContent>

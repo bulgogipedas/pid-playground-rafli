@@ -233,6 +233,11 @@ function MandatoryProgramSection() {
 
   const softSkillCourses = dummyCourses.filter(c => c.category === "Soft Skill" || c.type === "wajib")
 
+  const setProgramStatus = (programId: string, status: MandatoryProgram["status"]) => {
+    setPrograms((current) => current.map((program) => program.id === programId ? { ...program, status } : program))
+    toast.success(status === "active" ? "Program diaktifkan" : "Program dijeda")
+  }
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
@@ -401,17 +406,21 @@ function MandatoryProgramSection() {
                       <p className="text-xs text-muted-foreground">Tingkat Penyelesaian</p>
                     </div>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="sm">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => toast.info(program.name, { description: `${program.courseIds.length} pelatihan · ${program.enrolledCount} peserta · ${completionRate}% selesai` })}
+                      >
                         <Eye className="w-4 h-4 mr-1" />
                         Detail
                       </Button>
                       {program.status === "active" ? (
-                        <Button variant="outline" size="sm">
+                        <Button variant="outline" size="sm" onClick={() => setProgramStatus(program.id, "scheduled")}>
                           <Pause className="w-4 h-4 mr-1" />
                           Pause
                         </Button>
                       ) : program.status === "scheduled" ? (
-                        <Button size="sm" variant="success">
+                        <Button size="sm" variant="success" onClick={() => setProgramStatus(program.id, "active")}>
                           <Play className="w-4 h-4 mr-1" />
                           Aktifkan
                         </Button>
@@ -547,7 +556,7 @@ export default function PersetujuanPage() {
   const [requests, setRequests] = useState<TrainingRequest[]>(() => {
     if (typeof window === "undefined") return dummyTrainingRequests
     try {
-      const saved = window.localStorage.getItem("lms_pid_training_requests")
+      const saved = window.localStorage.getItem("pyfa_lms_training_requests") || window.localStorage.getItem("lms_pid_training_requests")
       return saved ? JSON.parse(saved) : dummyTrainingRequests
     } catch {
       return dummyTrainingRequests
@@ -556,7 +565,8 @@ export default function PersetujuanPage() {
   const [selectedIds, setSelectedIds] = useState<string[]>([])
 
   useEffect(() => {
-    window.localStorage.setItem("lms_pid_training_requests", JSON.stringify(requests))
+    window.localStorage.setItem("pyfa_lms_training_requests", JSON.stringify(requests))
+    window.localStorage.removeItem("lms_pid_training_requests")
   }, [requests])
 
   // Determine which level this user can approve

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -48,6 +49,8 @@ import {
   Pie,
   Cell,
 } from "recharts"
+import { downloadCsv } from "@/lib/client-actions"
+import { toast } from "sonner"
 
 // Dummy content analytics data
 const contentStats = {
@@ -196,6 +199,7 @@ const materialsAttention = [
 ]
 
 export default function LaporanKontenPage() {
+  const router = useRouter()
   const [periodFilter, setPeriodFilter] = useState("6months")
 
   return (
@@ -220,7 +224,7 @@ export default function LaporanKontenPage() {
               <SelectItem value="1year">1 Tahun</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline" className="gap-2">
+          <Button variant="outline" className="gap-2" onClick={() => { downloadCsv(`laporan-konten-${periodFilter}`, topCourses); toast.success("Laporan konten diunduh") }}>
             <Download className="w-4 h-4" />
             Export
           </Button>
@@ -446,7 +450,7 @@ export default function LaporanKontenPage() {
                       </TableCell>
                       <TableCell className="text-center">{course.avgTime}</TableCell>
                       <TableCell className="text-center">
-                        <Button size="sm" variant="outline">
+                        <Button size="sm" variant="outline" onClick={() => router.push(`/dashboard/katalog/${course.id}`)}>
                           Detail
                         </Button>
                       </TableCell>
@@ -569,7 +573,7 @@ export default function LaporanKontenPage() {
                         {material.severity === "high" ? "Prioritas Tinggi" :
                          material.severity === "medium" ? "Prioritas Sedang" : "Prioritas Rendah"}
                       </Badge>
-                      <Button size="sm" variant="outline">
+                      <Button size="sm" variant="outline" onClick={() => { router.push("/dashboard/konten"); toast.info("Buka course terkait untuk memperbaiki materi", { description: material.course }) }}>
                         Review
                       </Button>
                     </div>

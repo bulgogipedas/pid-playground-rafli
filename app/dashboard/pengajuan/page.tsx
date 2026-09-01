@@ -1,7 +1,8 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useAuth } from "@/lib/auth-context"
 import {
   dummyTrainingRequests,
@@ -95,6 +96,8 @@ function RequestForm({
     endDate: initialData?.endDate || "",
     learningHours: initialData?.learningHours || 0,
   })
+  const [attachment, setAttachment] = useState<File | null>(null)
+  const attachmentInputRef = useRef<HTMLInputElement>(null)
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -108,6 +111,7 @@ function RequestForm({
       currency: "IDR",
       status: "pending_l1",
       currentLevel: "atasan_langsung",
+      attachments: attachment ? [{ id: `ATT${Date.now()}`, name: attachment.name, type: attachment.type, size: attachment.size, url: "#" }] : initialData?.attachments || [],
     })
   }
 
@@ -248,6 +252,7 @@ function RequestForm({
 
       <div className="space-y-2">
         <Label>Lampiran (Opsional)</Label>
+        <input ref={attachmentInputRef} type="file" accept=".pdf,.doc,.docx" className="sr-only" onChange={(event) => setAttachment(event.target.files?.[0] || null)} />
         <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
           <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
           <p className="text-sm text-muted-foreground">
@@ -256,8 +261,9 @@ function RequestForm({
           <p className="text-xs text-muted-foreground mt-1">
             PDF, DOC, DOCX (Maks. 10MB)
           </p>
-          <Button type="button" variant="outline" size="sm" className="mt-3">
-            Pilih File
+          {attachment && <p className="mt-2 text-sm font-medium">{attachment.name}</p>}
+          <Button type="button" variant="outline" size="sm" className="mt-3" onClick={() => attachmentInputRef.current?.click()}>
+            {attachment ? "Ganti File" : "Pilih File"}
           </Button>
         </div>
       </div>
@@ -277,7 +283,9 @@ function RequestForm({
 // Notifications panel
 function NotificationsPanel() {
   const { user } = useAuth()
-  const userNotifications = dummyNotifications.filter(n => n.userId === user?.id)
+  const router = useRouter()
+  const [readIds, setReadIds] = useState<string[]>([])
+  const userNotifications = dummyNotifications.filter(n => n.userId === user?.id).map((notification) => ({ ...notification, isRead: notification.isRead || readIds.includes(notification.id) }))
   const unreadCount = userNotifications.filter(n => !n.isRead).length
 
   return (
@@ -305,10 +313,15 @@ function NotificationsPanel() {
             <p className="text-center text-muted-foreground py-8">Tidak ada notifikasi</p>
           ) : (
             userNotifications.map((notif) => (
-              <div 
+              <button
+                type="button"
                 key={notif.id} 
+                onClick={() => {
+                  setReadIds((current) => current.includes(notif.id) ? current : [...current, notif.id])
+                  if (notif.relatedType === "training_request" && notif.relatedId) router.push(`/dashboard/pengajuan/${notif.relatedId}`)
+                }}
                 className={cn(
-                  "p-3 rounded-lg border cursor-pointer hover:bg-gray-50 transition-colors",
+                  "w-full p-3 rounded-lg border cursor-pointer hover:bg-gray-50 transition-colors text-left",
                   !notif.isRead && "bg-blue-50 border-blue-200"
                 )}
               >
@@ -333,7 +346,7 @@ function NotificationsPanel() {
                     <p className="text-xs text-muted-foreground mt-1">{formatDateTime(notif.createdAt)}</p>
                   </div>
                 </div>
-              </div>
+              </button>
             ))
           )}
         </div>
@@ -347,10 +360,11 @@ export default function PengajuanPage() {
   const [searchQuery, setSearchQuery] = useState("")
   const [statusFilter, setStatusFilter] = useState<RequestStatus | "all">("all")
   const [isFormOpen, setIsFormOpen] = useState(false)
+  const [editingRequest, setEditingRequest] = useState<TrainingRequest | undefined>()
   const [requests, setRequests] = useState<TrainingRequest[]>(() => {
     if (typeof window === "undefined") return dummyTrainingRequests
     try {
-      const saved = window.localStorage.getItem("lms_pid_training_requests")
+      const saved = window.localStorage.getItem("pyfa_lms_training_requests") || window.localStorage.getItem("lms_pid_training_requests")
       return saved ? JSON.parse(saved) : dummyTrainingRequests
     } catch {
       return dummyTrainingRequests
@@ -358,7 +372,8 @@ export default function PengajuanPage() {
   })
 
   useEffect(() => {
-    window.localStorage.setItem("lms_pid_training_requests", JSON.stringify(requests))
+    window.localStorage.setItem("pyfa_lms_training_requests", JSON.stringify(requests))
+    window.localStorage.removeItem("lms_pid_training_requests")
   }, [requests])
 
   // Filter requests based on user role
@@ -381,6 +396,14 @@ export default function PengajuanPage() {
   const revisionRequests = filteredRequests.filter(r => r.status === "revision")
 
   const handleSubmitRequest = (data: Partial<TrainingRequest>) => {
+    if (editingRequest) {
+      setRequests((current) => current.map((request) => request.id === editingRequest.id
+        ? { ...request, ...data, status: "pending_l1", currentLevel: "atasan_langsung", updatedAt: new Date().toISOString() }
+        : request))
+      setEditingRequest(undefined)
+      setIsFormOpen(false)
+      return
+    }
     const newRequest: TrainingRequest = {
       id: `REQ${String(requests.length + 1).padStart(3, '0')}`,
       employeeId: user?.id || "",
@@ -444,14 +467,15 @@ export default function PengajuanPage() {
               </DialogTrigger>
               <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle className="font-serif text-xl">Pengajuan Pelatihan Baru</DialogTitle>
+                  <DialogTitle className="font-serif text-xl">{editingRequest ? "Revisi Pengajuan" : "Pengajuan Pelatihan Baru"}</DialogTitle>
                   <DialogDescription>
                     Lengkapi form berikut untuk mengajukan pelatihan hard skill.
                   </DialogDescription>
                 </DialogHeader>
                 <RequestForm 
                   onSubmit={handleSubmitRequest} 
-                  onClose={() => setIsFormOpen(false)} 
+                  onClose={() => { setIsFormOpen(false); setEditingRequest(undefined) }}
+                  initialData={editingRequest}
                 />
               </DialogContent>
             </Dialog>
@@ -620,7 +644,7 @@ export default function PengajuanPage() {
                             </Link>
                           </Button>
                           {request.status === "revision" && (
-                            <Button variant="outline" size="sm">
+                            <Button variant="outline" size="sm" onClick={() => { setEditingRequest(request); setIsFormOpen(true) }}>
                               <Edit className="w-4 h-4 mr-1" />
                               Revisi
                             </Button>

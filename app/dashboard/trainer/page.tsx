@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -55,6 +56,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { toast } from "sonner"
 
 // Dummy trainers data
 const trainers = [
@@ -167,12 +169,16 @@ const pendingRequests = [
 ]
 
 export default function TrainerPage() {
+  const router = useRouter()
+  const [trainerRecords, setTrainerRecords] = useState(trainers)
+  const [requests, setRequests] = useState(pendingRequests)
   const [searchTerm, setSearchTerm] = useState("")
   const [typeFilter, setTypeFilter] = useState("all")
   const [statusFilter, setStatusFilter] = useState("all")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
+  const [newTrainer, setNewTrainer] = useState({ type: "internal", name: "", email: "", phone: "", specialization: "" })
 
-  const filteredTrainers = trainers.filter(trainer => {
+  const filteredTrainers = trainerRecords.filter(trainer => {
     const matchesSearch = trainer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       trainer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       trainer.specialization.some(s => s.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -181,9 +187,69 @@ export default function TrainerPage() {
     return matchesSearch && matchesType && matchesStatus
   })
 
-  const internalCount = trainers.filter(t => t.type === "internal").length
-  const externalCount = trainers.filter(t => t.type === "external").length
-  const activeCount = trainers.filter(t => t.status === "active").length
+  const internalCount = trainerRecords.filter(t => t.type === "internal").length
+  const externalCount = trainerRecords.filter(t => t.type === "external").length
+  const activeCount = trainerRecords.filter(t => t.status === "active").length
+
+  const addTrainer = () => {
+    if (!newTrainer.name || !newTrainer.email || !newTrainer.specialization) {
+      toast.error("Lengkapi nama, email, dan spesialisasi")
+      return
+    }
+    const trainer = {
+      id: `TR${Date.now()}`,
+      name: newTrainer.name,
+      email: newTrainer.email,
+      phone: newTrainer.phone,
+      type: newTrainer.type,
+      specialization: newTrainer.specialization.split(",").map((item) => item.trim()).filter(Boolean),
+      totalCourses: 0,
+      totalHours: 0,
+      rating: 0,
+      status: "active",
+      joinDate: new Date().toISOString().split("T")[0],
+      lastActive: new Date().toISOString().split("T")[0],
+    }
+    setTrainerRecords((current) => [trainer, ...current])
+    setNewTrainer({ type: "internal", name: "", email: "", phone: "", specialization: "" })
+    setIsAddDialogOpen(false)
+    toast.success("Trainer ditambahkan", { description: trainer.name })
+  }
+
+  const editTrainer = (trainer: (typeof trainers)[number]) => {
+    const name = window.prompt("Nama trainer", trainer.name)?.trim()
+    if (!name) return
+    setTrainerRecords((current) => current.map((item) => item.id === trainer.id ? { ...item, name } : item))
+    toast.success("Data trainer diperbarui", { description: name })
+  }
+
+  const removeTrainer = (trainerId: string) => {
+    setTrainerRecords((current) => current.filter((trainer) => trainer.id !== trainerId))
+    toast.success("Trainer dihapus")
+  }
+
+  const decideRequest = (requestId: string, decision: "approve" | "reject") => {
+    const request = requests.find((item) => item.id === requestId)
+    if (!request) return
+    if (decision === "approve") {
+      setTrainerRecords((current) => [{
+        id: `TR${Date.now()}`,
+        name: request.name,
+        email: request.email,
+        phone: "-",
+        type: request.type,
+        specialization: request.specialization,
+        totalCourses: 0,
+        totalHours: 0,
+        rating: 0,
+        status: "active",
+        joinDate: new Date().toISOString().split("T")[0],
+        lastActive: new Date().toISOString().split("T")[0],
+      }, ...current])
+    }
+    setRequests((current) => current.filter((item) => item.id !== requestId))
+    toast.success(decision === "approve" ? "Permintaan trainer disetujui" : "Permintaan trainer ditolak", { description: request.name })
+  }
 
   return (
     <div className="space-y-6">
@@ -212,7 +278,7 @@ export default function TrainerPage() {
             <div className="space-y-4 py-4">
               <div className="space-y-2">
                 <Label>Tipe Trainer</Label>
-                <Select defaultValue="internal">
+                <Select value={newTrainer.type} onValueChange={(type) => setNewTrainer({ ...newTrainer, type })}>
                   <SelectTrigger>
                     <SelectValue />
                   </SelectTrigger>
@@ -224,26 +290,26 @@ export default function TrainerPage() {
               </div>
               <div className="space-y-2">
                 <Label>Nama</Label>
-                <Input placeholder="Masukkan nama trainer/vendor" />
+                <Input placeholder="Masukkan nama trainer/vendor" value={newTrainer.name} onChange={(event) => setNewTrainer({ ...newTrainer, name: event.target.value })} />
               </div>
               <div className="space-y-2">
                 <Label>Email</Label>
-                <Input type="email" placeholder="email@example.com" />
+                <Input type="email" placeholder="email@example.com" value={newTrainer.email} onChange={(event) => setNewTrainer({ ...newTrainer, email: event.target.value })} />
               </div>
               <div className="space-y-2">
                 <Label>Nomor Telepon</Label>
-                <Input placeholder="081234567890" />
+                <Input placeholder="081234567890" value={newTrainer.phone} onChange={(event) => setNewTrainer({ ...newTrainer, phone: event.target.value })} />
               </div>
               <div className="space-y-2">
                 <Label>Spesialisasi</Label>
-                <Textarea placeholder="Masukkan spesialisasi (pisahkan dengan koma)" />
+                <Textarea placeholder="Masukkan spesialisasi (pisahkan dengan koma)" value={newTrainer.specialization} onChange={(event) => setNewTrainer({ ...newTrainer, specialization: event.target.value })} />
               </div>
             </div>
             <DialogFooter>
               <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                 Batal
               </Button>
-              <Button onClick={() => setIsAddDialogOpen(false)}>
+              <Button onClick={addTrainer}>
                 Simpan
               </Button>
             </DialogFooter>
@@ -261,7 +327,7 @@ export default function TrainerPage() {
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Total Trainer</p>
-                <p className="text-2xl font-bold text-primary">{trainers.length}</p>
+                <p className="text-2xl font-bold text-primary">{trainerRecords.length}</p>
               </div>
             </div>
           </CardContent>
@@ -315,8 +381,8 @@ export default function TrainerPage() {
           <TabsTrigger value="trainers">Daftar Trainer</TabsTrigger>
           <TabsTrigger value="requests">
             Permintaan Baru
-            {pendingRequests.length > 0 && (
-              <Badge className="ml-2 bg-amber-500">{pendingRequests.length}</Badge>
+            {requests.length > 0 && (
+              <Badge className="ml-2 bg-amber-500">{requests.length}</Badge>
             )}
           </TabsTrigger>
         </TabsList>
@@ -414,15 +480,15 @@ export default function TrainerPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => editTrainer(trainer)}>
                           <Edit className="w-4 h-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.push(`/dashboard/konten?trainer=${encodeURIComponent(trainer.name)}`)}>
                           <BookOpen className="w-4 h-4 mr-2" />
                           Lihat Kursus
                         </DropdownMenuItem>
-                        <DropdownMenuItem className="text-red-600">
+                        <DropdownMenuItem className="text-red-600" onClick={() => removeTrainer(trainer.id)}>
                           <Trash2 className="w-4 h-4 mr-2" />
                           Hapus
                         </DropdownMenuItem>
@@ -442,7 +508,7 @@ export default function TrainerPage() {
               <CardDescription>Permintaan pendaftaran trainer yang perlu disetujui</CardDescription>
             </CardHeader>
             <CardContent>
-              {pendingRequests.length > 0 ? (
+              {requests.length > 0 ? (
                 <Table>
                   <TableHeader>
                     <TableRow>
@@ -455,7 +521,7 @@ export default function TrainerPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {pendingRequests.map((request) => (
+                    {requests.map((request) => (
                       <TableRow key={request.id}>
                         <TableCell className="font-medium">{request.name}</TableCell>
                         <TableCell>
@@ -476,11 +542,11 @@ export default function TrainerPage() {
                         <TableCell>{new Date(request.requestDate).toLocaleDateString("id-ID")}</TableCell>
                         <TableCell className="text-center">
                           <div className="flex justify-center gap-2">
-                            <Button size="sm" variant="success">
+                            <Button size="sm" variant="success" onClick={() => decideRequest(request.id, "approve")}>
                               <UserCheck className="w-4 h-4 mr-1" />
                               Setujui
                             </Button>
-                            <Button size="sm" variant="destructive">
+                            <Button size="sm" variant="destructive" onClick={() => decideRequest(request.id, "reject")}>
                               <UserX className="w-4 h-4 mr-1" />
                               Tolak
                             </Button>

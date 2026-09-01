@@ -1,6 +1,7 @@
 "use client"
 
-import { useState } from "react"
+import Link from "next/link"
+import { useRef, useState } from "react"
 import { useAuth } from "@/lib/auth-context"
 import {
   dummyCourses,
@@ -323,11 +324,23 @@ function ContentUploadDialog({
     type: "video" as ContentType,
     duration: 0,
   })
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
+  const accept = contentData.type === "video" ? "video/mp4" :
+    contentData.type === "pdf" ? "application/pdf" :
+    contentData.type === "scorm" ? ".zip,application/zip" : undefined
 
   const handleSubmit = () => {
+    if (contentData.type !== "quiz" && !selectedFile) {
+      toast.error("Pilih file materi terlebih dahulu")
+      return
+    }
     onUpload(contentData)
     setContentData({ title: "", type: "video", duration: 0 })
+    setSelectedFile(null)
     setIsOpen(false)
+    toast.success("Konten ditambahkan", { description: contentData.title })
   }
 
   return (
@@ -409,7 +422,21 @@ function ContentUploadDialog({
 
           <div className="space-y-2">
             <Label>File Upload</Label>
-            <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={accept}
+              className="sr-only"
+              onChange={(event) => setSelectedFile(event.target.files?.[0] || null)}
+            />
+            <div
+              className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center transition-colors hover:border-secondary/70"
+              onDragOver={(event) => event.preventDefault()}
+              onDrop={(event) => {
+                event.preventDefault()
+                setSelectedFile(event.dataTransfer.files[0] || null)
+              }}
+            >
               <Upload className="w-8 h-8 mx-auto text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">
                 Seret file ke sini atau klik untuk upload
@@ -420,9 +447,12 @@ function ContentUploadDialog({
                  contentData.type === "scorm" ? "ZIP (SCORM 1.2/2004, Maks. 500MB)" :
                  "Quiz akan dibuat di editor"}
               </p>
-              <Button type="button" variant="outline" size="sm" className="mt-3">
-                Pilih File
-              </Button>
+              {selectedFile && <p className="mt-2 text-sm font-medium text-foreground">{selectedFile.name}</p>}
+              {contentData.type !== "quiz" && (
+                <Button type="button" variant="outline" size="sm" className="mt-3" onClick={() => fileInputRef.current?.click()}>
+                  Pilih File
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -445,7 +475,7 @@ function ContentUploadDialog({
 }
 
 // Course editor sheet
-function CourseEditorSheet({ course }: { course: Course }) {
+function CourseEditorSheet({ course, onSave }: { course: Course; onSave: (sections: CourseSection[]) => void }) {
   const [sections, setSections] = useState(course.sections)
   const [expandedSections, setExpandedSections] = useState<string[]>(course.sections.map(s => s.id))
 
@@ -480,6 +510,21 @@ function CourseEditorSheet({ course }: { course: Course }) {
         }]
       }
     }))
+  }
+
+  const editContent = (sectionId: string, item: ContentItem) => {
+    const title = window.prompt("Ubah judul materi", item.title)?.trim()
+    if (!title) return
+    setSections((current) => current.map((section) => section.id === sectionId
+      ? { ...section, items: section.items.map((content) => content.id === item.id ? { ...content, title } : content) }
+      : section))
+  }
+
+  const deleteContent = (sectionId: string, itemId: string) => {
+    setSections((current) => current.map((section) => section.id === sectionId
+      ? { ...section, items: section.items.filter((item) => item.id !== itemId) }
+      : section))
+    toast.success("Materi dihapus dari bagian")
   }
 
   return (
@@ -577,19 +622,19 @@ function CourseEditorSheet({ course }: { course: Course }) {
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => item.url ? window.open(item.url, "_blank", "noopener,noreferrer") : toast.info("Preview belum memiliki sumber file") }>
                               <Eye className="w-4 h-4 mr-2" />
                               Preview
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => editContent(section.id, item)}>
                               <Edit className="w-4 h-4 mr-2" />
                               Edit
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => toast.info("Versi saat ini", { description: `${item.title} · versi 1` })}>
                               <History className="w-4 h-4 mr-2" />
                               Versi Lama
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-red-600">
+                            <DropdownMenuItem className="text-red-600" onClick={() => deleteContent(section.id, item.id)}>
                               <Trash2 className="w-4 h-4 mr-2" />
                               Hapus
                             </DropdownMenuItem>
@@ -612,7 +657,7 @@ function CourseEditorSheet({ course }: { course: Course }) {
 
           {/* Save Button */}
           <div className="flex justify-end gap-3 pt-4 border-t">
-            <Button>
+            <Button onClick={() => { onSave(sections); toast.success("Struktur pelatihan disimpan") }}>
               Simpan Perubahan
             </Button>
           </div>
@@ -684,6 +729,29 @@ export default function KontenPage() {
     const statusText =
       newStatus === "published" ? "dipublikasikan" : newStatus === "archived" ? "diarsipkan" : "disimpan sebagai draft"
     toast.success(`Pelatihan ${statusText}`, { description: target?.title })
+  }
+
+  const duplicateCourse = (course: Course) => {
+    const copy: Course = {
+      ...course,
+      id: `${course.id}-COPY-${Date.now()}`,
+      title: `${course.title} (Salinan)`,
+      status: "draft",
+      enrollmentCount: 0,
+      completionRate: 0,
+      createdAt: new Date().toISOString().split("T")[0],
+    }
+    setCourses((current) => [copy, ...current])
+    toast.success("Pelatihan diduplikasi sebagai draf", { description: copy.title })
+  }
+
+  const removeCourse = (course: Course) => {
+    setCourses((current) => current.filter((item) => item.id !== course.id))
+    toast.success("Pelatihan dihapus", { description: course.title })
+  }
+
+  const saveCourseSections = (courseId: string, sections: CourseSection[]) => {
+    setCourses((current) => current.map((course) => course.id === courseId ? { ...course, sections } : course))
   }
 
   // Stats
@@ -859,9 +927,9 @@ export default function KontenPage() {
                   {tabCourses.map((course) => (
                     <Card key={course.id} className="border-gray-100 shadow-sm hover:shadow-md transition-shadow">
                       <CardContent className="p-4">
-                        <div className="flex gap-4">
+                        <div className="flex flex-col gap-4 lg:flex-row">
                           {/* Thumbnail */}
-                          <div className="w-40 h-24 rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0">
+                          <div className="h-32 w-full rounded-lg bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center shrink-0 lg:h-24 lg:w-40">
                             <BookOpen className="w-8 h-8 text-primary/30" />
                           </div>
 
@@ -919,11 +987,13 @@ export default function KontenPage() {
                           </div>
 
                           {/* Actions */}
-                          <div className="flex flex-col gap-2 shrink-0">
-                            <CourseEditorSheet course={course} />
-                            <Button variant="ghost" size="sm">
-                              <Eye className="w-4 h-4 mr-1" />
-                              Preview
+                          <div className="grid grid-cols-[1fr_1fr_auto] gap-2 shrink-0 lg:flex lg:flex-col">
+                            <CourseEditorSheet course={course} onSave={(sections) => saveCourseSections(course.id, sections)} />
+                            <Button asChild variant="ghost" size="sm">
+                              <Link href={`/dashboard/katalog/${course.id}`}>
+                                <Eye className="w-4 h-4 mr-1" />
+                                Preview
+                              </Link>
                             </Button>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
@@ -944,15 +1014,15 @@ export default function KontenPage() {
                                     Unpublish
                                   </DropdownMenuItem>
                                 )}
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => duplicateCourse(course)}>
                                   <Copy className="w-4 h-4 mr-2" />
                                   Duplikasi
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => toast.info("Riwayat versi", { description: `${course.title} · versi aktif 1` })}>
                                   <History className="w-4 h-4 mr-2" />
                                   Riwayat Versi
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => toast.info("Target peserta", { description: course.jobFamilies.join(", ") || "Semua job family" })}>
                                   <Users className="w-4 h-4 mr-2" />
                                   Kelola Divisi
                                 </DropdownMenuItem>
@@ -962,7 +1032,7 @@ export default function KontenPage() {
                                     Arsipkan
                                   </DropdownMenuItem>
                                 )}
-                                <DropdownMenuItem className="text-red-600">
+                                <DropdownMenuItem className="text-red-600" onClick={() => removeCourse(course)}>
                                   <Trash2 className="w-4 h-4 mr-2" />
                                   Hapus
                                 </DropdownMenuItem>

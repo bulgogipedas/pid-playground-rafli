@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
-import { suratTugasList, suratTugasStatuses } from "@/lib/data/surat-tugas"
+import { suratTugasList, suratTugasStatuses, type SuratTugas } from "@/lib/data/surat-tugas"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -33,11 +33,19 @@ import {
   Clock,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { downloadCsv } from "@/lib/client-actions"
+import { toast } from "sonner"
 
 export default function SuratTugasPage() {
   const { user } = useAuth()
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
+  const [letters, setLetters] = useState<SuratTugas[]>(suratTugasList)
+  const [isCreating, setIsCreating] = useState(false)
+  const [selectedLetter, setSelectedLetter] = useState<SuratTugas | null>(null)
+  const [newLetter, setNewLetter] = useState({ employeeName: "", nip: "", division: "", courseName: "", startDate: "", endDate: "", cost: "" })
 
   // Check access - only Admin SDM
   const hasAccess = user?.role === "admin_sdm"
@@ -55,7 +63,7 @@ export default function SuratTugasPage() {
   }
 
   // Filter data
-  const filteredData = suratTugasList.filter(st => {
+  const filteredData = letters.filter(st => {
     const matchSearch = st.employeeName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         st.courseName.toLowerCase().includes(searchTerm.toLowerCase()) ||
                         st.number.toLowerCase().includes(searchTerm.toLowerCase())
@@ -64,25 +72,55 @@ export default function SuratTugasPage() {
   })
 
   // Stats
-  const totalSurat = suratTugasList.length
-  const completedCount = suratTugasList.filter(st => st.status === "completed").length
-  const pendingCount = suratTugasList.filter(st => st.status === "pending" || st.status === "draft").length
-  const totalCost = suratTugasList.reduce((sum, st) => sum + st.cost, 0)
+  const totalSurat = letters.length
+  const completedCount = letters.filter(st => st.status === "completed").length
+  const pendingCount = letters.filter(st => st.status === "pending" || st.status === "draft").length
+  const totalCost = letters.reduce((sum, st) => sum + st.cost, 0)
+
+  const createLetter = () => {
+    if (!newLetter.employeeName || !newLetter.nip || !newLetter.courseName || !newLetter.startDate || !newLetter.endDate) {
+      toast.error("Lengkapi data wajib surat tugas")
+      return
+    }
+    const letter: SuratTugas = {
+      id: `ST${Date.now()}`,
+      number: `ST/HCS/${String(letters.length + 1).padStart(3, "0")}/${new Date().getFullYear()}`,
+      date: new Date().toISOString().split("T")[0],
+      employeeId: "manual",
+      employeeName: newLetter.employeeName,
+      nip: newLetter.nip,
+      position: "Karyawan",
+      division: newLetter.division || "-",
+      courseId: "manual",
+      courseName: newLetter.courseName,
+      trainingStartDate: newLetter.startDate,
+      trainingEndDate: newLetter.endDate,
+      venue: "Menunggu konfirmasi",
+      cost: Number(newLetter.cost) || 0,
+      status: "draft",
+      createdBy: user?.name || "Admin SDM",
+      createdDate: new Date().toISOString().split("T")[0],
+    }
+    setLetters((current) => [letter, ...current])
+    setNewLetter({ employeeName: "", nip: "", division: "", courseName: "", startDate: "", endDate: "", cost: "" })
+    setIsCreating(false)
+    toast.success("Draf surat tugas dibuat", { description: letter.number })
+  }
 
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-3xl font-serif font-bold">Kelola Surat Tugas</h1>
           <p className="text-muted-foreground mt-1">Integrasi dengan HC System (Sistem Informasi Sumber Daya Manusia)</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">
+        <div className="flex flex-wrap gap-2">
+          <Button variant="outline" onClick={() => { downloadCsv("surat-tugas", filteredData); toast.success("Daftar surat tugas diekspor") }}>
             <Download className="w-4 h-4 mr-2" />
             Ekspor
           </Button>
-          <Button>
+          <Button onClick={() => setIsCreating(true)}>
             <Plus className="w-4 h-4 mr-2" />
             Buat Surat Tugas
           </Button>
@@ -210,7 +248,7 @@ export default function SuratTugasPage() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <Button variant="ghost" size="sm">
+                        <Button variant="ghost" size="sm" aria-label={`Lihat ${st.number}`} onClick={() => setSelectedLetter(st)}>
                           <FileText className="w-4 h-4" />
                         </Button>
                       </TableCell>
@@ -228,6 +266,38 @@ export default function SuratTugasPage() {
           </div>
         </CardContent>
       </Card>
+
+      <Dialog open={isCreating} onOpenChange={setIsCreating}>
+        <DialogContent className="sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle>Buat Surat Tugas</DialogTitle>
+            <DialogDescription>Surat baru disimpan sebagai draf sebelum proses persetujuan.</DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-2 sm:grid-cols-2">
+            <div className="space-y-2"><Label>Nama Karyawan *</Label><Input value={newLetter.employeeName} onChange={(event) => setNewLetter({ ...newLetter, employeeName: event.target.value })} /></div>
+            <div className="space-y-2"><Label>NIP *</Label><Input value={newLetter.nip} onChange={(event) => setNewLetter({ ...newLetter, nip: event.target.value })} /></div>
+            <div className="space-y-2"><Label>Divisi</Label><Input value={newLetter.division} onChange={(event) => setNewLetter({ ...newLetter, division: event.target.value })} /></div>
+            <div className="space-y-2"><Label>Pelatihan *</Label><Input value={newLetter.courseName} onChange={(event) => setNewLetter({ ...newLetter, courseName: event.target.value })} /></div>
+            <div className="space-y-2"><Label>Tanggal Mulai *</Label><Input type="date" value={newLetter.startDate} onChange={(event) => setNewLetter({ ...newLetter, startDate: event.target.value })} /></div>
+            <div className="space-y-2"><Label>Tanggal Selesai *</Label><Input type="date" value={newLetter.endDate} onChange={(event) => setNewLetter({ ...newLetter, endDate: event.target.value })} /></div>
+            <div className="space-y-2 sm:col-span-2"><Label>Biaya (IDR)</Label><Input type="number" min="0" value={newLetter.cost} onChange={(event) => setNewLetter({ ...newLetter, cost: event.target.value })} /></div>
+          </div>
+          <DialogFooter><Button variant="outline" onClick={() => setIsCreating(false)}>Batal</Button><Button onClick={createLetter}>Simpan Draf</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!selectedLetter} onOpenChange={(open) => !open && setSelectedLetter(null)}>
+        <DialogContent>
+          <DialogHeader><DialogTitle>{selectedLetter?.number}</DialogTitle><DialogDescription>Detail surat tugas pembelajaran</DialogDescription></DialogHeader>
+          {selectedLetter && <div className="space-y-3 text-sm">
+            <p><span className="text-muted-foreground">Karyawan:</span> {selectedLetter.employeeName} ({selectedLetter.nip})</p>
+            <p><span className="text-muted-foreground">Pelatihan:</span> {selectedLetter.courseName}</p>
+            <p><span className="text-muted-foreground">Jadwal:</span> {new Date(selectedLetter.trainingStartDate).toLocaleDateString("id-ID")} – {new Date(selectedLetter.trainingEndDate).toLocaleDateString("id-ID")}</p>
+            <p><span className="text-muted-foreground">Lokasi:</span> {selectedLetter.venue}</p>
+          </div>}
+          <DialogFooter><Button onClick={() => setSelectedLetter(null)}>Tutup</Button></DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

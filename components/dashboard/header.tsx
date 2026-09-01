@@ -1,5 +1,6 @@
 "use client"
 
+import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowRight, Bell, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -40,7 +41,14 @@ const notifications = [
 
 export function Header() {
   const router = useRouter()
-  const unreadCount = notifications.filter((n) => n.unread).length
+  const [notificationItems, setNotificationItems] = useState(notifications)
+  const unreadCount = notificationItems.filter((n) => n.unread).length
+
+  const openNotification = (notificationId: number) => {
+    setNotificationItems((current) => current.map((item) => item.id === notificationId ? { ...item, unread: false } : item))
+    const target = notificationId === 1 ? "/dashboard/katalog" : notificationId === 2 ? "/dashboard/pelatihan" : "/dashboard/sertifikat"
+    router.push(target)
+  }
 
   const handleSearch = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
@@ -115,8 +123,8 @@ export function Header() {
           <DropdownMenuContent align="end" className="w-80">
             <DropdownMenuLabel className="font-serif">Notifikasi</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {notifications.map((notification) => (
-              <DropdownMenuItem key={notification.id} className="flex flex-col items-start gap-1 py-3 cursor-pointer">
+            {notificationItems.map((notification) => (
+              <DropdownMenuItem key={notification.id} onClick={() => openNotification(notification.id)} className="flex flex-col items-start gap-1 py-3 cursor-pointer">
                 <div className="flex items-start gap-2 w-full">
                   {notification.unread && (
                     <span className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-ring" />
@@ -130,8 +138,12 @@ export function Header() {
               </DropdownMenuItem>
             ))}
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-center text-primary cursor-pointer justify-center">
-              Lihat Semua Notifikasi
+            <DropdownMenuItem
+              disabled={unreadCount === 0}
+              onClick={() => setNotificationItems((current) => current.map((item) => ({ ...item, unread: false })))}
+              className="text-center text-primary cursor-pointer justify-center"
+            >
+              Tandai semua dibaca
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

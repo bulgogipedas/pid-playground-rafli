@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { useAuth } from "@/lib/auth-context"
+import { downloadCsv } from "@/lib/client-actions"
+import { toast } from "sonner"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -288,7 +290,7 @@ export default function LaporanDivisiPage() {
               <SelectItem value="2022">2022</SelectItem>
             </SelectContent>
           </Select>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => { downloadCsv(`laporan-divisi-${periodFilter}`, filteredEmployees); toast.success("Laporan divisi diunduh") }}>
             <Download className="w-4 h-4 mr-2" />
             Export
           </Button>

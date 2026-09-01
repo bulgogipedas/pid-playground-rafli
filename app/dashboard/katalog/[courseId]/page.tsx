@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: CourseDetailRouteProps): Prom
 
   if (!course) return { title: "Pelatihan tidak ditemukan | Pyridam Learning" }
 
-  const imageUrl = new URL(course.thumbnail, "https://pid-playground-rafli.netlify.app").toString()
+  const imageUrl = new URL(course.thumbnail, "https://pyfa-lms.netlify.app").toString()
   const title = `${course.title} | Pyridam Learning`
 
   return {

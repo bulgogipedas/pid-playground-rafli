@@ -45,6 +45,8 @@ import {
 } from "@/components/ui/collapsible"
 import { cn } from "@/lib/utils"
 import { useAuth } from "@/lib/auth-context"
+import { downloadCsv } from "@/lib/client-actions"
+import { toast } from "sonner"
 import { 
   BarChart, 
   Bar, 
@@ -417,7 +419,7 @@ export default function LaporanPage() {
                     <SelectItem value="public_offline">Public Offline</SelectItem>
                   </SelectContent>
                 </Select>
-                <Button>
+                <Button onClick={() => { downloadCsv("transkrip-jam-belajar", filteredLearningHours); toast.success("Transkrip jam belajar diunduh") }}>
                   <Download className="w-4 h-4 mr-2" />
                   Export
                 </Button>

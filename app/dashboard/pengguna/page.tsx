@@ -54,6 +54,7 @@ import { dummyUsers, User, roleLabels, UserRole, divisions, jobFamilies } from "
 import { toast } from "sonner"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { StatusBadge } from "@/components/dashboard/status-badge"
+import { downloadCsv } from "@/lib/client-actions"
 
 export default function UserManagementPage() {
   const [users, setUsers] = useState<User[]>(dummyUsers)
@@ -63,6 +64,9 @@ export default function UserManagementPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all")
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
   const [isSyncing, setIsSyncing] = useState(false)
+  const [newUser, setNewUser] = useState({
+    nip: "", name: "", email: "", role: "peserta" as UserRole, division: "", jobFamily: "", position: "", phone: "",
+  })
 
   // Filter users
   const filteredUsers = users.filter(user => {
@@ -108,6 +112,36 @@ export default function UserManagementPage() {
     }
   }
 
+  const addUser = () => {
+    if (!newUser.nip || !newUser.name || !newUser.email || !newUser.division || !newUser.jobFamily) {
+      toast.error("Lengkapi data wajib pengguna")
+      return
+    }
+    const user: User = {
+      id: `USR${Date.now()}`,
+      ...newUser,
+      joinDate: new Date().toISOString().split("T")[0],
+      status: "aktif",
+    }
+    setUsers((current) => [user, ...current])
+    setNewUser({ nip: "", name: "", email: "", role: "peserta", division: "", jobFamily: "", position: "", phone: "" })
+    setIsAddDialogOpen(false)
+    toast.success("Pengguna ditambahkan", { description: user.name })
+  }
+
+  const editUser = (user: User) => {
+    const name = window.prompt("Nama lengkap", user.name)?.trim()
+    if (!name) return
+    const position = window.prompt("Jabatan", user.position)?.trim() || user.position
+    setUsers((current) => current.map((item) => item.id === user.id ? { ...item, name, position } : item))
+    toast.success("Data pengguna diperbarui", { description: name })
+  }
+
+  const deleteUser = (user: User) => {
+    setUsers((current) => current.filter((item) => item.id !== user.id))
+    toast.success("Pengguna dihapus", { description: user.name })
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -146,21 +180,21 @@ export default function UserManagementPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="nip">NIP</Label>
-                    <Input id="nip" placeholder="Nomor Induk Pegawai" />
+                    <Input id="nip" placeholder="Nomor Induk Pegawai" value={newUser.nip} onChange={(event) => setNewUser({ ...newUser, nip: event.target.value })} />
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="name">Nama Lengkap</Label>
-                    <Input id="name" placeholder="Nama lengkap" />
+                    <Input id="name" placeholder="Nama lengkap" value={newUser.name} onChange={(event) => setNewUser({ ...newUser, name: event.target.value })} />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="email@pyfa.co.id" />
+                  <Input id="email" type="email" placeholder="email@pyfa.co.id" value={newUser.email} onChange={(event) => setNewUser({ ...newUser, email: event.target.value })} />
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="role">Role</Label>
-                    <Select>
+                    <Select value={newUser.role} onValueChange={(role) => setNewUser({ ...newUser, role: role as UserRole })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Pilih role" />
                       </SelectTrigger>
@@ -174,7 +208,7 @@ export default function UserManagementPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="division">Divisi</Label>
-                    <Select>
+                    <Select value={newUser.division} onValueChange={(division) => setNewUser({ ...newUser, division })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Pilih divisi" />
                       </SelectTrigger>
@@ -189,7 +223,7 @@ export default function UserManagementPage() {
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="jobFamily">Job Family</Label>
-                    <Select>
+                    <Select value={newUser.jobFamily} onValueChange={(jobFamily) => setNewUser({ ...newUser, jobFamily })}>
                       <SelectTrigger>
                         <SelectValue placeholder="Pilih job family" />
                       </SelectTrigger>
@@ -202,19 +236,19 @@ export default function UserManagementPage() {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="position">Jabatan</Label>
-                    <Input id="position" placeholder="Jabatan" />
+                    <Input id="position" placeholder="Jabatan" value={newUser.position} onChange={(event) => setNewUser({ ...newUser, position: event.target.value })} />
                   </div>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">No. Telepon</Label>
-                  <Input id="phone" placeholder="08xxxxxxxxxx" />
+                  <Input id="phone" placeholder="08xxxxxxxxxx" value={newUser.phone} onChange={(event) => setNewUser({ ...newUser, phone: event.target.value })} />
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                   Batal
                 </Button>
-                <Button onClick={() => setIsAddDialogOpen(false)}>
+                <Button onClick={addUser}>
                   Simpan
                 </Button>
               </DialogFooter>
@@ -307,7 +341,12 @@ export default function UserManagementPage() {
                   <SelectItem value="nonaktif">Nonaktif</SelectItem>
                 </SelectContent>
               </Select>
-              <Button variant="outline" size="icon">
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label="Ekspor pengguna"
+                onClick={() => { downloadCsv("pengguna-pyfa-lms", filteredUsers); toast.success("Data pengguna diekspor") }}
+              >
                 <Download className="w-4 h-4" />
               </Button>
             </div>
@@ -380,7 +419,7 @@ export default function UserManagementPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => editUser(user)}>
                           <Edit aria-hidden="true" className="w-4 h-4 mr-2" />
                           Edit
                         </DropdownMenuItem>
@@ -398,7 +437,7 @@ export default function UserManagementPage() {
                           )}
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem className="text-destructive">
+                        <DropdownMenuItem className="text-destructive" onClick={() => deleteUser(user)}>
                           <Trash2 aria-hidden="true" className="w-4 h-4 mr-2" />
                           Hapus
                         </DropdownMenuItem>

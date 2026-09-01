@@ -55,6 +55,8 @@ import { useAuth } from "@/lib/auth-context"
 import { dummyCertificates, type Certificate } from "@/lib/data/courses"
 import { PageHeader } from "@/components/dashboard/page-header"
 import { pythonCourse } from "@/lib/learning/seed"
+import { printCurrentPage, shareOrCopy } from "@/lib/client-actions"
+import { toast } from "sonner"
 
 // Extended certificates with more data
 const allCertificates: Certificate[] = [
@@ -238,7 +240,7 @@ export default function SertifikatPage() {
 
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem(`lms_pid_player_${pythonCourse.id}`)
+      const saved = window.localStorage.getItem(`pyfa_lms_player_${pythonCourse.id}`) || window.localStorage.getItem(`pyridam_learning_player_${pythonCourse.id}`)
       const player = saved ? JSON.parse(saved) : null
       if (player?.certificateIssued) {
         setLearningCertificate({
@@ -515,9 +517,9 @@ export default function SertifikatPage() {
                       <span className="text-xs font-mono text-muted-foreground">
                         {cert.certificateNumber}
                       </span>
-                      <Button variant="ghost" size="sm" className="h-8">
+                      <span className="inline-flex h-8 w-8 items-center justify-center text-muted-foreground" aria-hidden="true">
                         <Eye className="w-4 h-4" />
-                      </Button>
+                      </span>
                     </div>
                   </CardContent>
                 </Card>
@@ -785,11 +787,22 @@ export default function SertifikatPage() {
                 
                 {/* Actions */}
                 <div className="flex gap-3">
-                  <Button className="flex-1">
+                  <Button className="flex-1" onClick={() => { toast.info("Menyiapkan sertifikat untuk dicetak"); printCurrentPage() }}>
                     <Download className="w-4 h-4 mr-2" />
                     Unduh PDF
                   </Button>
-                  <Button variant="outline" className="flex-1">
+                  <Button
+                    variant="outline"
+                    className="flex-1"
+                    onClick={async () => {
+                      const result = await shareOrCopy({
+                        title: selectedCertificate.courseName,
+                        text: `Sertifikat ${selectedCertificate.certificateNumber}`,
+                        url: selectedCertificate.qrCode,
+                      })
+                      toast.success(result === "shared" ? "Sertifikat dibagikan" : "Tautan verifikasi disalin")
+                    }}
+                  >
                     <ExternalLink className="w-4 h-4 mr-2" />
                     Bagikan
                   </Button>

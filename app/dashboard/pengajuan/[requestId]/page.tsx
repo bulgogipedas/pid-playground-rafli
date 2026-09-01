@@ -61,7 +61,7 @@ const approvalSteps: ApprovalLevel[] = ["atasan_langsung", "kepala_divisi", "sdm
 function loadRequests() {
   if (typeof window === "undefined") return dummyTrainingRequests
   try {
-    const stored = window.localStorage.getItem("lms_pid_training_requests")
+    const stored = window.localStorage.getItem("pyfa_lms_training_requests") || window.localStorage.getItem("lms_pid_training_requests")
     const saved = stored ? (JSON.parse(stored) as TrainingRequest[]) : []
     const savedIds = new Set(saved.map((item) => item.id))
     return [...saved, ...dummyTrainingRequests.filter((item) => !savedIds.has(item.id))]
@@ -168,7 +168,8 @@ export default function TrainingRequestDetailPage() {
 
     const updatedRequests = requests.map((item) => item.id === request.id ? updatedRequest : item)
     setRequests(updatedRequests)
-    window.localStorage.setItem("lms_pid_training_requests", JSON.stringify(updatedRequests))
+    window.localStorage.setItem("pyfa_lms_training_requests", JSON.stringify(updatedRequests))
+    window.localStorage.removeItem("lms_pid_training_requests")
     setPendingDecision(null)
     setComment("")
     toast.success(
