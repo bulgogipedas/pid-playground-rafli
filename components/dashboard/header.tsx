@@ -1,8 +1,8 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowRight, Bell, Search } from "lucide-react"
+import { ArrowRight, Bell, Moon, Search, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { toast } from "sonner"
+import { useTheme } from "next-themes"
 
 const notifications = [
   {
@@ -41,8 +42,12 @@ const notifications = [
 
 export function Header() {
   const router = useRouter()
+  const { resolvedTheme, setTheme } = useTheme()
+  const [isThemeReady, setIsThemeReady] = useState(false)
   const [notificationItems, setNotificationItems] = useState(notifications)
   const unreadCount = notificationItems.filter((n) => n.unread).length
+
+  useEffect(() => setIsThemeReady(true), [])
 
   const openNotification = (notificationId: number) => {
     setNotificationItems((current) => current.map((item) => item.id === notificationId ? { ...item, unread: false } : item))
@@ -64,7 +69,7 @@ export function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b border-white/10 bg-background/85 px-3 pl-16 backdrop-blur-xl sm:px-7 sm:pl-16 lg:px-10">
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between gap-2 border-b border-border bg-background/85 px-3 pl-16 backdrop-blur-xl sm:px-7 sm:pl-16 lg:px-10">
       {/* Search */}
       <div className="min-w-0 max-w-md flex-1">
         <form role="search" onSubmit={handleSearch} className="relative">
@@ -80,7 +85,7 @@ export function Header() {
             name="query"
             type="search"
             placeholder="Cari pelatihan, sertifikat..."
-            className="border-white/10 bg-card pl-10 pr-10 focus-visible:ring-ring/20"
+            className="border-border bg-card pl-10 pr-10 focus-visible:ring-ring/20"
           />
           <Button
             type="submit"
@@ -96,6 +101,16 @@ export function Header() {
 
       {/* Actions */}
       <div className="flex shrink-0 items-center gap-1 sm:gap-3">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+          aria-label={resolvedTheme === "dark" ? "Aktifkan mode terang" : "Aktifkan mode gelap"}
+          className="hidden sm:inline-flex"
+        >
+          {isThemeReady && resolvedTheme === "dark" ? <Sun aria-hidden="true" className="h-5 w-5" /> : <Moon aria-hidden="true" className="h-5 w-5" />}
+        </Button>
+
         {/* Notifications */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

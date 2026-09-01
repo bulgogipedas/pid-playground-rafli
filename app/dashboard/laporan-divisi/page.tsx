@@ -272,7 +272,7 @@ export default function LaporanDivisiPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#233873]">
+          <h1 className="font-serif text-2xl font-bold text-foreground">
             Laporan Divisi
           </h1>
           <p className="text-muted-foreground">
@@ -303,10 +303,10 @@ export default function LaporanDivisiPage() {
           <CardContent className="p-4">
             <div className="flex items-center gap-3">
               <div className="p-2 rounded-lg bg-blue-100">
-                <Users className="w-5 h-5 text-[#2A438A]" />
+                <Users className="w-5 h-5 text-primary" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#233873]">
+                <p className="text-2xl font-bold text-foreground">
                   {divisionStats.totalKaryawan}
                 </p>
                 <p className="text-xs text-muted-foreground">Total Karyawan</p>
@@ -322,7 +322,7 @@ export default function LaporanDivisiPage() {
                 <BookOpen className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#233873]">
+                <p className="text-2xl font-bold text-foreground">
                   {divisionStats.kursusAktif}
                 </p>
                 <p className="text-xs text-muted-foreground">Kursus Aktif</p>
@@ -338,7 +338,7 @@ export default function LaporanDivisiPage() {
                 <Target className="w-5 h-5 text-amber-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#233873]">
+                <p className="text-2xl font-bold text-foreground">
                   {divisionStats.rataRataProgress}%
                 </p>
                 <p className="text-xs text-muted-foreground">Rata-rata Progress</p>
@@ -354,7 +354,7 @@ export default function LaporanDivisiPage() {
                 <Clock className="w-5 h-5 text-purple-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#233873]">
+                <p className="text-2xl font-bold text-foreground">
                   {divisionStats.totalJamBelajar}
                 </p>
                 <p className="text-xs text-muted-foreground">Total Jam Belajar</p>
@@ -370,7 +370,7 @@ export default function LaporanDivisiPage() {
                 <Award className="w-5 h-5 text-indigo-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#233873]">
+                <p className="text-2xl font-bold text-foreground">
                   {divisionStats.sertifikatDiterbitkan}
                 </p>
                 <p className="text-xs text-muted-foreground">Sertifikat</p>
@@ -386,7 +386,7 @@ export default function LaporanDivisiPage() {
                 <CheckCircle className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-[#233873]">
+                <p className="text-2xl font-bold text-foreground">
                   {divisionStats.kepatuhanWajib}%
                 </p>
                 <p className="text-xs text-muted-foreground">Kepatuhan Wajib</p>

@@ -90,7 +90,7 @@ export default function TNAPage() {
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="font-serif text-2xl font-bold text-[#233873]">
+          <h1 className="font-serif text-2xl font-bold text-foreground">
             Training Needs Analysis (TNA)
           </h1>
           <p className="text-muted-foreground">
@@ -134,10 +134,10 @@ export default function TNAPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Gap Kompetensi
             </CardTitle>
-            <Target className="w-4 h-4 text-[#2A438A]" />
+            <Target className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#233873]">{totalGaps}</div>
+            <div className="text-2xl font-bold text-foreground">{totalGaps}</div>
             <p className="text-xs text-muted-foreground">Teridentifikasi dari HCIS</p>
           </CardContent>
         </Card>
@@ -146,10 +146,10 @@ export default function TNAPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Gap Prioritas Tinggi
             </CardTitle>
-            <AlertTriangle className="w-4 h-4 text-[#DC2626]" />
+            <AlertTriangle className="w-4 h-4 text-destructive" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#DC2626]">{criticalGaps}</div>
+            <div className="text-2xl font-bold text-destructive">{criticalGaps}</div>
             <p className="text-xs text-muted-foreground">Perlu penanganan segera</p>
           </CardContent>
         </Card>
@@ -158,10 +158,10 @@ export default function TNAPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Karyawan dengan Gap
             </CardTitle>
-            <Users className="w-4 h-4 text-[#D97706]" />
+            <Users className="w-4 h-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#D97706]">{employeesWithGap}</div>
+            <div className="text-2xl font-bold text-warning">{employeesWithGap}</div>
             <p className="text-xs text-muted-foreground">Membutuhkan pelatihan</p>
           </CardContent>
         </Card>
@@ -170,10 +170,10 @@ export default function TNAPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Pelatihan Wajib Aktif
             </CardTitle>
-            <TrendingUp className="w-4 h-4 text-[#059669]" />
+            <TrendingUp className="w-4 h-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#059669]">
+            <div className="text-2xl font-bold text-success">
               {mandatoryTrainingAssignments.length}
             </div>
             <p className="text-xs text-muted-foreground">Program berjalan</p>
@@ -212,7 +212,7 @@ export default function TNAPage() {
             {/* Division Summary */}
             <Card className="rounded-lg border border-gray-100 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-lg font-serif text-[#233873]">
+                <CardTitle className="text-lg font-serif text-foreground">
                   Gap per Divisi
                 </CardTitle>
                 <CardDescription>
@@ -238,10 +238,10 @@ export default function TNAPage() {
                           variant="outline" 
                           className={
                             div.criticalGaps > 10 
-                              ? 'text-[#DC2626] border-[#DC2626]' 
+                              ? 'text-destructive border-[#DC2626]' 
                               : div.criticalGaps > 5 
-                              ? 'text-[#D97706] border-[#D97706]'
-                              : 'text-[#059669] border-[#059669]'
+                              ? 'text-warning border-[#D97706]'
+                              : 'text-success border-[#059669]'
                           }
                         >
                           {div.criticalGaps} kritis
@@ -256,7 +256,7 @@ export default function TNAPage() {
             {/* Top Competency Gaps */}
             <Card className="rounded-lg border border-gray-100 shadow-sm">
               <CardHeader>
-                <CardTitle className="text-lg font-serif text-[#233873]">
+                <CardTitle className="text-lg font-serif text-foreground">
                   Top Gap Kompetensi
                 </CardTitle>
                 <CardDescription>
@@ -273,7 +273,7 @@ export default function TNAPage() {
                     { competency: "Kepatuhan Regulasi", avgGap: 1.8, affected: 12, category: "technical" },
                   ].map((item, index) => (
                     <div key={item.competency} className="flex items-center gap-4">
-                      <div className="w-8 h-8 rounded-full bg-[#233873] text-white flex items-center justify-center text-sm font-medium shrink-0">
+                      <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-medium shrink-0">
                         {index + 1}
                       </div>
                       <div className="flex-1">
@@ -298,7 +298,7 @@ export default function TNAPage() {
             {/* Mandatory Training Progress */}
             <Card className="rounded-lg border border-gray-100 shadow-sm lg:col-span-2">
               <CardHeader>
-                <CardTitle className="text-lg font-serif text-[#233873]">
+                <CardTitle className="text-lg font-serif text-foreground">
                   Progres Pelatihan Wajib
                 </CardTitle>
                 <CardDescription>
@@ -313,7 +313,7 @@ export default function TNAPage() {
                       <div key={training.id} className="space-y-3">
                         <div className="flex items-start justify-between">
                           <div>
-                            <h4 className="font-medium text-[#233873]">
+                            <h4 className="font-medium text-foreground">
                               {training.trainingName}
                             </h4>
                             <p className="text-sm text-muted-foreground">
@@ -327,10 +327,10 @@ export default function TNAPage() {
                           <Badge 
                             className={
                               completionRate >= 80 
-                                ? 'bg-[#059669]/10 text-[#059669]' 
+                                ? 'bg-success/10 text-success' 
                                 : completionRate >= 50 
-                                ? 'bg-[#D97706]/10 text-[#D97706]'
-                                : 'bg-[#DC2626]/10 text-[#DC2626]'
+                                ? 'bg-[#D97706]/10 text-warning'
+                                : 'bg-[#DC2626]/10 text-destructive'
                             }
                           >
                             {completionRate.toFixed(0)}% Selesai
@@ -339,7 +339,7 @@ export default function TNAPage() {
                         <Progress value={completionRate} className="h-2" />
                         <div className="flex items-center gap-4 text-sm">
                           <span className="flex items-center gap-1">
-                            <span className="w-2 h-2 rounded-full bg-[#059669]" />
+                            <span className="w-2 h-2 rounded-full bg-success" />
                             Selesai: {training.completed}
                           </span>
                           <span className="flex items-center gap-1">
@@ -379,7 +379,7 @@ export default function TNAPage() {
                 <TableBody>
                   {divisionGapSummaries.map((div) => (
                     <TableRow key={div.division}>
-                      <TableCell className="font-medium text-[#233873]">
+                      <TableCell className="font-medium text-foreground">
                         {div.division}
                       </TableCell>
                       <TableCell className="text-center">{div.totalEmployees}</TableCell>
@@ -394,17 +394,17 @@ export default function TNAPage() {
                           variant="outline"
                           className={
                             div.averageGap >= 1.8 
-                              ? 'text-[#DC2626] border-[#DC2626]' 
+                              ? 'text-destructive border-[#DC2626]' 
                               : div.averageGap >= 1.4 
-                              ? 'text-[#D97706] border-[#D97706]'
-                              : 'text-[#059669] border-[#059669]'
+                              ? 'text-warning border-[#D97706]'
+                              : 'text-success border-[#059669]'
                           }
                         >
                           {div.averageGap.toFixed(1)}
                         </Badge>
                       </TableCell>
                       <TableCell className="text-center">
-                        <Badge className="bg-[#DC2626]/10 text-[#DC2626]">
+                        <Badge className="bg-[#DC2626]/10 text-destructive">
                           {div.criticalGaps}
                         </Badge>
                       </TableCell>
@@ -458,7 +458,7 @@ export default function TNAPage() {
                 <TableBody>
                   {jobFamilyGapSummaries.map((jf) => (
                     <TableRow key={jf.jobFamily}>
-                      <TableCell className="font-medium text-[#233873]">
+                      <TableCell className="font-medium text-foreground">
                         {jf.jobFamily}
                       </TableCell>
                       <TableCell className="text-center">{jf.totalEmployees}</TableCell>
@@ -473,10 +473,10 @@ export default function TNAPage() {
                           variant="outline"
                           className={
                             jf.averageGap >= 1.8 
-                              ? 'text-[#DC2626] border-[#DC2626]' 
+                              ? 'text-destructive border-[#DC2626]' 
                               : jf.averageGap >= 1.4 
-                              ? 'text-[#D97706] border-[#D97706]'
-                              : 'text-[#059669] border-[#059669]'
+                              ? 'text-warning border-[#D97706]'
+                              : 'text-success border-[#059669]'
                           }
                         >
                           {jf.averageGap.toFixed(1)}
@@ -571,7 +571,7 @@ export default function TNAPage() {
                     <TableRow key={gap.id}>
                       <TableCell>
                         <div>
-                          <div className="font-medium text-[#233873]">{gap.userName}</div>
+                          <div className="font-medium text-foreground">{gap.userName}</div>
                           <div className="text-xs text-muted-foreground">{gap.division}</div>
                         </div>
                       </TableCell>
@@ -590,7 +590,7 @@ export default function TNAPage() {
                               ? 'bg-[#DC2626] text-white' 
                               : gap.gap >= 1 
                               ? 'bg-[#D97706] text-white'
-                              : 'bg-[#059669] text-white'
+                              : 'bg-success text-white'
                           }
                         >
                           {gap.gap}
@@ -600,10 +600,10 @@ export default function TNAPage() {
                         <Badge 
                           className={
                             gap.priority === 'tinggi' 
-                              ? 'bg-[#DC2626]/10 text-[#DC2626]' 
+                              ? 'bg-[#DC2626]/10 text-destructive' 
                               : gap.priority === 'sedang' 
-                              ? 'bg-[#D97706]/10 text-[#D97706]'
-                              : 'bg-[#059669]/10 text-[#059669]'
+                              ? 'bg-[#D97706]/10 text-warning'
+                              : 'bg-success/10 text-success'
                           }
                         >
                           {priorityLabels[gap.priority]}
@@ -654,7 +654,7 @@ export default function TNAPage() {
                     return (
                       <TableRow key={training.id}>
                         <TableCell>
-                          <div className="font-medium text-[#233873] max-w-[250px]">
+                          <div className="font-medium text-foreground max-w-[250px]">
                             {training.trainingName}
                           </div>
                           <div className="text-xs text-muted-foreground">
@@ -678,10 +678,10 @@ export default function TNAPage() {
                         <TableCell className="text-center font-medium">
                           {training.totalAssigned}
                         </TableCell>
-                        <TableCell className="text-center text-[#059669] font-medium">
+                        <TableCell className="text-center text-success font-medium">
                           {training.completed}
                         </TableCell>
-                        <TableCell className="text-center text-[#D97706] font-medium">
+                        <TableCell className="text-center text-warning font-medium">
                           {training.inProgress}
                         </TableCell>
                         <TableCell className="text-center text-muted-foreground">

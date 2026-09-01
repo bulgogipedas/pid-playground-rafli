@@ -171,7 +171,7 @@ export default function UserManagementPage() {
             </DialogTrigger>
             <DialogContent className="sm:max-w-[500px]">
               <DialogHeader>
-                <DialogTitle className="font-serif text-[#233873]">Tambah Pengguna Manual</DialogTitle>
+                <DialogTitle className="font-serif text-foreground">Tambah Pengguna Manual</DialogTitle>
                 <DialogDescription>
                   Untuk pengguna yang tidak terdaftar di HCIS (contoh: kontraktor)
                 </DialogDescription>
@@ -289,7 +289,7 @@ export default function UserManagementPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">Sinkronisasi Terakhir</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-sm font-medium text-[#233873]">15 Jan 2024, 08:30</div>
+            <div className="text-sm font-medium text-foreground">15 Jan 2024, 08:30</div>
           </CardContent>
         </Card>
       </div>

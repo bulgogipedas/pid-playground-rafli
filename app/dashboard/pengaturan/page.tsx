@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -29,14 +29,21 @@ import {
   Key,
   Eye,
   EyeOff,
+  Monitor,
+  Moon,
+  Sun,
 } from "lucide-react"
 import { useAuth } from "@/lib/auth-context"
 import { roleLabels } from "@/lib/data/users"
 import { toast } from "sonner"
 import { PageHeader } from "@/components/dashboard/page-header"
+import { useTheme } from "next-themes"
+import { cn } from "@/lib/utils"
 
 export default function PengaturanPage() {
   const { user } = useAuth()
+  const { theme, setTheme } = useTheme()
+  const [isThemeReady, setIsThemeReady] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
   const [avatarUrl, setAvatarUrl] = useState("")
   const avatarInputRef = useRef<HTMLInputElement>(null)
@@ -59,6 +66,8 @@ export default function PengaturanPage() {
   // Display settings
   const [timezone, setTimezone] = useState("Asia/Jakarta")
   const [dateFormat, setDateFormat] = useState("dd/MM/yyyy")
+
+  useEffect(() => setIsThemeReady(true), [])
 
   const handleSave = (section: string) => {
     toast.success("Perubahan disimpan", { description: section })
@@ -422,13 +431,35 @@ export default function PengaturanPage() {
               {/* Theme */}
               <div className="space-y-4">
                 <h4 className="font-medium">Tema</h4>
-                <div className="flex items-center gap-4 rounded-xl border border-border bg-muted/30 p-4">
-                  <div className="h-10 w-16 rounded-lg border border-white/10 bg-gray-900" aria-hidden="true" />
-                  <div>
-                    <p className="font-medium">Gelap</p>
-                    <p className="text-sm text-muted-foreground">Tema standar PYFA LMS untuk konsistensi dan kenyamanan visual.</p>
-                  </div>
+                <div className="grid gap-3 sm:grid-cols-3" aria-label="Pilih tema tampilan">
+                  {[
+                    { value: "light", label: "Terang", description: "Latar terang dengan kontras lembut", icon: Sun, preview: "bg-[#F5F7FA]" },
+                    { value: "dark", label: "Gelap", description: "Nyaman untuk lingkungan redup", icon: Moon, preview: "bg-[#151515]" },
+                    { value: "system", label: "Sistem", description: "Mengikuti pengaturan perangkat", icon: Monitor, preview: "bg-gradient-to-r from-[#F5F7FA] to-[#151515]" },
+                  ].map((option) => {
+                    const Icon = option.icon
+                    const isSelected = isThemeReady && theme === option.value
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        aria-pressed={isSelected}
+                        onClick={() => setTheme(option.value)}
+                        className={cn(
+                          "rounded-xl border p-4 text-left transition-colors hover:border-ring/60 hover:bg-accent/50 focus-visible:outline-none",
+                          isSelected ? "border-ring bg-accent/70 ring-2 ring-ring/15" : "border-border bg-card",
+                        )}
+                      >
+                        <div className={cn("mb-4 flex h-14 items-center justify-center rounded-lg border border-border/70", option.preview)}>
+                          <Icon className={cn("h-5 w-5", option.value === "dark" || option.value === "system" ? "text-white" : "text-[#1D315F]")} />
+                        </div>
+                        <p className="font-medium">{option.label}</p>
+                        <p className="mt-1 text-xs leading-5 text-muted-foreground">{option.description}</p>
+                      </button>
+                    )
+                  })}
                 </div>
+                <p className="text-xs text-muted-foreground">Tema diterapkan langsung dan disimpan di perangkat ini.</p>
               </div>
 
               <div className="flex justify-end">

@@ -312,7 +312,7 @@ export default function LearningPlayerPage() {
 
   return (
     <div className="min-h-[100dvh] bg-background text-foreground">
-      <header className="sticky top-0 z-30 border-b border-white/10 bg-background/85 backdrop-blur-xl">
+      <header className="sticky top-0 z-30 border-b border-border bg-background/85 backdrop-blur-xl">
         <div className="mx-auto flex max-w-[1500px] items-center gap-3 px-4 py-3 sm:px-6">
           <Link href="/dashboard/pelatihan" aria-label="Kembali ke Pelatihan Saya"><Button variant="ghost" size="icon"><ArrowLeft className="h-5 w-5" /></Button></Link>
           <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium sm:text-base">{course.title}</p><p className="text-xs text-muted-foreground">{course.youtubePlaylistId ? "Open class · YouTube" : course.format} · {user?.name ?? "Peserta"}</p></div>
@@ -336,7 +336,7 @@ export default function LearningPlayerPage() {
               <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 px-4 py-3 text-sm text-white"><span className="flex items-center gap-2 text-white/75"><PlayCircle className="h-4 w-4" />Episode ini sesuai tahap learning path</span><a className="inline-flex cursor-pointer items-center gap-1 font-medium text-cyan-300 transition-colors hover:text-white hover:underline" href={`https://www.youtube.com/watch?v=${activeMaterial.youtubeId}&list=${course.youtubePlaylistId}`} target="_blank" rel="noreferrer">Buka di YouTube <ExternalLink className="h-3.5 w-3.5" /></a></div>
             </Card>
           ) : activeMaterial?.type === "artikel" ? (
-            <Card><CardContent className="max-w-none p-6 text-foreground sm:p-8"><div className="mb-5 flex items-center gap-3 rounded-[14px] bg-white/[0.06] p-4"><FileText className="h-5 w-5 text-foreground" /><p className="text-sm font-medium">Baca materi ini sampai selesai sebelum lanjut.</p></div><p className="whitespace-pre-line leading-8 text-white/75">{activeMaterial.body}</p></CardContent></Card>
+            <Card><CardContent className="max-w-none p-6 text-foreground sm:p-8"><div className="mb-5 flex items-center gap-3 rounded-[14px] bg-muted p-4"><FileText className="h-5 w-5 text-foreground" /><p className="text-sm font-medium">Baca materi ini sampai selesai sebelum lanjut.</p></div><p className="whitespace-pre-line leading-8 text-muted-foreground">{activeMaterial.body}</p></CardContent></Card>
           ) : activeMaterial?.type === "assignment" ? (
             <Card><CardHeader><Badge variant="outline" className="w-fit">Final project</Badge><CardTitle>{pythonAssignment.title}</CardTitle><p className="text-sm text-muted-foreground">{pythonAssignment.brief}</p></CardHeader><CardContent className="space-y-5"><div className="rounded-lg border bg-muted/30 p-4 text-sm"><p className="font-medium">Output yang diharapkan</p><p className="mt-1 text-muted-foreground">{pythonAssignment.expectedOutput}</p><p className="mt-3 font-medium">Aturan submission</p><p className="mt-1 text-muted-foreground">{pythonAssignment.submissionRules}</p></div><div className="space-y-2"><Label htmlFor="assignment-note">Catatan submission</Label><Textarea id="assignment-note" value={assignmentNote} onChange={(event) => setAssignmentNote(event.target.value)} placeholder="Jelaskan solusi atau cara menjalankan program..." rows={4} /></div><div className="space-y-2"><Label htmlFor="assignment-link">Link repository atau file</Label><Input id="assignment-link" value={assignmentLink} onChange={(event) => setAssignmentLink(event.target.value)} placeholder="https://github.com/..." /></div>{state.assignmentSubmitted && <div className="flex items-center gap-2 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-800"><CheckCircle2 className="h-4 w-4" />Submission diterima · status Lulus untuk demo</div>}<Button onClick={submitAssignment} disabled={state.assignmentSubmitted}><Send className="mr-2 h-4 w-4" />{state.assignmentSubmitted ? "Sudah dikirim" : "Kirim submission"}</Button></CardContent></Card>
           ) : activeMaterial?.type === "feedback" ? (
@@ -345,7 +345,7 @@ export default function LearningPlayerPage() {
             <Card><CardContent className="space-y-4 p-8 text-center"><div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary"><ClipboardCheck className="h-8 w-8" /></div><h2 className="text-xl font-semibold">Siap mengukur pemahaman?</h2><p className="mx-auto max-w-md text-sm text-muted-foreground">Kerjakan assessment ini setelah mempelajari materi terkait. Kamu akan melihat nilai dan pembahasan setelah mengumpulkan jawaban.</p><Button onClick={() => activeAssessmentForMaterial && setActiveAssessment(activeAssessmentForMaterial)} disabled={!activeAssessmentForMaterial}>{activeAssessmentForMaterial ? "Mulai assessment" : "Materi belum tersedia"}</Button></CardContent></Card>
           )}
 
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[16px] border border-white/10 bg-card p-4">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-[16px] border border-border bg-card p-4">
             <div className="flex items-center gap-2 text-sm">{activeMaterial && state.completed.includes(activeMaterial.id) ? <><CheckCircle2 className="h-5 w-5 text-emerald-600" /><span className="font-medium text-emerald-700">Materi selesai</span></> : <><Lock className="h-4 w-4 text-muted-foreground" /><span className="text-muted-foreground">Tandai selesai setelah dipelajari</span></>}</div>
             <Button onClick={markComplete} disabled={!activeMaterial || state.completed.includes(activeMaterial.id) || ["quiz", "pretest", "posttest", "assignment", "feedback"].includes(activeMaterial.type)}>{state.completed.includes(activeMaterial?.id ?? "") ? "Sudah selesai" : "Tandai selesai"}<ChevronRight className="ml-2 h-4 w-4" /></Button>
           </div>
@@ -365,7 +365,7 @@ export default function LearningPlayerPage() {
             ...(hasAssignment ? [["Assignment dikumpulkan", state.assignmentSubmitted] as [string, boolean]] : []),
             ...(postTest ? [[`Post-test minimal ${course.passingGrade}%`, postTestReady] as [string, boolean]] : []),
             ...(hasFeedback ? [["Feedback dikirim", state.feedbackSubmitted] as [string, boolean]] : []),
-          ].map(([label, done]) => <div key={String(label)} className="flex items-center gap-2">{done ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <span className="h-4 w-4 rounded-full border border-white/20" />}<span className={cn(done ? "text-foreground" : "text-muted-foreground")}>{label}</span></div>)}</CardContent></Card>}
+          ].map(([label, done]) => <div key={String(label)} className="flex items-center gap-2">{done ? <CheckCircle2 className="h-4 w-4 text-emerald-400" /> : <span className="h-4 w-4 rounded-full border border-border" />}<span className={cn(done ? "text-foreground" : "text-muted-foreground")}>{label}</span></div>)}</CardContent></Card>}
         </aside>
       </div>
     </div>

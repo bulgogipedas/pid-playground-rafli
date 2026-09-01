@@ -3,9 +3,66 @@
 
 @custom-variant dark (&:is(.dark *));
 
-/* Pyridam Learning — dark product design system based on the supplied Framer canvas. */
+/* PYFA LMS — adaptive product design system based on the supplied Framer canvas. */
 
 :root {
+  color-scheme: light;
+  --background: #F5F7FA;
+  --foreground: #141821;
+  --card: #FFFFFF;
+  --card-foreground: #141821;
+  --popover: #FFFFFF;
+  --popover-foreground: #141821;
+  --primary: #1D315F;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E8EEF8;
+  --secondary-foreground: #1D315F;
+  --muted: #EEF1F5;
+  --muted-foreground: #667085;
+  --accent: #E5EDFA;
+  --accent-foreground: #193766;
+  --success: #157A50;
+  --success-foreground: #FFFFFF;
+  --warning: #A95309;
+  --warning-foreground: #FFFFFF;
+  --destructive: #C83E55;
+  --destructive-foreground: #FFFFFF;
+  --border: rgba(29, 49, 95, 0.13);
+  --input: #FFFFFF;
+  --ring: #2563EB;
+  --chart-1: #1D315F;
+  --chart-2: #2563EB;
+  --chart-3: #7C3AED;
+  --chart-4: #D97706;
+  --chart-5: #DB3655;
+  --chart-6: #15805A;
+  --chart-7: #C2410C;
+  --chart-8: #667085;
+  --radius: 0.625rem;
+  --sidebar: #111827;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #263A68;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #1E293B;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #60A5FA;
+  --sidebar-muted: rgba(255, 255, 255, 0.1);
+  --sidebar-muted-foreground: rgba(255, 255, 255, 0.7);
+  --blue-50: #EFF6FF;
+  --blue-100: #DBEAFE;
+  --blue-200: #BFDBFE;
+  --blue-300: #93C5FD;
+  --blue-400: #60A5FA;
+  --blue-500: #3B82F6;
+  --blue-600: #2563EB;
+  --blue-700: #1D4ED8;
+  --blue-800: #1E40AF;
+  --blue-900: #1E3A8A;
+  --blue-950: #172554;
+}
+
+.dark {
   color-scheme: dark;
   --background: #050505;
   --foreground: #FFFFFF;
@@ -38,17 +95,21 @@
   --chart-6: #059669;
   --chart-7: #EA580C;
   --chart-8: #999999;
-  --radius: 0.625rem;
   --sidebar: #0A0A0A;
-  --sidebar-foreground: #FFFFFF;
   --sidebar-primary: #292929;
-  --sidebar-primary-foreground: #FFFFFF;
   --sidebar-accent: #202020;
-  --sidebar-accent-foreground: #FFFFFF;
-  --sidebar-border: rgba(255, 255, 255, 0.1);
   --sidebar-ring: #0099FF;
-  --sidebar-muted: rgba(255, 255, 255, 0.1);
-  --sidebar-muted-foreground: rgba(255, 255, 255, 0.7);
+  --blue-50: #07131A;
+  --blue-100: #0A2433;
+  --blue-200: #0B3C57;
+  --blue-300: #38BDF8;
+  --blue-400: #22AFFF;
+  --blue-500: #0099FF;
+  --blue-600: #0099FF;
+  --blue-700: #7DD3FC;
+  --blue-800: #BAE6FD;
+  --blue-900: #E0F2FE;
+  --blue-950: #F0F9FF;
 }
 
 @theme inline {
@@ -87,17 +148,17 @@
   --color-chart-7: var(--chart-7);
   --color-chart-8: var(--chart-8);
 
-  --color-blue-50: #07131A;
-  --color-blue-100: #0A2433;
-  --color-blue-200: #0B3C57;
-  --color-blue-300: #38BDF8;
-  --color-blue-400: #22AFFF;
-  --color-blue-500: #0099FF;
-  --color-blue-600: #0099FF;
-  --color-blue-700: #7DD3FC;
-  --color-blue-800: #BAE6FD;
-  --color-blue-900: #E0F2FE;
-  --color-blue-950: #F0F9FF;
+  --color-blue-50: var(--blue-50);
+  --color-blue-100: var(--blue-100);
+  --color-blue-200: var(--blue-200);
+  --color-blue-300: var(--blue-300);
+  --color-blue-400: var(--blue-400);
+  --color-blue-500: var(--blue-500);
+  --color-blue-600: var(--blue-600);
+  --color-blue-700: var(--blue-700);
+  --color-blue-800: var(--blue-800);
+  --color-blue-900: var(--blue-900);
+  --color-blue-950: var(--blue-950);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -125,6 +186,7 @@
     @apply bg-background text-foreground;
     font-feature-settings: "cv01", "cv05", "cv09", "cv11", "ss03", "ss07", "dlig", "tnum";
     letter-spacing: -0.01em;
+    transition: background-color 180ms ease, color 180ms ease;
   }
 
   button,
@@ -206,6 +268,11 @@
   .bg-red-50 { background-color: color-mix(in srgb, var(--destructive) 10%, transparent); }
   .text-slate-950,
   .text-gray-900 { color: var(--foreground); }
+}
+
+:root:not(.dark) header.border-white\/10,
+:root:not(.dark) [data-slot="card"].border-white\/10 {
+  border-color: var(--border);
 }
 
 .featured-course-shell {

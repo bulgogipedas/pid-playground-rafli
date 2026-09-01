@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { AuthProvider } from '@/lib/auth-context'
 import { Toaster } from '@/components/ui/sonner'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 const inter = Inter({ 
@@ -34,7 +35,10 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#050505',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#F5F7FA' },
+    { media: '(prefers-color-scheme: dark)', color: '#050505' },
+  ],
   width: 'device-width',
   initialScale: 1,
 }
@@ -45,13 +49,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="id" data-scroll-behavior="smooth" className={`${inter.variable} bg-background dark`}>
+    <html lang="id" data-scroll-behavior="smooth" suppressHydrationWarning className={`${inter.variable} bg-background`}>
       <body className="font-sans antialiased bg-background">
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-        <Toaster richColors position="top-right" />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange storageKey="pyfa_lms_theme">
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+          <Toaster richColors position="top-right" />
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </ThemeProvider>
       </body>
     </html>
   )

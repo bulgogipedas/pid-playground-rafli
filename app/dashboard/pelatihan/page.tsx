@@ -94,8 +94,8 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
                   <Badge 
                     className={
                       course.type === 'wajib' 
-                        ? 'bg-[#D97706]/10 text-[#D97706]' 
-                        : 'bg-[#2A438A]/10 text-[#2A438A]'
+                        ? 'bg-[#D97706]/10 text-warning' 
+                        : 'bg-blue-600/10 text-primary'
                     }
                   >
                     {typeLabels[course.type]}
@@ -104,7 +104,7 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
                     {methodLabels[course.method]}
                   </Badge>
                 </div>
-                <h3 className="font-semibold text-[#233873] mb-1 line-clamp-2">
+                <h3 className="font-semibold text-foreground mb-1 line-clamp-2">
                   {course.title}
                 </h3>
                 <p className="text-sm text-muted-foreground mb-3 line-clamp-2">
@@ -126,12 +126,12 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
               {/* Status & Action */}
               <div className="text-right shrink-0">
                 {enrollment.status === 'selesai' ? (
-                  <Badge className="bg-[#059669] text-white mb-2">
+                  <Badge className="bg-success text-white mb-2">
                     <CheckCircle className="w-3 h-3 mr-1" />
                     Selesai
                   </Badge>
                 ) : enrollment.status === 'sedang_berjalan' ? (
-                  <Badge className="bg-[#2A438A] text-white mb-2">
+                  <Badge className="bg-blue-600 text-white mb-2">
                     <Play className="w-3 h-3 mr-1" />
                     Sedang Berjalan
                   </Badge>
@@ -142,7 +142,7 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
                 )}
                 
                 {enrollment.deadline && enrollment.status !== 'selesai' && (
-                  <div className={`text-xs mt-1 ${isOverdue ? 'text-[#DC2626]' : isUrgent ? 'text-[#D97706]' : 'text-muted-foreground'}`}>
+                  <div className={`text-xs mt-1 ${isOverdue ? 'text-destructive' : isUrgent ? 'text-warning' : 'text-muted-foreground'}`}>
                     {isOverdue ? (
                       <span className="flex items-center gap-1 justify-end">
                         <AlertTriangle className="w-3 h-3" />
@@ -163,7 +163,7 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
               <div className="mt-4">
                 <div className="flex items-center justify-between text-sm mb-2">
                   <span className="text-muted-foreground">Progres</span>
-                  <span className="font-medium text-[#233873]">{enrollment.progress}%</span>
+                  <span className="font-medium text-foreground">{enrollment.progress}%</span>
                 </div>
                 <Progress value={enrollment.progress} className="h-2" />
               </div>
@@ -179,10 +179,10 @@ function EnrolledCourseCard({ enrollment, course }: EnrolledCourseCardProps) {
                   size="sm" 
                   className={
                     enrollment.status === 'selesai'
-                      ? 'bg-[#059669] hover:bg-[#047857]'
+                      ? 'bg-success hover:bg-[#047857]'
                       : enrollment.status === 'sedang_berjalan'
-                      ? 'bg-[#2A438A] hover:bg-[#233873]'
-                      : 'bg-[#233873] hover:bg-[#1D305F]'
+                      ? 'bg-blue-600 hover:bg-blue-600'
+                      : 'bg-blue-600 hover:bg-[#1D305F]'
                   }
                 >
                   {enrollment.status === 'selesai' ? 'Lihat Sertifikat' : 
@@ -260,10 +260,10 @@ export default function PelatihanSayaPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Total Pelatihan
             </CardTitle>
-            <BookOpen className="w-4 h-4 text-[#2A438A]" />
+            <BookOpen className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#233873]">{totalEnrolled}</div>
+            <div className="text-2xl font-bold text-foreground">{totalEnrolled}</div>
             <p className="text-xs text-muted-foreground">Terdaftar</p>
           </CardContent>
         </Card>
@@ -272,10 +272,10 @@ export default function PelatihanSayaPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Sedang Berjalan
             </CardTitle>
-            <Play className="w-4 h-4 text-[#D97706]" />
+            <Play className="w-4 h-4 text-warning" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#D97706]">{inProgress}</div>
+            <div className="text-2xl font-bold text-warning">{inProgress}</div>
             <p className="text-xs text-muted-foreground">Perlu dilanjutkan</p>
           </CardContent>
         </Card>
@@ -284,10 +284,10 @@ export default function PelatihanSayaPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Selesai
             </CardTitle>
-            <CheckCircle className="w-4 h-4 text-[#059669]" />
+            <CheckCircle className="w-4 h-4 text-success" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#059669]">{completed}</div>
+            <div className="text-2xl font-bold text-success">{completed}</div>
             <p className="text-xs text-muted-foreground">Pelatihan</p>
           </CardContent>
         </Card>
@@ -296,10 +296,10 @@ export default function PelatihanSayaPage() {
             <CardTitle className="text-sm font-medium text-muted-foreground">
               Jam Belajar
             </CardTitle>
-            <TrendingUp className="w-4 h-4 text-[#2A438A]" />
+            <TrendingUp className="w-4 h-4 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-[#233873]">{totalLearningHours.toFixed(1)}</div>
+            <div className="text-2xl font-bold text-foreground">{totalLearningHours.toFixed(1)}</div>
             <p className="text-xs text-muted-foreground">Total jam</p>
           </CardContent>
         </Card>
@@ -354,7 +354,7 @@ export default function PelatihanSayaPage() {
             <Card className="rounded-lg border border-gray-100 shadow-sm">
               <CardContent className="py-12 text-center">
                 <BookOpen className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
-                <h3 className="font-semibold text-lg text-[#233873] mb-2">
+                <h3 className="font-semibold text-lg text-foreground mb-2">
                   Tidak ada pelatihan ditemukan
                 </h3>
                 <p className="text-muted-foreground mb-4">
